@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
 
-// Descomenta cuando tengas Capacitor instalado:
+// Cuando este el Capacitor instalado , hay que buscar los sonidos !!!!!!!!!!!!!!!!!:
 // import { Haptics } from '@capacitor/haptics';
 // import { NativeAudio } from '@capacitor-community/native-audio';
 
@@ -28,15 +28,15 @@ export class SplashPage implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    // Reproducir sonido de inicio
+    // sonido de inicio
     await this.reproducirSonidoInicio();
 
-    // Pequeño delay antes de animar
+    // delay antes de animar
     setTimeout(() => {
       this.animacionIniciada = true;
     }, 100);
 
-    // Iniciar la barra de progreso con mensajes
+    // barra de progreso con mensajes
     this.animarProgreso();
 
     // Verificar si ya hay sesión activa
