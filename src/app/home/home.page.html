@@ -1,16 +1,24 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Verabri</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()" color="danger">
-        <ion-icon name="log-out-outline" slot="start"></ion-icon>
-        Cerrar sesión
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="home-content">
 
-<ion-content class="ion-padding">
-  <h2>¡Bienvenido!</h2>
-  <p>Seleccioná una opción del menú.</p>
+  <div class="home-header">
+    <img src="assets/logo.png" class="home-logo"/>
+    <h1 class="home-titulo">VERABRI</h1>
+    <p class="home-subtitulo">Bienvenido al sistema</p>
+  </div>
+
+  <div class="home-usuario">
+    <ion-icon name="person-circle-outline" class="usuario-icono"></ion-icon>
+    <p class="usuario-texto">Sesión iniciada correctamente</p>
+  </div>
+
+  <div class="home-acciones">
+    <ion-button 
+      expand="block" 
+      class="boton-cerrar"
+      (click)="cerrarSesion()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Cerrar sesión
+    </ion-button>
+  </div>
+
 </ion-content>
