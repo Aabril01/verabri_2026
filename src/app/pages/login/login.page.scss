@@ -1,0 +1,177 @@
+.login-content {
+  --background: #f5f5f5;
+}
+
+.fondo-login {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  .figura { position: absolute; border-radius: 50%; }
+  .figura-top {
+    width: 350px; height: 350px;
+    top: -120px; right: -80px;
+    background: radial-gradient(circle, rgba(200,200,200,0.5) 0%, transparent 65%);
+  }
+  .figura-bottom {
+    width: 280px; height: 280px;
+    bottom: -100px; left: -60px;
+    background: radial-gradient(circle, rgba(180,180,180,0.3) 0%, transparent 65%);
+  }
+}
+
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px 24px;
+}
+
+.logo-pequeno {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 2px solid rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  svg { width: 46px; height: 46px; }
+}
+
+.titulo-login {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 6px;
+  margin: 0 0 4px;
+}
+
+.subtitulo-login {
+  font-size: 13px;
+  color: rgba(0,0,0,0.45);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.formulario-login { padding: 0 20px; margin-bottom: 8px; }
+
+.campo-contenedor { margin-bottom: 6px; }
+
+.campo-item {
+  --background: rgba(0,0,0,0.04);
+  --border-color: rgba(0,0,0,0.2);
+  --border-radius: 12px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --color: #1a1a1a;
+  --placeholder-color: rgba(0,0,0,0.3);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 12px;
+  margin-bottom: 4px;
+
+  &.campo-error { border-color: #cc0000; }
+  &:focus-within { border-color: rgba(0,0,0,0.6); }
+}
+
+.icono-campo { color: rgba(0,0,0,0.45); font-size: 18px; margin-right: 8px; }
+.etiqueta-campo { color: rgba(0,0,0,0.45) !important; font-size: 11px !important; }
+.input-campo { color: #1a1a1a !important; font-size: 15px; }
+.boton-ver-clave { --color: rgba(0,0,0,0.4); }
+
+.mensajes-error {
+  padding: 4px 8px 2px;
+  ion-note {
+    display: flex; align-items: center; gap: 4px; font-size: 12px;
+    ion-icon { font-size: 14px; flex-shrink: 0; }
+  }
+}
+
+.error-general {
+  display: flex; justify-content: center; margin: 12px 0 6px;
+  .chip-error {
+    border: 1px solid rgba(204,0,0,0.4);
+    border-radius: 10px; padding: 8px 14px;
+    height: auto; white-space: normal;
+    font-size: 13px; text-align: center;
+  }
+}
+
+.boton-ingresar {
+  --background: #1a1a1a;
+  --background-activated: #333;
+  --color: #f5f5f5;
+  --border-radius: 12px;
+  font-weight: 700; font-size: 16px;
+  letter-spacing: 1px; height: 52px;
+  margin: 16px 0 4px;
+}
+
+.accesos-rapidos { padding: 0 20px 32px; }
+
+.accesos-titulo {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+  span {
+    font-size: 11px; color: rgba(0,0,0,0.4);
+    letter-spacing: 2px; text-transform: uppercase;
+    white-space: nowrap; flex-shrink: 0;
+  }
+}
+
+.linea-deco {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.2), transparent);
+}
+
+.accesos-subtitulo {
+  font-size: 12px; color: rgba(0,0,0,0.4);
+  text-align: center; margin: 0 0 16px;
+}
+
+.grilla-perfiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.tarjeta-perfil {
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 12px;
+  padding: 14px 8px 10px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+    background: rgba(0,0,0,0.12);
+    border-color: rgba(0,0,0,0.4);
+  }
+  &.tarjeta-cargando { opacity: 0.7; pointer-events: none; }
+}
+
+.perfil-icono-contenedor {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1px solid rgba(0,0,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.perfil-icono { font-size: 20px; color: #f5f5f5; }
+.perfil-nombre { font-size: 11px; color: #1a1a1a; text-align: center; font-weight: 500; }
+.spinner-perfil { position: absolute; bottom: 4px; right: 4px; font-size: 12px; color: #1a1a1a; }
+
+.spinner-verabri {
+  .loading-wrapper {
+    background: #f5f5f5 !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0,0,0,0.15) !important;
+    padding: 24px !important;
+    color: #1a1a1a !important;
+  }
+  ion-spinner { color: #1a1a1a !important; }
+}

@@ -1,0 +1,132 @@
+<ion-content [fullscreen]="true" class="login-content">
+
+  <!-- Fondo decorativo -->
+  <div class="fondo-login">
+    <div class="figura figura-top"></div>
+    <div class="figura figura-bottom"></div>
+  </div>
+
+  <!-- Cabecera con logo -->
+  <div class="login-header">
+    <div class="logo-pequeno">
+      <div class="logo-pequeno">
+        <img src="assets/logo.png" alt="Logo Verabri" style="width:46px; height:46px; object-fit:contain;"/>
+      </div>
+    </div>
+    <h1 class="titulo-login">VERABRI</h1>
+    <p class="subtitulo-login">Ingresá a tu cuenta</p>
+  </div>
+
+  <!-- Formulario de inicio de sesión -->
+  <form [formGroup]="formularioLogin" class="formulario-login">
+
+    <!-- Campo correo electrónico -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('email')">
+        <ion-icon name="mail-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked" class="etiqueta-campo">Correo electrónico</ion-label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          placeholder="tu@correo.com"
+          autocomplete="email"
+          class="input-campo">
+        </ion-input>
+      </ion-item>
+      <!-- Mensajes de error del correo (NO alert) -->
+      <div class="mensajes-error" *ngIf="campoInvalido('email')">
+        <ion-note color="danger" *ngIf="formularioLogin.get('email')?.errors?.['required']">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El correo electrónico es obligatorio.
+        </ion-note>
+        <ion-note color="danger" *ngIf="formularioLogin.get('email')?.errors?.['email']">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El formato del correo no es válido.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- Campo contraseña -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('contrasena')">
+        <ion-icon name="lock-closed-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked" class="etiqueta-campo">Contraseña</ion-label>
+        <ion-input
+          formControlName="contrasena"
+          [type]="mostrarContrasena ? 'text' : 'password'"
+          placeholder="Ingresá tu contraseña"
+          class="input-campo">
+        </ion-input>
+        <ion-button
+          fill="clear"
+          slot="end"
+          (click)="toggleContrasena()"
+          class="boton-ver-clave">
+          <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <!-- Mensajes de error de la contraseña (NO alert) -->
+      <div class="mensajes-error" *ngIf="campoInvalido('contrasena')">
+        <ion-note color="danger" *ngIf="formularioLogin.get('contrasena')?.errors?.['required']">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          La contraseña es obligatoria.
+        </ion-note>
+        <ion-note color="danger" *ngIf="formularioLogin.get('contrasena')?.errors?.['minlength']">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          La contraseña debe tener al menos 6 caracteres.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- Mensaje de error general de inicio de sesión (NO alert) -->
+    <div class="error-general" *ngIf="errorGeneral">
+      <ion-chip color="danger" class="chip-error">
+        <ion-icon name="close-circle"></ion-icon>
+        <ion-label>{{ errorGeneral }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Botón de ingresar -->
+    <ion-button
+      expand="block"
+      class="boton-ingresar"
+      (click)="iniciarSesion()"
+      [disabled]="cargando">
+      <ion-spinner *ngIf="cargando" name="crescent" class="spinner-boton"></ion-spinner>
+      <span *ngIf="!cargando">Ingresar</span>
+    </ion-button>
+
+  </form>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ACCESOS RÁPIDOS — tarjetas por perfil (NO combos ni selects) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="accesos-rapidos">
+    <div class="accesos-titulo">
+      <div class="linea-deco"></div>
+      <span>Acceso rápido</span>
+      <div class="linea-deco"></div>
+    </div>
+    <p class="accesos-subtitulo">Toca un perfil para ingresar automáticamente</p>
+
+    <!-- Grilla de tarjetas de perfil -->
+    <div class="grilla-perfiles">
+      <div
+        *ngFor="let perfil of perfilesRapidos"
+        class="tarjeta-perfil"
+        (click)="accesoRapido(perfil)"
+        [class.tarjeta-cargando]="perfilCargando === perfil.id">
+        <div class="perfil-icono-contenedor">
+          <ion-icon [name]="perfil.icono" class="perfil-icono"></ion-icon>
+        </div>
+        <span class="perfil-nombre">{{ perfil.nombre }}</span>
+        <ion-spinner
+          *ngIf="perfilCargando === perfil.id"
+          name="dots"
+          class="spinner-perfil">
+        </ion-spinner>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

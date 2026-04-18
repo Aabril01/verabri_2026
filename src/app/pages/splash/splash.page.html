@@ -1,0 +1,60 @@
+<ion-content [fullscreen]="true" class="splash-content">
+
+  <!-- Fondo decorativo con formas -->
+  <div class="fondo-decorativo">
+    <div class="circulo circulo-1"></div>
+    <div class="circulo circulo-2"></div>
+    <div class="linea linea-1"></div>
+    <div class="linea linea-2"></div>
+  </div>
+
+  <div class="contenedor-principal" [class.visible]="animacionIniciada">
+
+    <!-- Logo animado -->
+    <div class="contenedor-logo" [class.logo-entrada]="animacionIniciada">
+      <div class="logo-circulo">
+        <!-- SVG del logo Verabri (monograma VA) -->
+        <div class="logo-circulo">
+          <img src="assets/logo.png" alt="Logo Verabri" class="logo-svg"/>
+        </div>
+      </div>
+      <div class="brillo-logo"></div>
+    </div>
+
+    <!-- Nombre de la aplicación -->
+    <div class="nombre-app" [class.texto-entrada]="animacionIniciada">
+      <h1 class="titulo-verabri">VERABRI</h1>
+      <div class="linea-separadora"></div>
+      <p class="subtitulo-app">Experiencia gastronómica</p>
+    </div>
+
+    <!-- Integrantes del grupo -->
+    <div class="integrantes" [class.integrantes-entrada]="animacionIniciada">
+      <div class="grupo-label">Grupo de desarrollo</div>
+      <div class="integrante-item">
+        <span class="integrante-nombre">Avellaneda, Abril</span>
+      </div>
+      <div class="integrante-item">
+        <span class="integrante-nombre">Ceramella, Ornella</span>
+      </div>
+      <div class="integrante-item">
+        <span class="integrante-nombre">{{ nombreTercero }}</span>
+      </div>
+    </div>
+
+    <!-- Barra de progreso animada -->
+    <div class="contenedor-progreso" [class.progreso-entrada]="animacionIniciada">
+      <div class="barra-progreso">
+        <div class="barra-relleno" [style.width]="progreso + '%'"></div>
+      </div>
+      <p class="texto-cargando">{{ mensajeCarga }}</p>
+    </div>
+
+  </div>
+
+  <!-- UTN en la parte inferior -->
+  <div class="footer-utn" [class.footer-entrada]="animacionIniciada">
+    <span>UTN Avellaneda · Tecnicatura en Programación · 2026</span>
+  </div>
+
+</ion-content>

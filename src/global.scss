@@ -35,3 +35,11 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+ion-content {
+  --background: transparent;
+}
+
+.splash-content,
+.login-content {
+  --background: #4A1228;
+}
