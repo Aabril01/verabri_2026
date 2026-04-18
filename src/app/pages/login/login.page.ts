@@ -154,17 +154,7 @@ export class LoginPage implements OnInit {
   // ── NAVEGACIÓN POR PERFIL ─────────────────────────────────────
 
   private navegarSegunPerfil(perfil: string) {
-    const rutas: { [key: string]: string } = {
-      dueno:             '/home/dueno',
-      supervisor:        '/home/supervisor',
-      metre:             '/home/metre',
-      mozo:              '/home/mozo',
-      cocinero:          '/home/cocinero',
-      cantinero:         '/home/cantinero',
-      cliente_registrado:'/home/cliente',
-      cliente_anonimo:   '/home/cliente'
-    };
-    this.router.navigateByUrl(rutas[perfil] || '/home', { replaceUrl: true });
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   // ── CIERRE DE SESIÓN ──────────────────────────────────────────

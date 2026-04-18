@@ -88,18 +88,7 @@ export class SplashPage implements OnInit, OnDestroy {
   }
 
   private navegarSegunPerfil(perfil: string) {
-    const rutas: { [key: string]: string } = {
-      dueno: '/home/dueno',
-      supervisor: '/home/supervisor',
-      metre: '/home/metre',
-      mozo: '/home/mozo',
-      cocinero: '/home/cocinero',
-      cantinero: '/home/cantinero',
-      cliente_registrado: '/home/cliente',
-      cliente_anonimo: '/home/cliente'
-    };
-    const ruta = rutas[perfil] || '/home';
-    this.router.navigateByUrl(ruta, { replaceUrl: true });
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
 
   private async reproducirSonidoInicio() {
