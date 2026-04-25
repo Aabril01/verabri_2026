@@ -1,0 +1,190 @@
+.alta-mesa-content {
+  --background: #f5f5f5;
+}
+
+.toolbar-verabri {
+  --background: #1a1a1a;
+  --color: #f5f5f5;
+}
+
+.formulario {
+  padding: 16px;
+}
+
+.seccion-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.contenedor-foto {
+  width: 100%;
+  height: 180px;
+  border-radius: 14px;
+  background: white;
+  border: 1.5px dashed rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s;
+
+  &:active { opacity: 0.85; }
+
+  .foto-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .foto-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    ion-icon { font-size: 40px; color: rgba(0,0,0,0.25); }
+    span { font-size: 13px; color: rgba(0,0,0,0.4); }
+  }
+}
+
+.error-foto {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.campo-contenedor { margin-bottom: 10px; }
+
+.campo-item {
+  --background: white;
+  --border-radius: 12px;
+  --padding-start: 14px;
+  --color: #1a1a1a;
+  --placeholder-color: rgba(0,0,0,0.3);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  margin-bottom: 4px;
+
+  &.campo-error { border-color: var(--ion-color-danger); }
+  &:focus-within { border-color: #1a1a1a; }
+}
+
+.icono-campo { color: rgba(0,0,0,0.4); font-size: 18px; }
+
+.mensajes-error {
+  padding: 4px 8px;
+  ion-note {
+    display: flex; align-items: center; gap: 4px; font-size: 12px;
+    ion-icon { font-size: 14px; }
+  }
+}
+
+// ── TIPO DE MESA ──────────────────────────────────────────────
+.label-tipo {
+  font-size: 12px;
+  color: rgba(0,0,0,0.5);
+  margin: 4px 4px 10px;
+  letter-spacing: 0.5px;
+}
+
+.opciones-tipo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.opcion-tipo {
+  background: white;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  ion-icon { font-size: 24px; color: rgba(0,0,0,0.4); }
+  span { font-size: 11px; color: rgba(0,0,0,0.5); text-align: center; }
+
+  &.opcion-seleccionada {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    ion-icon { color: #f5f5f5; }
+    span { color: #f5f5f5; font-weight: 600; }
+  }
+}
+
+.error-general {
+  display: flex; justify-content: center; margin: 8px 0;
+  .chip-error {
+    border: 1px solid rgba(var(--ion-color-danger-rgb), 0.4);
+    border-radius: 10px; padding: 8px 14px;
+    height: auto; white-space: normal; font-size: 13px;
+  }
+}
+
+.boton-guardar {
+  --background: #1a1a1a;
+  --color: #f5f5f5;
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+// ── QR GENERADO ───────────────────────────────────────────────
+.seccion-qr {
+  padding: 16px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.qr-card {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  text-align: center;
+}
+
+.qr-subtitulo {
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+  margin: 0;
+  text-align: center;
+}
+
+.boton-nueva-mesa {
+  --background: transparent;
+  --color: #1a1a1a;
+  --border-radius: 12px;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: #1a1a1a;
+  width: 100%;
+  height: 48px;
+  font-weight: 600;
+}

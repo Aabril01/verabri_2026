@@ -1,0 +1,173 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Alta de Empleado</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="alta-empleado-content">
+
+  <form [formGroup]="formulario" class="formulario">
+
+    <!-- FOTO -->
+    <div class="seccion-foto">
+      <div class="contenedor-foto" (click)="seleccionarFoto()">
+        <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-preview"/>
+        <div *ngIf="!fotoUrl" class="foto-placeholder">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Tomar foto</span>
+        </div>
+      </div>
+      <ion-note *ngIf="errorFoto" color="danger" class="error-foto">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        {{ errorFoto }}
+      </ion-note>
+    </div>
+
+    <!-- APELLIDO -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('apellido')">
+        <ion-icon name="person-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Apellido</ion-label>
+        <ion-input formControlName="apellido" type="text" placeholder="Ingresá el apellido"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('apellido')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El apellido es obligatorio.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- NOMBRE -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('nombre')">
+        <ion-icon name="person-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input formControlName="nombre" type="text" placeholder="Ingresá el nombre"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('nombre')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El nombre es obligatorio.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- DNI -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('dni')">
+        <ion-icon name="card-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Número de DNI</ion-label>
+        <ion-input formControlName="dni" type="number" placeholder="Ej: 38444555"></ion-input>
+        <ion-button fill="clear" slot="end" (click)="escanearQRDni()" class="boton-qr">
+          <ion-icon name="qr-code-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('dni')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El DNI debe tener entre 7 y 8 dígitos.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- CUIL -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('cuil')">
+        <ion-icon name="id-card-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Número de CUIL</ion-label>
+        <ion-input formControlName="cuil" type="text" placeholder="Ej: 20384445556"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('cuil')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El CUIL debe tener 11 dígitos.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('email')">
+        <ion-icon name="mail-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Correo electrónico</ion-label>
+        <ion-input formControlName="email" type="email" placeholder="empleado@verabri.com"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('email')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          Ingresá un correo electrónico válido.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- CONTRASEÑA -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('contrasena')">
+        <ion-icon name="lock-closed-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input
+          formControlName="contrasena"
+          [type]="mostrarContrasena ? 'text' : 'password'"
+          placeholder="Mínimo 6 caracteres">
+        </ion-input>
+        <ion-button fill="clear" slot="end" (click)="toggleContrasena()">
+          <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('contrasena')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          La contraseña debe tener al menos 6 caracteres.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('perfil')">
+        <ion-icon name="briefcase-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Perfil</ion-label>
+        <ion-select formControlName="perfil" placeholder="Seleccioná un perfil">
+          <ion-select-option value="metre">Metre</ion-select-option>
+          <ion-select-option value="mozo">Mozo</ion-select-option>
+          <ion-select-option value="cocinero">Cocinero</ion-select-option>
+          <ion-select-option value="cantinero">Cantinero</ion-select-option>
+          <ion-select-option value="supervisor">Supervisor</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('perfil')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          Seleccioná un perfil para el empleado.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- ERROR GENERAL -->
+    <div class="error-general" *ngIf="errorGeneral">
+      <ion-chip color="danger" class="chip-error">
+        <ion-icon name="close-circle"></ion-icon>
+        <ion-label>{{ errorGeneral }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <ion-button
+      expand="block"
+      class="boton-guardar"
+      (click)="guardarEmpleado()"
+      [disabled]="cargando">
+      <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
+      <span *ngIf="!cargando">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Guardar empleado
+      </span>
+    </ion-button>
+
+  </form>
+
+</ion-content>

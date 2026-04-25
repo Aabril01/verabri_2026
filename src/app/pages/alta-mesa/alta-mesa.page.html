@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Alta de Mesa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="alta-mesa-content">
+
+  <form [formGroup]="formulario" class="formulario">
+
+    <!-- FOTO DE LA MESA -->
+    <div class="seccion-foto">
+      <div class="contenedor-foto" (click)="seleccionarFoto()">
+        <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-preview"/>
+        <div *ngIf="!fotoUrl" class="foto-placeholder">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Fotografiar mesa</span>
+        </div>
+      </div>
+      <ion-note *ngIf="errorFoto" color="danger" class="error-foto">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        {{ errorFoto }}
+      </ion-note>
+    </div>
+
+    <!-- NÚMERO DE MESA -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('numero')">
+        <ion-icon name="grid-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Número de mesa</ion-label>
+        <ion-input formControlName="numero" type="number" placeholder="Ej: 1"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('numero')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El número de mesa es obligatorio y debe ser mayor a 0.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- CANTIDAD DE COMENSALES -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('capacidad')">
+        <ion-icon name="people-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Cantidad de comensales</ion-label>
+        <ion-input formControlName="capacidad" type="number" placeholder="Ej: 4"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('capacidad')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          La capacidad es obligatoria y debe ser mayor a 0.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- TIPO DE MESA -->
+    <div class="campo-contenedor">
+      <p class="label-tipo">Tipo de mesa</p>
+      <div class="opciones-tipo">
+        <div
+          class="opcion-tipo"
+          [class.opcion-seleccionada]="formulario.get('tipo')?.value === 'estandar'"
+          (click)="seleccionarTipo('estandar')">
+          <ion-icon name="restaurant-outline"></ion-icon>
+          <span>Estándar</span>
+        </div>
+        <div
+          class="opcion-tipo"
+          [class.opcion-seleccionada]="formulario.get('tipo')?.value === 'vip'"
+          (click)="seleccionarTipo('vip')">
+          <ion-icon name="star-outline"></ion-icon>
+          <span>VIP</span>
+        </div>
+        <div
+          class="opcion-tipo"
+          [class.opcion-seleccionada]="formulario.get('tipo')?.value === 'movilidad_reducida'"
+          (click)="seleccionarTipo('movilidad_reducida')">
+          <ion-icon name="accessibility-outline"></ion-icon>
+          <span>Movilidad reducida</span>
+        </div>
+      </div>
+      <div class="mensajes-error" *ngIf="campoInvalido('tipo')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          Seleccioná el tipo de mesa.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- ERROR GENERAL -->
+    <div class="error-general" *ngIf="errorGeneral">
+      <ion-chip color="danger" class="chip-error">
+        <ion-icon name="close-circle"></ion-icon>
+        <ion-label>{{ errorGeneral }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <ion-button
+      expand="block"
+      class="boton-guardar"
+      (click)="guardarMesa()"
+      [disabled]="cargando">
+      <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
+      <span *ngIf="!cargando">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Guardar mesa
+      </span>
+    </ion-button>
+
+  </form>
+
+  <!-- QR GENERADO -->
+  <div class="seccion-qr" *ngIf="qrGenerado">
+    <div class="qr-card">
+      <p class="qr-titulo">Código QR — Mesa {{ numeroMesaGuardada }}</p>
+      <img [src]="qrImagenUrl" class="qr-imagen" alt="Código QR de la mesa"/>
+      <p class="qr-subtitulo">Imprimí este código y colocalo en la mesa</p>
+      <ion-button expand="block" class="boton-nueva-mesa" (click)="nuevaMesa()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Agregar otra mesa
+      </ion-button>
+    </div>
+</div>
+
+</ion-content>

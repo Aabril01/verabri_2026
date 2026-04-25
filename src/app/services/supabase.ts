@@ -90,4 +90,41 @@ export class SupabaseService {
   get client(): SupabaseClient {
     return this.supabase;
   }
+
+
+  async crearEmpleado(email: string, contrasena: string, datos: any) {
+    // Crear en Auth
+    const { data: authData, error: authError } = await this.supabase.auth.signUp({
+      email,
+      password: contrasena
+    });
+    if (authError) throw authError;
+
+    // Insertar en tabla usuarios
+    const { error: dbError } = await this.supabase
+      .from('usuarios')
+      .insert({
+        id: authData.user?.id,
+        apellido: datos.apellido,
+        nombre: datos.nombre,
+        dni: datos.dni,
+        cuil: datos.cuil,
+        email,
+        perfil: datos.perfil,
+        estado: 'aceptado',
+        foto_url: datos.foto_url || ''
+      });
+    if (dbError) throw dbError;
+
+    return authData;
+  }
+
+
+
+
+
+
+
+
+
 }

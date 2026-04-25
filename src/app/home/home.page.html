@@ -1,23 +1,72 @@
-<ion-content [fullscreen]="true" class="home-content">
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-title>Verabri</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()" color="danger">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Cerrar sesión
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="home-content">
 
   <div class="home-header">
     <img src="assets/logo.png" class="home-logo"/>
     <h1 class="home-titulo">VERABRI</h1>
-    <p class="home-subtitulo">Bienvenido al sistema</p>
+    <p class="home-subtitulo">Bienvenido, {{ nombre }}</p>
   </div>
 
-  <div class="home-usuario">
-    <ion-icon name="person-circle-outline" class="usuario-icono"></ion-icon>
-    <p class="usuario-texto">Sesión iniciada correctamente</p>
+  <!-- DUEÑO / SUPERVISOR -->
+  <div class="menu-opciones" *ngIf="perfil === 'dueno' || perfil === 'supervisor'">
+    <ion-button expand="block" routerLink="/alta-empleado" class="boton-menu">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon>
+      Alta de empleado
+    </ion-button>
+    <ion-button expand="block" routerLink="/alta-mesa" class="boton-menu">
+      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+      Alta de mesa
+    </ion-button>
   </div>
 
-  <div class="home-acciones">
-    <ion-button 
-      expand="block" 
-      class="boton-cerrar"
-      (click)="cerrarSesion()">
-      <ion-icon name="log-out-outline" slot="start"></ion-icon>
-      Cerrar sesión
+  <!-- COCINERO -->
+  <div class="menu-opciones" *ngIf="perfil === 'cocinero'">
+    <ion-button expand="block" class="boton-menu">
+      <ion-icon name="flame-outline" slot="start"></ion-icon>
+      Alta de plato
+    </ion-button>
+  </div>
+
+  <!-- CANTINERO -->
+  <div class="menu-opciones" *ngIf="perfil === 'cantinero'">
+    <ion-button expand="block" class="boton-menu">
+      <ion-icon name="wine-outline" slot="start"></ion-icon>
+      Alta de bebida
+    </ion-button>
+  </div>
+
+  <!-- METRE -->
+  <div class="menu-opciones" *ngIf="perfil === 'metre'">
+    <ion-button expand="block" class="boton-menu">
+      <ion-icon name="people-outline" slot="start"></ion-icon>
+      Lista de espera
+    </ion-button>
+  </div>
+
+  <!-- MOZO -->
+  <div class="menu-opciones" *ngIf="perfil === 'mozo'">
+    <ion-button expand="block" class="boton-menu">
+      <ion-icon name="receipt-outline" slot="start"></ion-icon>
+      Pedidos pendientes
+    </ion-button>
+  </div>
+
+  <!-- CLIENTE -->
+  <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado' || perfil === 'cliente_anonimo'">
+    <ion-button expand="block" class="boton-menu">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      Escanear mesa
     </ion-button>
   </div>
 
