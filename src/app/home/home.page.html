@@ -32,7 +32,7 @@
 
   <!-- COCINERO -->
   <div class="menu-opciones" *ngIf="perfil === 'cocinero'">
-    <ion-button expand="block" class="boton-menu">
+    <ion-button expand="block" routerLink="/alta-plato" class="boton-menu">
       <ion-icon name="flame-outline" slot="start"></ion-icon>
       Alta de plato
     </ion-button>
@@ -40,7 +40,7 @@
 
   <!-- CANTINERO -->
   <div class="menu-opciones" *ngIf="perfil === 'cantinero'">
-    <ion-button expand="block" class="boton-menu">
+    <ion-button expand="block" routerLink="/alta-bebida" class="boton-menu">
       <ion-icon name="wine-outline" slot="start"></ion-icon>
       Alta de bebida
     </ion-button>

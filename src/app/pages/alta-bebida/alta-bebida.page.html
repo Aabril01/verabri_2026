@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Alta de Bebida</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="alta-bebida-content">
+  <form [formGroup]="formulario" class="formulario">
+
+    <!-- FOTOS -->
+    <p class="label-fotos">Fotos de la bebida (3 requeridas)</p>
+    <div class="contenedor-fotos">
+      <div *ngFor="let foto of fotos; let i = index"
+           class="foto-item"
+           (click)="seleccionarFoto(i)">
+        <img *ngIf="foto" [src]="foto" class="foto-preview"/>
+        <div *ngIf="!foto" class="foto-placeholder">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Foto {{ i + 1 }}</span>
+        </div>
+      </div>
+    </div>
+    <ion-note *ngIf="errorFotos" color="danger" class="error-fotos">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorFotos }}
+    </ion-note>
+
+    <!-- NOMBRE -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('nombre')">
+        <ion-icon name="wine-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Nombre de la bebida</ion-label>
+        <ion-input formControlName="nombre" type="text" placeholder="Ej: Limonada natural"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('nombre')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El nombre de la bebida es obligatorio.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('descripcion')">
+        <ion-icon name="document-text-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea formControlName="descripcion" placeholder="Describí los ingredientes..." rows="3"></ion-textarea>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('descripcion')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          La descripción es obligatoria.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- TIEMPO -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('tiempo_min')">
+        <ion-icon name="time-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Tiempo de elaboración (minutos)</ion-label>
+        <ion-input formControlName="tiempo_min" type="number" placeholder="Ej: 5"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('tiempo_min')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El tiempo es obligatorio y debe ser mayor a 0.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- PRECIO -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('precio')">
+        <ion-icon name="cash-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Precio ($)</ion-label>
+        <ion-input formControlName="precio" type="number" placeholder="Ej: 800"></ion-input>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('precio')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          El precio es obligatorio y debe ser mayor a 0.
+        </ion-note>
+      </div>
+    </div>
+
+    <!-- ERROR GENERAL -->
+    <div class="error-general" *ngIf="errorGeneral">
+      <ion-chip color="danger" class="chip-error">
+        <ion-icon name="close-circle"></ion-icon>
+        <ion-label>{{ errorGeneral }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <ion-button expand="block" class="boton-guardar" (click)="guardarBebida()" [disabled]="cargando">
+      <ion-spinner *ngIf="cargando" name="crescent"></ion-spinner>
+      <span *ngIf="!cargando">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Guardar bebida
+      </span>
+    </ion-button>
+
+  </form>
+</ion-content>
