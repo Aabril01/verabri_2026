@@ -76,9 +76,7 @@ export class AltaMesaPage implements OnInit {
       return;
     }
 
-    if (this.formulario.invalid) {
-      return;
-    }
+    if (this.formulario.invalid) return;
 
     this.cargando = true;
     this.errorGeneral = '';
@@ -115,6 +113,45 @@ export class AltaMesaPage implements OnInit {
         tipomesa: tipo
       });
 
+      // Descargar imagen del QR y subirla a Supabase Storage
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrInfo)}`;
+      let qrStorageUrl = qrApiUrl;
+
+      try {
+        const response = await fetch(qrApiUrl);
+        const blob = await response.blob();
+        const nombreQR = `qr-mesas/mesa-${numero}-${Date.now()}.png`;
+
+        const { error: storageError } = await this.supabaseService.client.storage
+          .from('fotos')
+          .upload(nombreQR, blob, { contentType: 'image/png' });
+
+        if (!storageError) {
+          const { data: urlData } = this.supabaseService.client.storage
+            .from('fotos')
+            .getPublicUrl(nombreQR);
+          qrStorageUrl = urlData.publicUrl;
+        }
+      } catch (e) {
+        console.log('No se pudo subir el QR al storage, usando URL directa');
+      }
+
+      // Subir foto de la mesa
+      let fotoStorageUrl = '';
+      if (this.fotoArchivo) {
+        const nombreFoto = `fotos-mesas/mesa-${numero}-${Date.now()}.jpg`;
+        const { error: fotoError } = await this.supabaseService.client.storage
+          .from('fotos')
+          .upload(nombreFoto, this.fotoArchivo, { contentType: 'image/jpeg' });
+
+        if (!fotoError) {
+          const { data: fotoUrlData } = this.supabaseService.client.storage
+            .from('fotos')
+            .getPublicUrl(nombreFoto);
+          fotoStorageUrl = fotoUrlData.publicUrl;
+        }
+      }
+
       // Insertar en Supabase
       const { error } = await this.supabaseService.client
         .from('mesas')
@@ -123,16 +160,16 @@ export class AltaMesaPage implements OnInit {
           capacidad,
           tipo,
           estado: 'vacia',
-          qr_url: qrInfo
+          foto_url: fotoStorageUrl,
+          qr_url: qrStorageUrl
         });
 
       if (error) throw error;
 
       this.numeroMesaGuardada = numero;
       this.qrData = qrInfo;
-      this.qrImagenUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrInfo)}`;
+      this.qrImagenUrl = qrStorageUrl;
       this.qrGenerado = true;
-      
 
       await this.mostrarToast(`Mesa ${numero} guardada correctamente`, 'success');
 
