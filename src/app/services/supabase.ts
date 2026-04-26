@@ -91,6 +91,11 @@ export class SupabaseService {
     return this.supabase;
   }
 
+  async getUsers(){
+    const {data, error} = await this.supabase.from('usuarios').select('*');
+    if(error) throw error;
+    return data;
+  }
 
   async crearEmpleado(email: string, contrasena: string, datos: any) {
     // Crear en Auth
@@ -119,12 +124,35 @@ export class SupabaseService {
     return authData;
   }
 
+  /**
+   * Crea un usuario 'cliente_registrado' en la tabla de usuarios. Se agrega con cuil Null y estado 'pendiente'
+   * @param email Correo del cliente
+   * @param contrasena Clave del cliente
+   * @param datos Otros datos (nombre, apellido, dni, foto)
+   * @returns 
+   */
+  async crearClienteRegistrado(email:string, contrasena:string, datos:any){
+      const {data: authData, error: authError} = await this.supabase.auth.signUp({
+        email,
+        password: contrasena
+      });
 
+      if(authError) throw authError;
 
+      const { error:dbError} = await this.supabase.from('usuarios').insert({
+        id: authData.user?.id,
+        apellido: datos.apellido,
+        nombre: datos.nombre,
+        dni: datos.dni,
+        cuil: null,
+        email,
+        perfil: 'cliente_registrado',
+        estado: 'pendiente',
+        foto_url: datos.foto_url || ''
+      });
+      if(dbError) throw dbError;
 
-
-
-
-
+      return authData;
+  }
 
 }

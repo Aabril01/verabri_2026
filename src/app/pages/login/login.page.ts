@@ -197,4 +197,8 @@ export class LoginPage implements OnInit {
     //   await NativeAudio.preload({ assetId: 'cierre', assetPath: 'assets/sounds/cierre.mp3', audioChannelNum: 1, isUrl: false });
     // } catch(e) {}
   }
+
+  navegarCrearCliente(){
+    this.router.navigateByUrl('/alta-cliente', {replaceUrl:true});
+  }
 }

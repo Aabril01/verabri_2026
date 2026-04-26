@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Solicitudes de ingreso</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="waiting-content ion-padding">
+
+   <!-- Búsqueda de datos -->
+  <div *ngIf="cargandoClientes" class="loading-state">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Aprueba o rechaza el acceso de los nuevos clientes registrados.</p>
+    <p>Buscando clientes...</p>
+  </div>
+
+  <ion-grid *ngIf="!cargandoClientes">
+    <ion-row>
+      
+      <!-- Hay clientes en estado "pendiente" -->
+      @if (clientes.length > 0) {
+        @for (cliente of clientes; track $index) {
+          <ion-col size="12" size-md="6" size-lg="4">
+            <div class="client-card animate-card">
+              
+              <div class="card-avatar">
+                <img [src]="cliente.foto_url || 'assets/icon/favicon.png'" alt="{{cliente.nombre}}">
+              </div>
+
+              <div class="card-info">
+                <h3>{{cliente.nombre}} {{cliente.apellido}}</h3>
+                <p class="email">
+                  <ion-icon name="mail-outline"></ion-icon>
+                  {{cliente.email}}
+                </p>
+                <div class="dni-tag" *ngIf="cliente.dni">
+                  DNI {{cliente.dni}}
+                </div>
+              </div>
+
+              <div class="card-actions">
+                <ion-button 
+                  class="action-btn" 
+                  color="danger" 
+                  fill="outline" 
+                  expand="block">
+                  <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                  Rechazar
+                </ion-button>
+
+                <ion-button 
+                  class="action-btn" 
+                  color="success" 
+                  fill="solid" 
+                  expand="block">
+                  <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                  Aprobar
+                </ion-button>
+              </div>
+
+            </div>
+          </ion-col>
+        }
+        
+      <!-- NO hay clientes en estado "pendiente" -->
+      } @else {
+        <ion-col size="12">
+          <div class="empty-state">
+            <ion-icon name="people-outline"></ion-icon>
+            <h2>¡Todo al día!</h2>
+            <p>No hay clientes pendientes de aprobación en este momento.</p>
+          </div>
+        </ion-col>
+      }
+
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
