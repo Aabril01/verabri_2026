@@ -155,4 +155,25 @@ export class SupabaseService {
       return authData;
   }
 
+  /**
+   * 
+   * @param email correo del usuario
+   * @param nuevoEstado "aceptado", "pendiente" o "rechazado"
+   * @returns 
+   */
+  async cambiarEstado(email: string, nuevoEstado:string){
+    return await this.supabase.from("usuarios").update({estado: nuevoEstado}).eq("email", email).select();
+  }
+
+  /**
+   * Obtiene todos los datos de usuario por su correo
+   * @param email 
+   * @returns 
+   */
+  async traerUsuarioPorCorreo(email: string) {
+    const { data, error } = await this.supabase.from('usuarios').select('*').eq('email', email).single();
+    if (error) throw error;
+    return data;
+  }
+
 }

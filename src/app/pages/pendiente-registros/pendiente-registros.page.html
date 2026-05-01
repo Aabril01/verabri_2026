@@ -45,7 +45,8 @@
                   class="action-btn" 
                   color="danger" 
                   fill="outline" 
-                  expand="block">
+                  expand="block"
+                  (click)="cambiarEstado(cliente.email, 'rechazado')">
                   <ion-icon name="close-circle-outline" slot="start"></ion-icon>
                   Rechazar
                 </ion-button>
@@ -54,7 +55,8 @@
                   class="action-btn" 
                   color="success" 
                   fill="solid" 
-                  expand="block">
+                  expand="block"
+                  (click)="cambiarEstado(cliente.email, 'aceptado')">
                   <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
                   Aprobar
                 </ion-button>

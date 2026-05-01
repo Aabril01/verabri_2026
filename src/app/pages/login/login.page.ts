@@ -101,17 +101,19 @@ export class LoginPage implements OnInit {
       const { email, contrasena } = this.formularioLogin.value;
       await this.supabaseService.iniciarSesion(email, contrasena);
 
-      const usuario = this.supabaseService.usuarioActual;
+      //obtención de datos del usuario por su email ingresado
+      const usuario = await this.supabaseService.traerUsuarioPorCorreo(email);
+      console.log(usuario);
 
       // Verificar si el cliente fue aceptado
       if (usuario?.perfil === 'cliente_registrado' && usuario?.estado !== 'aceptado') {
+
         await this.supabaseService.cerrarSesion();
         const mensaje = usuario.estado === 'rechazado'
           ? 'Tu solicitud de registro fue rechazada. Por favor contactate con el restaurante.'
           : 'Tu cuenta está pendiente de aprobación. Te notificaremos por correo electrónico.';
         this.errorGeneral = mensaje;
-        await this.vibrarError();
-        return;
+        return await this.vibrarError();;
       }
 
       await this.mostrarToast('¡Bienvenido a Verabri!', 'success');
