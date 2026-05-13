@@ -98,6 +98,18 @@
 
   </form>
 
+  <!-- Botón de registrarse -->
+   <div class="boton-registro">
+    <ion-button
+      expand="block"
+      class="boton-ingresar"
+      (click)="navegarCrearCliente()"
+      [disabled]="cargando">
+      <ion-spinner *ngIf="cargando" name="crescent" class="spinner-boton"></ion-spinner>
+      <span *ngIf="!cargando">Crear una cuenta</span>
+    </ion-button>
+  </div>
+ 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- ACCESOS RÁPIDOS — tarjetas por perfil (NO combos ni selects) -->
   <!-- ═══════════════════════════════════════════════════════════ -->

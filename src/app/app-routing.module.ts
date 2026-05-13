@@ -21,22 +21,12 @@ const routes: Routes = [
   },
   {
     path: 'alta-empleado',
-    loadChildren: () => import('./pages/alta-empleado/alta-empleado.module').then( m => m.AltaEmpleadoPageModule)
+    loadChildren: () => import('./pages/alta-empleado/alta-empleado.module').then(m => m.AltaEmpleadoPageModule)
   },
-  
   {
     path: 'alta-mesa',
-    loadChildren: () => import('./pages/alta-mesa/alta-mesa.module').then( m => m.AltaMesaPageModule)
+    loadChildren: () => import('./pages/alta-mesa/alta-mesa.module').then(m => m.AltaMesaPageModule)
   },
-  {
-    path: 'alta-plato',
-    loadChildren: () => import('./pages/alta-plato/alta-plato.module').then( m => m.AltaPlatoPageModule)
-  },
-  {
-    path: 'alta-bebida',
-    loadChildren: () => import('./pages/alta-bebida/alta-bebida.module').then( m => m.AltaBebidaPageModule)
-  },
-
   {
     path: 'alta-plato',
     loadChildren: () => import('./pages/alta-plato/alta-plato.module').then(m => m.AltaPlatoPageModule)
@@ -45,7 +35,14 @@ const routes: Routes = [
     path: 'alta-bebida',
     loadChildren: () => import('./pages/alta-bebida/alta-bebida.module').then(m => m.AltaBebidaPageModule)
   },
-    
+  {
+    path: 'alta-cliente',
+    loadChildren: () => import('./pages/alta-cliente/alta-cliente.module').then(m => m.AltaClientePageModule)
+  },
+  {
+    path: 'pendiente-registros',
+    loadChildren: () => import('./pages/pendiente-registros/pendiente-registros.module').then(m => m.PendienteRegistrosPageModule)
+  },
 ];
 
 @NgModule({
