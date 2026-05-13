@@ -1,10 +1,10 @@
 .alta-mesa-content {
-  --background: #f5f5f5;
+  --background: var(--vb-fondo);
 }
 
 .toolbar-verabri {
-  --background: #1a1a1a;
-  --color: #f5f5f5;
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
 }
 
 .formulario {
@@ -22,8 +22,8 @@
   width: 100%;
   height: 180px;
   border-radius: 14px;
-  background: white;
-  border: 1.5px dashed rgba(0,0,0,0.2);
+  background: var(--vb-card);
+  border: 1.5px dashed rgba(42,16,24,0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,8 +45,8 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    ion-icon { font-size: 40px; color: rgba(0,0,0,0.25); }
-    span { font-size: 13px; color: rgba(0,0,0,0.4); }
+    ion-icon { font-size: 40px; color: rgba(42,16,24,0.25); }
+    span { font-size: 13px; color: rgba(42,16,24,0.4); }
   }
 }
 
@@ -61,20 +61,20 @@
 .campo-contenedor { margin-bottom: 10px; }
 
 .campo-item {
-  --background: white;
+  --background: var(--vb-card);
   --border-radius: 12px;
   --padding-start: 14px;
-  --color: #1a1a1a;
-  --placeholder-color: rgba(0,0,0,0.3);
-  border: 1px solid rgba(0,0,0,0.12);
+  --color: var(--vb-texto);
+  --placeholder-color: rgba(42,16,24,0.3);
+  border: 1px solid rgba(42,16,24,0.12);
   border-radius: 12px;
   margin-bottom: 4px;
 
   &.campo-error { border-color: var(--ion-color-danger); }
-  &:focus-within { border-color: #1a1a1a; }
+  &:focus-within { border-color: var(--vb-acento); }
 }
 
-.icono-campo { color: rgba(0,0,0,0.4); font-size: 18px; }
+.icono-campo { color: rgba(42,16,24,0.4); font-size: 18px; }
 
 .mensajes-error {
   padding: 4px 8px;
@@ -87,7 +87,7 @@
 // ── TIPO DE MESA ──────────────────────────────────────────────
 .label-tipo {
   font-size: 12px;
-  color: rgba(0,0,0,0.5);
+  color: rgba(42,16,24,0.5);
   margin: 4px 4px 10px;
   letter-spacing: 0.5px;
 }
@@ -100,8 +100,8 @@
 }
 
 .opcion-tipo {
-  background: white;
-  border: 1.5px solid rgba(0,0,0,0.12);
+  background: var(--vb-card);
+  border: 1.5px solid rgba(42,16,24,0.12);
   border-radius: 12px;
   padding: 14px 8px;
   display: flex;
@@ -111,14 +111,14 @@
   cursor: pointer;
   transition: all 0.2s;
 
-  ion-icon { font-size: 24px; color: rgba(0,0,0,0.4); }
-  span { font-size: 11px; color: rgba(0,0,0,0.5); text-align: center; }
+  ion-icon { font-size: 24px; color: rgba(42,16,24,0.4); }
+  span { font-size: 11px; color: rgba(42,16,24,0.5); text-align: center; }
 
   &.opcion-seleccionada {
-    background: #1a1a1a;
-    border-color: #1a1a1a;
-    ion-icon { color: #f5f5f5; }
-    span { color: #f5f5f5; font-weight: 600; }
+    background: var(--vb-acento);
+    border-color: var(--vb-acento);
+    ion-icon { color: var(--vb-blanco); }
+    span { color: var(--vb-blanco); font-weight: 600; }
   }
 }
 
@@ -132,8 +132,8 @@
 }
 
 .boton-guardar {
-  --background: #1a1a1a;
-  --color: #f5f5f5;
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
   --border-radius: 12px;
   height: 52px;
   font-weight: 600;
@@ -152,8 +152,8 @@
 }
 
 .qr-card {
-  background: white;
-  border: 1px solid rgba(0,0,0,0.1);
+  background: var(--vb-card);
+  border: 1px solid rgba(42,16,24,0.1);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -165,25 +165,25 @@
 .qr-titulo {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--vb-texto);
   margin: 0;
   text-align: center;
 }
 
 .qr-subtitulo {
   font-size: 12px;
-  color: rgba(0,0,0,0.45);
+  color: rgba(42,16,24,0.45);
   margin: 0;
   text-align: center;
 }
 
 .boton-nueva-mesa {
   --background: transparent;
-  --color: #1a1a1a;
+  --color: var(--vb-texto);
   --border-radius: 12px;
   --border-width: 1.5px;
   --border-style: solid;
-  --border-color: #1a1a1a;
+  --border-color: var(--vb-acento);
   width: 100%;
   height: 48px;
   font-weight: 600;

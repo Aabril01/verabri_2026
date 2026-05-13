@@ -1,5 +1,5 @@
 .splash-content {
-  --background: #f5f5f5;
+  --background: var(--vb-fondo);
 }
 
 .fondo-decorativo {
@@ -11,7 +11,7 @@
   .circulo {
     position: absolute;
     border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid rgba(42,16,24,0.06);
   }
   .circulo-1 {
     width: 400px; height: 400px;
@@ -25,7 +25,7 @@
   }
   .linea {
     position: absolute;
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
+    background: linear-gradient(90deg, transparent, rgba(42,16,24,0.08), transparent);
     height: 1px;
     width: 100%;
   }
@@ -63,12 +63,12 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #1a1a1a;
-  border: 2px solid rgba(0,0,0,0.2);
+  background: var(--vb-acento);
+  border: 2px solid rgba(42,16,24,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 40px rgba(0,0,0,0.15), 0 8px 32px rgba(0,0,0,0.1);
+  box-shadow: 0 0 40px rgba(42,16,24,0.15), 0 8px 32px rgba(42,16,24,0.1);
   animation: pulsoLogo 3s ease-in-out infinite;
 
   .logo-svg {
@@ -78,8 +78,8 @@
 }
 
 @keyframes pulsoLogo {
-  0%, 100% { box-shadow: 0 0 40px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.1); }
-  50%       { box-shadow: 0 0 60px rgba(0,0,0,0.2),  0 8px 40px rgba(0,0,0,0.15); }
+  0%, 100% { box-shadow: 0 0 40px rgba(42,16,24,0.12), 0 8px 32px rgba(42,16,24,0.1); }
+  50%       { box-shadow: 0 0 60px rgba(42,16,24,0.2),  0 8px 40px rgba(42,16,24,0.15); }
 }
 
 .brillo-logo {
@@ -107,7 +107,7 @@
 .titulo-verabri {
   font-size: 42px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--vb-texto);
   letter-spacing: 10px;
   margin: 0 0 10px;
 }
@@ -115,13 +115,13 @@
 .linea-separadora {
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(42,16,24,0.3), transparent);
   margin: 10px auto;
 }
 
 .subtitulo-app {
   font-size: 13px;
-  color: rgba(0,0,0,0.45);
+  color: rgba(42,16,24,0.45);
   letter-spacing: 4px;
   text-transform: uppercase;
   margin: 0;
@@ -130,8 +130,8 @@
 .integrantes {
   width: 100%;
   max-width: 340px;
-  background: rgba(0,0,0,0.04);
-  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(42,16,24,0.04);
+  border: 1px solid rgba(42,16,24,0.12);
   border-radius: 14px;
   padding: 16px 20px;
   margin-bottom: 36px;
@@ -147,7 +147,7 @@
 
 .grupo-label {
   font-size: 10px;
-  color: rgba(0,0,0,0.4);
+  color: rgba(42,16,24,0.4);
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -158,14 +158,14 @@
   display: flex;
   align-items: center;
   padding: 7px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(42,16,24,0.08);
 
   &:last-child { border-bottom: none; }
 }
 
 .integrante-nombre {
   font-size: 15px;
-  color: #1a1a1a;
+  color: var(--vb-texto);
   font-weight: 500;
 }
 
@@ -184,7 +184,7 @@
 
 .barra-progreso {
   height: 2px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(42,16,24,0.1);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -192,14 +192,14 @@
 
 .barra-relleno {
   height: 100%;
-  background: #1a1a1a;
+  background: var(--vb-acento);
   border-radius: 4px;
   transition: width 0.5s ease;
 }
 
 .texto-cargando {
   font-size: 12px;
-  color: rgba(0,0,0,0.35);
+  color: rgba(42,16,24,0.35);
   text-align: center;
   margin: 0;
   letter-spacing: 1px;
@@ -215,7 +215,7 @@
 
   span {
     font-size: 11px;
-    color: rgba(0,0,0,0.3);
+    color: rgba(42,16,24,0.3);
     letter-spacing: 0.5px;
   }
 

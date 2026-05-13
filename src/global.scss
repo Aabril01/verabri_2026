@@ -1,45 +1,159 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* ── PALETA VERABRI ───────────────────────────────────── */
+:root {
+  --vb-fondo:        #6B4E7A;
+  --vb-card:         #7D5E8C;
+  --vb-acento:       #C9943A;
+  --vb-acento-suave: #E0A840;
+  --vb-dorado:       #C9943A;
+  --vb-texto:        #F0E6D3;
+  --vb-texto-suave:  #D4BF9E;
+  --vb-blanco:       #F5EEF0;
+  --vb-exito:        #2A8C50;
+  --vb-error:        #C0392B;
+  --vb-advertencia:  #D4A020;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* ── BASE GLOBAL ──────────────────────────────────────── */
 ion-content {
+  --background: var(--vb-fondo);
+  --color: var(--vb-texto);
+}
+
+ion-header, ion-toolbar {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+ion-title {
+  color: var(--vb-blanco);
+  font-family: serif;
+  letter-spacing: 2px;
+}
+
+ion-footer {
+  --background: var(--vb-acento);
+}
+
+/* ── PÁGINAS ESPECÍFICAS ──────────────────────────────── */
+.splash-content,
+.login-content {
+  --background: var(--vb-fondo);
+}
+
+/* ── CARDS ────────────────────────────────────────────── */
+ion-card {
+  --background: var(--vb-card);
+  --color: var(--vb-texto);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(42, 16, 24, 0.15);
+}
+
+ion-card-title {
+  color: var(--vb-acento);
+  font-family: serif;
+}
+
+ion-card-subtitle {
+  color: var(--vb-texto-suave);
+}
+
+/* ── BOTONES ──────────────────────────────────────────── */
+ion-button {
+  --background: var(--vb-acento);
+  --background-hover: var(--vb-acento-suave);
+  --color: var(--vb-blanco);
+  --border-radius: 8px;
+  font-family: serif;
+  letter-spacing: 1px;
+}
+
+ion-button[fill="outline"] {
+  --color: var(--vb-acento);
+  --border-color: var(--vb-acento);
   --background: transparent;
 }
 
-.splash-content,
-.login-content {
-  --background: #4A1228;
+/* ── INPUTS ───────────────────────────────────────────── */
+ion-input, ion-textarea, ion-select {
+  --background: var(--vb-blanco);
+  --color: var(--vb-texto);
+  --placeholder-color: var(--vb-texto-suave);
+  --border-color: var(--vb-acento);
+  --highlight-color: var(--vb-acento);
+  border-radius: 8px;
 }
+
+ion-item {
+  --background: var(--vb-card);
+  --color: var(--vb-texto);
+  --border-color: var(--vb-acento-suave);
+}
+
+ion-label {
+  color: var(--vb-texto) !important;
+  font-family: serif;
+}
+
+/* ── LISTAS ───────────────────────────────────────────── */
+ion-list {
+  background: var(--vb-fondo);
+}
+
+/* ── TABS ─────────────────────────────────────────────── */
+ion-tab-bar {
+  --background: var(--vb-acento);
+  --color: rgba(245, 238, 240, 0.6);
+  --color-selected: var(--vb-blanco);
+}
+
+/* ── TOAST ────────────────────────────────────────────── */
+ion-toast {
+  --background: var(--vb-card);
+  --color: var(--vb-texto);
+  --border-radius: 8px;
+}
+
+ion-toast.toast-success {
+  --background: var(--vb-exito);
+  --color: var(--vb-blanco);
+}
+
+ion-toast.toast-danger {
+  --background: var(--vb-error);
+  --color: var(--vb-blanco);
+}
+
+/* ── SPINNER VERABRI ──────────────────────────────────── */
+.spinner-verabri {
+  --background: var(--vb-card);
+  --spinner-color: var(--vb-acento);
+
+  .loading-content {
+    color: var(--vb-texto);
+    font-family: serif;
+  }
+}
+
+/* ── TEXTOS GENERALES ─────────────────────────────────── */
+h1, h2, h3 {
+  color: var(--vb-acento);
+  font-family: serif;
+}
+
+p, span {
+  color: var(--vb-texto);
+}
+
+/* ── MODO OSCURO DESACTIVADO ──────────────────────────── */
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */

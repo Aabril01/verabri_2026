@@ -1,10 +1,10 @@
 .alta-bebida-content {
-  --background: #f5f5f5;
+  --background: var(--vb-fondo);
 }
 
 .toolbar-verabri {
-  --background: #1a1a1a;
-  --color: #f5f5f5;
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
 }
 
 .formulario {
@@ -13,7 +13,7 @@
 
 .label-fotos {
   font-size: 12px;
-  color: rgba(0,0,0,0.5);
+  color: rgba(42,16,24,0.5);
   margin: 0 4px 10px;
   letter-spacing: 0.5px;
 }
@@ -28,8 +28,8 @@
 .foto-item {
   aspect-ratio: 1;
   border-radius: 12px;
-  background: white;
-  border: 1.5px dashed rgba(0,0,0,0.2);
+  background: var(--vb-card);
+  border: 1.5px dashed rgba(42,16,24,0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,8 +51,8 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    ion-icon { font-size: 28px; color: rgba(0,0,0,0.25); }
-    span { font-size: 11px; color: rgba(0,0,0,0.4); }
+    ion-icon { font-size: 28px; color: rgba(42,16,24,0.25); }
+    span { font-size: 11px; color: rgba(42,16,24,0.4); }
   }
 }
 
@@ -67,20 +67,20 @@
 .campo-contenedor { margin-bottom: 10px; }
 
 .campo-item {
-  --background: white;
+  --background: var(--vb-card);
   --border-radius: 12px;
   --padding-start: 14px;
-  --color: #1a1a1a;
-  --placeholder-color: rgba(0,0,0,0.3);
-  border: 1px solid rgba(0,0,0,0.12);
+  --color: var(--vb-texto);
+  --placeholder-color: rgba(42,16,24,0.3);
+  border: 1px solid rgba(42,16,24,0.12);
   border-radius: 12px;
   margin-bottom: 4px;
 
   &.campo-error { border-color: var(--ion-color-danger); }
-  &:focus-within { border-color: #1a1a1a; }
+  &:focus-within { border-color: var(--vb-acento); }
 }
 
-.icono-campo { color: rgba(0,0,0,0.4); font-size: 18px; }
+.icono-campo { color: rgba(42,16,24,0.4); font-size: 18px; }
 
 .mensajes-error {
   padding: 4px 8px;
@@ -100,8 +100,8 @@
 }
 
 .boton-guardar {
-  --background: #1a1a1a;
-  --color: #f5f5f5;
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
   --border-radius: 12px;
   height: 52px;
   font-weight: 600;

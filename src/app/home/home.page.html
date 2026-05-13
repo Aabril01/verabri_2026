@@ -1,12 +1,6 @@
 <ion-header>
   <ion-toolbar class="toolbar-verabri">
     <ion-title>Verabri</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()" color="danger">
-        <ion-icon name="log-out-outline" slot="start"></ion-icon>
-        Cerrar sesión
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -17,6 +11,8 @@
     <h1 class="home-titulo">VERABRI</h1>
     <p class="home-subtitulo">Bienvenido, {{ nombre }}</p>
   </div>
+
+  <p class="seccion-titulo">Menú principal</p>
 
   <!-- DUEÑO / SUPERVISOR -->
   <div class="menu-opciones" *ngIf="perfil === 'dueno' || perfil === 'supervisor'">
@@ -29,8 +25,12 @@
       Alta de mesa
     </ion-button>
     <ion-button expand="block" routerLink="/pendiente-registros" class="boton-menu">
-      <ion-icon name="man" slot="start"></ion-icon>
+      <ion-icon name="people-outline" slot="start"></ion-icon>
       Clientes en espera
+    </ion-button>
+    <ion-button expand="block" routerLink="/alta-cliente" class="boton-menu">
+      <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+      Alta de cliente
     </ion-button>
   </div>
 
@@ -53,7 +53,7 @@
   <!-- METRE -->
   <div class="menu-opciones" *ngIf="perfil === 'metre'">
     <ion-button expand="block" class="boton-menu">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
+      <ion-icon name="list-outline" slot="start"></ion-icon>
       Lista de espera
     </ion-button>
   </div>
@@ -72,6 +72,17 @@
       <ion-icon name="qr-code-outline" slot="start"></ion-icon>
       Escanear mesa
     </ion-button>
+  </div>
+
+  <div class="separador"></div>
+
+  <ion-button expand="block" (click)="cerrarSesion()" class="boton-cerrar-sesion">
+    <ion-icon name="log-out-outline" slot="start"></ion-icon>
+    Cerrar sesión
+  </ion-button>
+
+  <div class="footer-home">
+    <span>VERABRI GRILL · UTN Avellaneda · 2026</span>
   </div>
 
 </ion-content>

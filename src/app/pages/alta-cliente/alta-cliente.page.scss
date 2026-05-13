@@ -1,10 +1,10 @@
 .alta-empleado-content {
-    --background: #f5f5f5;
+    --background: var(--vb-fondo);
   }
   
   .toolbar-verabri {
-    --background: #1a1a1a;
-    --color: #f5f5f5;
+    --background: var(--vb-acento);
+    --color: var(--vb-blanco);
   }
   
   .formulario {
@@ -22,8 +22,8 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.06);
-    border: 2px dashed rgba(0,0,0,0.25);
+    background: rgba(42,16,24,0.06);
+    border: 2px dashed rgba(42,16,24,0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,11 +48,11 @@
   
       ion-icon {
         font-size: 36px;
-        color: rgba(0,0,0,0.35);
+        color: rgba(42,16,24,0.35);
       }
       span {
         font-size: 12px;
-        color: rgba(0,0,0,0.4);
+        color: rgba(42,16,24,0.4);
       }
     }
   }
@@ -68,20 +68,20 @@
   .campo-contenedor { margin-bottom: 8px; }
   
   .campo-item {
-    --background: white;
+    --background: var(--vb-card);
     --border-radius: 12px;
     --padding-start: 14px;
-    --color: #1a1a1a;
-    --placeholder-color: rgba(0,0,0,0.35);
-    border: 1px solid rgba(0,0,0,0.15);
+    --color: var(--vb-texto);
+    --placeholder-color: rgba(42,16,24,0.35);
+    border: 1px solid rgba(42,16,24,0.15);
     border-radius: 12px;
     margin-bottom: 4px;
   
     &.campo-error { border-color: var(--ion-color-danger); }
-    &:focus-within { border-color: #1a1a1a; }
+    &:focus-within { border-color: var(--vb-acento); }
   }
   
-  .icono-campo { color: rgba(0,0,0,0.4); font-size: 18px; }
+  .icono-campo { color: rgba(42,16,24,0.4); font-size: 18px; }
   
   .mensajes-error {
     padding: 4px 8px;
@@ -92,7 +92,7 @@
   }
   
   .boton-qr {
-    --color: #1a1a1a;
+    --color: var(--vb-texto);
   }
   
   .error-general {
@@ -105,8 +105,8 @@
   }
   
   .boton-guardar {
-    --background: #1a1a1a;
-    --color: #f5f5f5;
+    --background: var(--vb-acento);
+    --color: var(--vb-blanco);
     --border-radius: 12px;
     height: 52px;
     font-weight: 600;
