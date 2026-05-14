@@ -6,15 +6,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 24px 20px;
+  padding: clamp(24px, 5vw, 40px) 24px 20px;
   background: var(--vb-acento);
   border-radius: 0 0 28px 28px;
   margin-bottom: 24px;
 }
 
 .home-logo {
-  width: 80px;
-  height: 80px;
+  width: clamp(60px, 15vw, 80px);
+  height: clamp(60px, 15vw, 80px);
   object-fit: contain;
   margin-bottom: 12px;
   border-radius: 50%;
@@ -23,23 +23,23 @@
 }
 
 .home-titulo {
-  font-size: 28px;
+  font-size: clamp(22px, 6vw, 28px);
   font-weight: 700;
   color: var(--vb-blanco);
-  letter-spacing: 8px;
+  letter-spacing: clamp(4px, 2vw, 8px);
   margin: 0 0 4px;
   font-family: serif;
 }
 
 .home-subtitulo {
-  font-size: 13px;
+  font-size: clamp(12px, 3vw, 14px);
   color: rgba(245, 238, 240, 0.75);
   letter-spacing: 1px;
   margin: 0;
 }
 
 .menu-opciones {
-  padding: 0 20px;
+  padding: 0 clamp(12px, 4vw, 20px);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -50,54 +50,48 @@
   --color: var(--vb-texto);
   --border-radius: 14px;
   --box-shadow: none;
-  height: 64px;
-  font-size: 15px;
+  min-height: 56px;
+  height: auto;
+  font-size: clamp(13px, 3.5vw, 15px);
   font-weight: 600;
   font-family: serif;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(122, 26, 53, 0.2);
+  border: 1px solid rgba(201, 148, 58, 0.3);
 
   ion-icon {
     color: var(--vb-dorado);
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px);
     margin-right: 4px;
   }
 }
 
-.boton-menu:nth-child(2) {
-  --background: var(--vb-acento);
-  --color: var(--vb-blanco);
-  border: none;
-
-  ion-icon { color: #C9943A; }
-}
-
 .separador {
   height: 1px;
-  background: rgba(122, 26, 53, 0.15);
-  margin: 8px 20px;
+  background: rgba(201, 148, 58, 0.2);
+  margin: 8px clamp(12px, 4vw, 20px);
 }
 
 .seccion-titulo {
-  font-size: 11px;
+  font-size: clamp(10px, 2.5vw, 11px);
   color: var(--vb-texto-suave);
   letter-spacing: 2px;
   text-transform: uppercase;
-  padding: 0 20px;
+  padding: 0 clamp(12px, 4vw, 20px);
   margin-bottom: 8px;
   font-family: serif;
 }
 
 .boton-cerrar-sesion {
   --background: transparent;
-  --color: var(--vb-acento);
+  --color: var(--vb-dorado);
   --border-radius: 14px;
   --box-shadow: none;
-  height: 52px;
-  font-size: 14px;
+  min-height: 48px;
+  height: auto;
+  font-size: clamp(13px, 3.5vw, 14px);
   font-weight: 600;
-  border: 1.5px solid var(--vb-acento);
-  margin: 20px 20px 0;
+  border: 1.5px solid var(--vb-dorado);
+  margin: 20px clamp(12px, 4vw, 20px) 0;
 }
 
 .footer-home {
@@ -106,8 +100,8 @@
   margin-top: 12px;
 
   span {
-    font-size: 11px;
-    color: rgba(42, 16, 24, 0.3);
+    font-size: clamp(10px, 2.5vw, 11px);
+    color: var(--vb-texto-suave);
     letter-spacing: 1px;
   }
 }

@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   standalone: false,
@@ -41,23 +43,45 @@ export class AltaBebidaPage implements OnInit {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  seleccionarFoto(index: number) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        this.fotosArchivos[index] = file;
-        const reader = new FileReader();
-        reader.onload = (r: any) => {
-          this.fotos[index] = r.target.result;
-          this.errorFotos = '';
+  async seleccionarFoto(index: number) {
+    try {
+      if (Capacitor.getPlatform() === 'web') {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e: any) => {
+          const file = e.target.files[0];
+          if (file) {
+            this.fotosArchivos[index] = file;
+            const reader = new FileReader();
+            reader.onload = (r: any) => {
+              this.fotos[index] = r.target.result;
+              this.errorFotos = '';
+            };
+            reader.readAsDataURL(file);
+          }
         };
-        reader.readAsDataURL(file);
+        input.click();
+        return;
       }
-    };
-    input.click();
+
+      const image = await Camera.getPhoto({
+        quality: 85,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+
+      if (image.dataUrl) {
+        this.fotos[index] = image.dataUrl;
+        this.errorFotos = '';
+        const response = await fetch(image.dataUrl);
+        const blob = await response.blob();
+        this.fotosArchivos[index] = new File([blob], `foto-${index}-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      }
+    } catch (e) {
+      // Usuario canceló
+    }
   }
 
   async guardarBebida() {
@@ -84,7 +108,6 @@ export class AltaBebidaPage implements OnInit {
     try {
       const { nombre, descripcion, tiempo_min, precio } = this.formulario.value;
 
-      // Verificar que no exista esa bebida
       const { data: bebidaExistente } = await this.supabaseService.client
         .from('productos')
         .select('id')
@@ -99,6 +122,13 @@ export class AltaBebidaPage implements OnInit {
         return;
       }
 
+      // Subir las 3 fotos a Supabase
+      const urlsFotos = await Promise.all(
+        this.fotosArchivos.map(archivo =>
+          this.supabaseService.subirFoto(archivo!, 'bebidas')
+        )
+      );
+
       const { error } = await this.supabaseService.client
         .from('productos')
         .insert({
@@ -107,7 +137,10 @@ export class AltaBebidaPage implements OnInit {
           tiempo_min,
           precio,
           tipo: 'bebida',
-          activo: true
+          activo: true,
+          foto1_url: urlsFotos[0],
+          foto2_url: urlsFotos[1],
+          foto3_url: urlsFotos[2]
         });
 
       if (error) throw error;

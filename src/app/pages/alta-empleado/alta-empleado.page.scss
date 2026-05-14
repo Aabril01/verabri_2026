@@ -22,8 +22,8 @@
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  background: rgba(42,16,24,0.06);
-  border: 2px dashed rgba(42,16,24,0.25);
+  background: rgba(240,230,211,0.1);
+  border: 2px dashed rgba(240,230,211,0.35);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,11 +48,11 @@
 
     ion-icon {
       font-size: 36px;
-      color: rgba(42,16,24,0.35);
+      color: rgba(240,230,211,0.45);
     }
     span {
       font-size: 12px;
-      color: rgba(42,16,24,0.4);
+      color: rgba(240,230,211,0.5);
     }
   }
 }
@@ -72,8 +72,8 @@
   --border-radius: 12px;
   --padding-start: 14px;
   --color: var(--vb-texto);
-  --placeholder-color: rgba(42,16,24,0.35);
-  border: 1px solid rgba(42,16,24,0.15);
+  --placeholder-color: rgba(240,230,211,0.45);
+  border: 1px solid rgba(240,230,211,0.2);
   border-radius: 12px;
   margin-bottom: 4px;
 
@@ -81,7 +81,7 @@
   &:focus-within { border-color: var(--vb-acento); }
 }
 
-.icono-campo { color: rgba(42,16,24,0.4); font-size: 18px; }
+.icono-campo { color: rgba(240,230,211,0.5); font-size: 18px; }
 
 .mensajes-error {
   padding: 4px 8px;

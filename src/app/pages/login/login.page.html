@@ -129,7 +129,8 @@
         (click)="accesoRapido(perfil)"
         [class.tarjeta-cargando]="perfilCargando === perfil.id">
         <div class="perfil-icono-contenedor">
-          <ion-icon [name]="perfil.icono" class="perfil-icono"></ion-icon>
+          <img *ngIf="perfil.fotoUrl" [src]="perfil.fotoUrl" class="perfil-foto"/>
+          <ion-icon *ngIf="!perfil.fotoUrl" [name]="perfil.icono" class="perfil-icono"></ion-icon>
         </div>
         <span class="perfil-nombre">{{ perfil.nombre }}</span>
         <ion-spinner

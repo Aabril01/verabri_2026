@@ -15,6 +15,7 @@ interface PerfilRapido {
   icono: string;
   email: string;
   contrasena: string;
+  fotoUrl?: string;
 }
 
 @Component({
@@ -55,6 +56,7 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.construirFormulario();
     this.precargarSonidos();
+    this.cargarFotosPerfiles();
   }
 
   // ── FORMULARIO ────────────────────────────────────────────────
@@ -202,5 +204,17 @@ export class LoginPage implements OnInit {
 
   navegarCrearCliente(){
     this.router.navigateByUrl('/alta-cliente', {replaceUrl:true});
+  }
+  private async cargarFotosPerfiles() {
+    for (const perfil of this.perfilesRapidos) {
+      try {
+        const { data } = await this.supabaseService.client
+          .from('usuarios')
+          .select('foto_url')
+          .eq('email', perfil.email)
+          .single();
+        if (data?.foto_url) perfil.fotoUrl = data.foto_url;
+      } catch (e) {}
+    }
   }
 }

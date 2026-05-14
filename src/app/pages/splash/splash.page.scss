@@ -11,7 +11,7 @@
   .circulo {
     position: absolute;
     border-radius: 50%;
-    border: 1px solid rgba(42,16,24,0.06);
+    border: 1px solid rgba(240,230,211,0.1);
   }
   .circulo-1 {
     width: 400px; height: 400px;
@@ -25,7 +25,7 @@
   }
   .linea {
     position: absolute;
-    background: linear-gradient(90deg, transparent, rgba(42,16,24,0.08), transparent);
+    background: linear-gradient(90deg, transparent, rgba(240,230,211,0.12), transparent);
     height: 1px;
     width: 100%;
   }
@@ -64,11 +64,11 @@
   height: 140px;
   border-radius: 50%;
   background: var(--vb-acento);
-  border: 2px solid rgba(42,16,24,0.2);
+  border: 2px solid rgba(240,230,211,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 40px rgba(42,16,24,0.15), 0 8px 32px rgba(42,16,24,0.1);
+  box-shadow: 0 0 40px rgba(240,230,211,0.2), 0 8px 32px rgba(240,230,211,0.15);
   animation: pulsoLogo 3s ease-in-out infinite;
 
   .logo-svg {
@@ -78,8 +78,8 @@
 }
 
 @keyframes pulsoLogo {
-  0%, 100% { box-shadow: 0 0 40px rgba(42,16,24,0.12), 0 8px 32px rgba(42,16,24,0.1); }
-  50%       { box-shadow: 0 0 60px rgba(42,16,24,0.2),  0 8px 40px rgba(42,16,24,0.15); }
+  0%, 100% { box-shadow: 0 0 40px rgba(240,230,211,0.18), 0 8px 32px rgba(240,230,211,0.15); }
+  50%       { box-shadow: 0 0 60px rgba(240,230,211,0.25),  0 8px 40px rgba(240,230,211,0.2); }
 }
 
 .brillo-logo {
@@ -115,13 +115,13 @@
 .linea-separadora {
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(42,16,24,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(240,230,211,0.4), transparent);
   margin: 10px auto;
 }
 
 .subtitulo-app {
   font-size: 13px;
-  color: rgba(42,16,24,0.45);
+  color: rgba(240,230,211,0.55);
   letter-spacing: 4px;
   text-transform: uppercase;
   margin: 0;
@@ -130,8 +130,8 @@
 .integrantes {
   width: 100%;
   max-width: 340px;
-  background: rgba(42,16,24,0.04);
-  border: 1px solid rgba(42,16,24,0.12);
+  background: rgba(240,230,211,0.08);
+  border: 1px solid rgba(240,230,211,0.18);
   border-radius: 14px;
   padding: 16px 20px;
   margin-bottom: 36px;
@@ -147,7 +147,7 @@
 
 .grupo-label {
   font-size: 10px;
-  color: rgba(42,16,24,0.4);
+  color: rgba(240,230,211,0.5);
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -158,7 +158,7 @@
   display: flex;
   align-items: center;
   padding: 7px 0;
-  border-bottom: 1px solid rgba(42,16,24,0.08);
+  border-bottom: 1px solid rgba(240,230,211,0.12);
 
   &:last-child { border-bottom: none; }
 }
@@ -184,7 +184,7 @@
 
 .barra-progreso {
   height: 2px;
-  background: rgba(42,16,24,0.1);
+  background: rgba(240,230,211,0.15);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -199,7 +199,7 @@
 
 .texto-cargando {
   font-size: 12px;
-  color: rgba(42,16,24,0.35);
+  color: rgba(240,230,211,0.45);
   text-align: center;
   margin: 0;
   letter-spacing: 1px;
@@ -215,7 +215,7 @@
 
   span {
     font-size: 11px;
-    color: rgba(42,16,24,0.3);
+    color: rgba(240,230,211,0.4);
     letter-spacing: 0.5px;
   }
 

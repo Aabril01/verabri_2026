@@ -175,5 +175,21 @@ export class SupabaseService {
     if (error) throw error;
     return data;
   }
+  async subirFoto(archivo: File, carpeta: string): Promise<string> {
+    const extension = archivo.name.split('.').pop();
+    const nombre = `${carpeta}/${Date.now()}.${extension}`;
+
+    const { error } = await this.supabase.storage
+      .from('fotos')
+      .upload(nombre, archivo);
+
+    if (error) throw error;
+
+    const { data } = this.supabase.storage
+      .from('fotos')
+      .getPublicUrl(nombre);
+
+    return data.publicUrl;
+  }
 
 }

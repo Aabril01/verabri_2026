@@ -13,7 +13,7 @@
 
 .label-fotos {
   font-size: 12px;
-  color: rgba(42,16,24,0.5);
+  color: rgba(240,230,211,0.6);
   margin: 0 4px 10px;
   letter-spacing: 0.5px;
 }
@@ -29,7 +29,7 @@
   aspect-ratio: 1;
   border-radius: 12px;
   background: var(--vb-card);
-  border: 1.5px dashed rgba(42,16,24,0.2);
+  border: 1.5px dashed rgba(240,230,211,0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,8 +51,8 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    ion-icon { font-size: 28px; color: rgba(42,16,24,0.25); }
-    span { font-size: 11px; color: rgba(42,16,24,0.4); }
+    ion-icon { font-size: 28px; color: rgba(240,230,211,0.35); }
+    span { font-size: 11px; color: rgba(240,230,211,0.5); }
   }
 }
 
@@ -71,8 +71,8 @@
   --border-radius: 12px;
   --padding-start: 14px;
   --color: var(--vb-texto);
-  --placeholder-color: rgba(42,16,24,0.3);
-  border: 1px solid rgba(42,16,24,0.12);
+  --placeholder-color: rgba(240,230,211,0.4);
+  border: 1px solid rgba(240,230,211,0.18);
   border-radius: 12px;
   margin-bottom: 4px;
 
@@ -80,7 +80,7 @@
   &:focus-within { border-color: var(--vb-acento); }
 }
 
-.icono-campo { color: rgba(42,16,24,0.4); font-size: 18px; }
+.icono-campo { color: rgba(240,230,211,0.5); font-size: 18px; }
 
 .mensajes-error {
   padding: 4px 8px;

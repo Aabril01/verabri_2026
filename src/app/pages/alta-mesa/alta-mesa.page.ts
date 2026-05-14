@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
-
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 @Component({
   standalone: false,
   selector: 'app-alta-mesa',
@@ -50,24 +51,45 @@ export class AltaMesaPage implements OnInit {
   }
 
   async seleccionarFoto() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        this.fotoArchivo = file;
-        const reader = new FileReader();
-        reader.onload = (r: any) => {
-          this.fotoUrl = r.target.result;
-          this.errorFoto = '';
+    try {
+      if (Capacitor.getPlatform() === 'web') {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e: any) => {
+          const file = e.target.files[0];
+          if (file) {
+            this.fotoArchivo = file;
+            const reader = new FileReader();
+            reader.onload = (r: any) => {
+              this.fotoUrl = r.target.result;
+              this.errorFoto = '';
+            };
+            reader.readAsDataURL(file);
+          }
         };
-        reader.readAsDataURL(file);
+        input.click();
+        return;
       }
-    };
-    input.click();
-  }
 
+      const image = await Camera.getPhoto({
+        quality: 85,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+
+      if (image.dataUrl) {
+        this.fotoUrl = image.dataUrl;
+        this.errorFoto = '';
+        const response = await fetch(image.dataUrl);
+        const blob = await response.blob();
+        this.fotoArchivo = new File([blob], `foto-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      }
+    } catch (e) {
+      // Usuario canceló
+    }
+  }
   async guardarMesa() {
     this.formulario.markAllAsTouched();
 
