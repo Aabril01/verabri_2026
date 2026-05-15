@@ -113,7 +113,7 @@ export class AltaPlatoPage implements OnInit {
         .select('id')
         .eq('nombre', nombre)
         .eq('tipo', 'plato')
-        .single();
+        .maybeSingle();
 
       if (platoExistente) {
         this.errorGeneral = `El plato "${nombre}" ya existe en el menú.`;
@@ -149,7 +149,8 @@ export class AltaPlatoPage implements OnInit {
       this.router.navigateByUrl('/home', { replaceUrl: true });
 
     } catch (error: any) {
-      this.errorGeneral = 'No se pudo guardar el plato. Verificá los datos e intentá nuevamente.';
+      console.error('ERROR REAL:', error);
+      this.errorGeneral = error?.message || 'No se pudo guardar el plato.';
     } finally {
       await loading.dismiss();
       this.cargando = false;

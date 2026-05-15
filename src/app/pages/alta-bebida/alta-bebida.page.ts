@@ -108,12 +108,13 @@ export class AltaBebidaPage implements OnInit {
     try {
       const { nombre, descripcion, tiempo_min, precio } = this.formulario.value;
 
+      // CAMBIO: .maybeSingle() en lugar de .single() para evitar error cuando no existe
       const { data: bebidaExistente } = await this.supabaseService.client
         .from('productos')
         .select('id')
         .eq('nombre', nombre)
         .eq('tipo', 'bebida')
-        .single();
+        .maybeSingle();
 
       if (bebidaExistente) {
         this.errorGeneral = `La bebida "${nombre}" ya existe en el menú.`;
@@ -149,7 +150,9 @@ export class AltaBebidaPage implements OnInit {
       this.router.navigateByUrl('/home', { replaceUrl: true });
 
     } catch (error: any) {
-      this.errorGeneral = 'No se pudo guardar la bebida. Verificá los datos e intentá nuevamente.';
+      // CAMBIO: mostramos el error real en consola y en pantalla
+      console.error('ERROR REAL:', error);
+      this.errorGeneral = error?.message || 'No se pudo guardar la bebida.';
     } finally {
       await loading.dismiss();
       this.cargando = false;

@@ -175,9 +175,11 @@ export class SupabaseService {
     if (error) throw error;
     return data;
   }
+
   async subirFoto(archivo: File, carpeta: string): Promise<string> {
     const extension = archivo.name.split('.').pop();
-    const nombre = `${carpeta}/${Date.now()}.${extension}`;
+    // CAMBIO: se agrega string aleatorio para evitar nombres duplicados al subir varias fotos en paralelo
+    const nombre = `${carpeta}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
 
     const { error } = await this.supabase.storage
       .from('fotos')
