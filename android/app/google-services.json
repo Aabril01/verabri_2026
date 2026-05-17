@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "952398961587",
+    "project_id": "verabri-pushnotifications",
+    "storage_bucket": "verabri-pushnotifications.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952398961587:android:9d18d527b4a034022249c6",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFTgx6vL5-pi80MUG-NSgbxLpmIZWGM2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

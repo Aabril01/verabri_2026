@@ -4,6 +4,7 @@ import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 @Component({
   standalone: false,
@@ -16,10 +17,11 @@ export class PendienteRegistrosPage implements OnInit {
   public clientes: any[] = [];
 
   constructor(
-    private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private pushNotif: PushNotification
+    
   ) {
     addIcons({
       'checkmark-circle-outline': checkmarkCircleOutline,
@@ -55,7 +57,7 @@ export class PendienteRegistrosPage implements OnInit {
       cssClass: 'spinner-verabri',
     });
 
-    try {
+    try{
       await loading.present();
 
       // Buscar datos del cliente para personalizar el mail
@@ -64,25 +66,28 @@ export class PendienteRegistrosPage implements OnInit {
 
       // Cambiar estado en la base de datos
       await this.supabaseService.cambiarEstado(correo, estado);
-
+      if (estado === "aceptado") {
+        this.mostrarToast("El cliente fue aceptado.", "success");
+      }
       // Enviar mail automático via Edge Function
       await this.supabaseService.enviarEmailEstado(correo, nombre, estado);
 
       if (estado === 'aceptado') {
         await this.mostrarToast('El cliente fue aceptado y notificado por mail.', 'success');
       } else {
+        this.mostrarToast("El cliente fue rechazado.", "success");
         await this.mostrarToast('El cliente fue rechazado y notificado por mail.', 'success');
       }
 
       await this.traerUsuariosPendientes();
 
-    } catch (error) {
-      console.error('Ocurrió un error:', error);
-      await this.mostrarToast('Ocurrió un error al procesar el cliente.', 'danger');
-    } finally {
-      await loading.dismiss();
+      } catch (error) {
+        console.error('Ocurrió un error:', error);
+        await this.mostrarToast('Ocurrió un error al procesar el cliente.', 'danger');
+      } finally {
+        await loading.dismiss();
+      }
     }
-  }
 
   // ── MENSAJES TOAST ────────────────────────────────────────────────────────
 

@@ -181,22 +181,12 @@ export class SupabaseService {
   // ── EMAIL AUTOMÁTICO ───────────────────────────────────────────
 
   async enviarEmailEstado(email: string, nombre: string, estado: string): Promise<void> {
-    const { data: { session } } = await this.supabase.auth.getSession();
-
-    const response = await fetch(
-      `${environment.supabase.url}/functions/v1/enviar-email`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`
-        },
-        body: JSON.stringify({ email, nombre, estado })
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
+    // En lugar de usar fetch manual, usamos el cliente nativo de Supabase
+    const { data, error } = await this.supabase.functions.invoke('enviar-email', {
+      body: { email, nombre, estado }
+    });
+  
+    if (error) {
       throw new Error(error.message || 'Error al enviar el correo');
     }
   }

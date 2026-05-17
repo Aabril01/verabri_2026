@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 // Descomenta cuando tengas Capacitor instalado:
 // import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -50,13 +51,14 @@ export class LoginPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private pushNotifications: PushNotification
   ) {}
 
   ngOnInit() {
     this.construirFormulario();
     this.precargarSonidos();
-    this.cargarFotosPerfiles();
+    //this.cargarFotosPerfiles();
   }
 
   // ── FORMULARIO ────────────────────────────────────────────────
@@ -107,6 +109,10 @@ export class LoginPage implements OnInit {
       const usuario = await this.supabaseService.traerUsuarioPorCorreo(email);
       console.log(usuario);
 
+      //token para notificaciones
+      await this.pushNotifications.inicirPushNotifications(usuario);
+      await this.pushNotifications.actualizarTokenConNuevoUsuario(usuario);
+
       // Verificar si el cliente fue aceptado
       if (usuario?.perfil === 'cliente_registrado' && usuario?.estado !== 'aceptado') {
 
@@ -145,6 +151,12 @@ export class LoginPage implements OnInit {
     try {
       await this.supabaseService.iniciarSesion(perfil.email, perfil.contrasena);
       const usuario = this.supabaseService.usuarioActual;
+
+      //token para notificaciones
+      const usuarioToken = await this.supabaseService.traerUsuarioPorCorreo(perfil.email);
+      await this.pushNotifications.inicirPushNotifications(usuarioToken);
+      await this.pushNotifications.actualizarTokenConNuevoUsuario(usuarioToken);
+
       await this.mostrarToast(`Ingresando como ${perfil.nombre}`, 'success');
       this.navegarSegunPerfil(usuario?.perfil || perfil.id);
     } catch (error: any) {
@@ -205,6 +217,7 @@ export class LoginPage implements OnInit {
   navegarCrearCliente(){
     this.router.navigateByUrl('/alta-cliente', {replaceUrl:true});
   }
+  /**
   private async cargarFotosPerfiles() {
     for (const perfil of this.perfilesRapidos) {
       try {
@@ -217,4 +230,6 @@ export class LoginPage implements OnInit {
       } catch (e) {}
     }
   }
+   */
+  
 }
