@@ -43,6 +43,22 @@ const routes: Routes = [
     path: 'pendiente-registros',
     loadChildren: () => import('./pages/pendiente-registros/pendiente-registros.module').then(m => m.PendienteRegistrosPageModule)
   },
+  {
+    path: 'ingreso-anonimo',
+    loadChildren: () => import('./pages/ingreso-anonimo/ingreso-anonimo.module').then( m => m.IngresoAnonimoPageModule)
+  },
+  {
+    path: 'lista-espera',
+    loadChildren: () => import('./pages/lista-espera/lista-espera.module').then( m => m.ListaEsperaPageModule)
+  },
+  {
+    path: 'ingreso-cliente',
+    loadChildren: () => import('./pages/ingreso-cliente/ingreso-cliente.module').then( m => m.IngresoClientePageModule)
+  },
+  {
+    path: 'ingreso-cliente',
+    loadChildren: () => import('./pages/ingreso-cliente/ingreso-cliente.module').then(m => m.IngresoClientePageModule)
+  },
 ];
 
 @NgModule({

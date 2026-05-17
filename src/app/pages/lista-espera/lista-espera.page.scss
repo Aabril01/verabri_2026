@@ -1,0 +1,120 @@
+.lista-espera-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  gap: 12px;
+
+  ion-icon { font-size: 80px; color: rgba(240,230,211,0.2); }
+  h3 { font-size: 20px; font-weight: 600; color: var(--vb-texto); margin: 0; }
+  p { font-size: 14px; color: var(--vb-texto-suave); margin: 0; }
+}
+
+.boton-refrescar {
+  --color: var(--vb-texto-suave);
+  --border-color: rgba(240,230,211,0.3);
+  --border-radius: 12px;
+  margin-top: 8px;
+}
+
+.lista-contenedor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cantidad-espera, .mesas-disponibles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--vb-texto-suave);
+  margin: 0;
+  ion-icon { font-size: 16px; }
+}
+
+.cliente-card {
+  background: var(--vb-card);
+  border: 1px solid rgba(240,230,211,0.15);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cliente-numero {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--vb-acento);
+  color: var(--vb-blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cliente-foto {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--vb-acento);
+  flex-shrink: 0;
+}
+
+.cliente-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .cliente-nombre {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  .cliente-hora {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+    ion-icon { font-size: 14px; }
+  }
+
+  .badge-espera {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+}
+
+.boton-asignar {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 10px;
+  font-size: 12px;
+  height: 36px;
+  flex-shrink: 0;
+}

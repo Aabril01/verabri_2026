@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ingresar al Local</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ingreso-cliente-content">
+
+  <!-- PASO 1: ESCANEAR QR -->
+  <div class="paso-contenedor" *ngIf="paso === 'escanear'">
+
+    <div class="encabezado">
+      <img
+        [src]="fotoUrl || 'assets/avatar-default.png'"
+        class="foto-cliente"/>
+      <h2>¡Hola, {{ nombre }}!</h2>
+      <p>Escaneá el código QR de la entrada para anotarte en la lista de espera</p>
+    </div>
+
+    <div class="qr-ilustracion">
+      <ion-icon name="scan-outline"></ion-icon>
+    </div>
+
+    <ion-button expand="block" class="boton-principal" (click)="escanearQR()">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      Escanear código QR
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" class="boton-secundario" (click)="procesarIngreso()">
+      <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+      Simular escaneo (prueba web)
+    </ion-button>
+
+  </div>
+
+  <!-- PASO 2: EN ESPERA -->
+  <div class="paso-contenedor" *ngIf="paso === 'espera'">
+
+    <div class="encabezado">
+      <ion-icon name="time-outline" class="icono-principal"></ion-icon>
+      <h2>¡Ya estás en la lista!</h2>
+      <p>Aguardá a que el metre te asigne una mesa</p>
+    </div>
+
+    <div class="card-espera">
+      <img
+        [src]="fotoUrl || 'assets/avatar-default.png'"
+        class="foto-espera"/>
+      <p class="nombre-espera">{{ nombre }}</p>
+      <ion-badge color="warning" class="badge-estado">En espera</ion-badge>
+    </div>
+
+    <p class="texto-info">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      El metre verá tu solicitud y te asignará una mesa a la brevedad.
+    </p>
+
+  </div>
+
+</ion-content>

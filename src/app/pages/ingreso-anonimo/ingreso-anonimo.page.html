@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ingreso al Local</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ingreso-anonimo-content">
+
+  <!-- PASO 1: DATOS DEL CLIENTE -->
+  <div class="paso-contenedor" *ngIf="paso === 'datos'">
+
+    <div class="encabezado">
+      <ion-icon name="person-add-outline" class="icono-principal"></ion-icon>
+      <h2>¡Bienvenido!</h2>
+      <p>Ingresá tu nombre y una foto para registrarte</p>
+    </div>
+
+    <!-- FOTO -->
+    <div class="seccion-foto">
+      <div class="contenedor-foto" (click)="seleccionarFoto()">
+        <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-preview"/>
+        <div *ngIf="!fotoUrl" class="foto-placeholder">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Tocar para sacar foto</span>
+        </div>
+      </div>
+      <ion-note *ngIf="errorFoto" color="danger" class="error-msg">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        {{ errorFoto }}
+      </ion-note>
+    </div>
+
+    <!-- NOMBRE -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="errorNombre">
+        <ion-icon name="person-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Tu nombre</ion-label>
+        <ion-input
+          [(ngModel)]="nombre"
+          type="text"
+          placeholder="Ej: Juan"
+          (ionInput)="errorNombre = ''">
+        </ion-input>
+      </ion-item>
+      <ion-note *ngIf="errorNombre" color="danger" class="error-msg">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        {{ errorNombre }}
+      </ion-note>
+    </div>
+
+    <!-- ERROR GENERAL -->
+    <div class="error-general" *ngIf="errorGeneral">
+      <ion-chip color="danger">
+        <ion-icon name="close-circle"></ion-icon>
+        <ion-label>{{ errorGeneral }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <ion-button expand="block" class="boton-principal" (click)="continuar()">
+      <ion-icon name="arrow-forward-outline" slot="start"></ion-icon>
+      Continuar
+    </ion-button>
+
+  </div>
+
+  <!-- PASO 2: ESCANEAR QR -->
+  <div class="paso-contenedor" *ngIf="paso === 'escanear'">
+
+    <div class="encabezado">
+      <ion-icon name="qr-code-outline" class="icono-principal"></ion-icon>
+      <h2>Escaneá el QR</h2>
+      <p>Buscá el código QR de la entrada del local y escanealo</p>
+    </div>
+
+    <div class="qr-ilustracion">
+      <ion-icon name="scan-outline"></ion-icon>
+    </div>
+
+    <ion-button expand="block" class="boton-principal" (click)="escanearQR()">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      Escanear código QR
+    </ion-button>
+
+    <!-- Solo en web para pruebas -->
+    <ion-button expand="block" fill="outline" class="boton-secundario" (click)="procesarIngreso()">
+      <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+      Simular escaneo (prueba web)
+    </ion-button>
+
+  </div>
+
+  <!-- PASO 3: EN ESPERA -->
+  <div class="paso-contenedor" *ngIf="paso === 'espera'">
+
+    <div class="encabezado">
+      <ion-icon name="time-outline" class="icono-principal icono-exito"></ion-icon>
+      <h2>¡Ya estás en la lista!</h2>
+      <p>Aguardá a que el metre te asigne una mesa</p>
+    </div>
+
+    <div class="card-espera">
+      <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-espera"/>
+      <p class="nombre-espera">{{ nombre }}</p>
+      <ion-badge color="warning" class="badge-estado">En espera</ion-badge>
+    </div>
+
+    <p class="texto-info">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      El metre verá tu solicitud y te asignará una mesa a la brevedad.
+    </p>
+
+  </div>
+
+</ion-content>

@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Lista de Espera</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarDatos()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="lista-espera-content">
+
+  <!-- SIN CLIENTES -->
+  <div class="estado-vacio" *ngIf="!cargando && clientes.length === 0">
+    <ion-icon name="people-outline"></ion-icon>
+    <h3>No hay clientes esperando</h3>
+    <p>Cuando un cliente escanee el QR de ingreso aparecerá acá</p>
+    <ion-button fill="outline" class="boton-refrescar" (click)="cargarDatos()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Actualizar
+    </ion-button>
+  </div>
+
+  <!-- LISTA DE CLIENTES -->
+  <div class="lista-contenedor" *ngIf="clientes.length > 0">
+
+    <p class="cantidad-espera">
+      <ion-icon name="people-outline"></ion-icon>
+      {{ clientes.length }} cliente{{ clientes.length !== 1 ? 's' : '' }} esperando
+    </p>
+
+    <p class="mesas-disponibles">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      {{ mesas.length }} mesa{{ mesas.length !== 1 ? 's' : '' }} disponible{{ mesas.length !== 1 ? 's' : '' }}
+    </p>
+
+    <div class="cliente-card" *ngFor="let cliente of clientes; let i = index">
+
+      <div class="cliente-numero">{{ i + 1 }}</div>
+
+      <img
+        [src]="cliente.foto_url || 'assets/avatar-default.png'"
+        class="cliente-foto"
+        alt="Foto del cliente"/>
+
+      <div class="cliente-info">
+        <p class="cliente-nombre">{{ cliente.nombre }}</p>
+        <p class="cliente-hora">
+          <ion-icon name="time-outline"></ion-icon>
+          Ingresó a las {{ formatearHora(cliente.created_at) }}
+        </p>
+        <ion-badge color="warning" class="badge-espera">En espera</ion-badge>
+      </div>
+
+      <ion-button
+        class="boton-asignar"
+        size="small"
+        (click)="asignarMesa(cliente)">
+        <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+        Asignar mesa
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>

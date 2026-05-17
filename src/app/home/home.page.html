@@ -52,12 +52,11 @@
 
   <!-- METRE -->
   <div class="menu-opciones" *ngIf="perfil === 'metre'">
-    <ion-button expand="block" class="boton-menu">
+    <ion-button expand="block" routerLink="/lista-espera" class="boton-menu">
       <ion-icon name="list-outline" slot="start"></ion-icon>
       Lista de espera
     </ion-button>
   </div>
-
   <!-- MOZO -->
   <div class="menu-opciones" *ngIf="perfil === 'mozo'">
     <ion-button expand="block" class="boton-menu">
@@ -66,13 +65,21 @@
     </ion-button>
   </div>
 
-  <!-- CLIENTE -->
-  <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado' || perfil === 'cliente_anonimo'">
-    <ion-button expand="block" class="boton-menu">
-      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-      Escanear mesa
-    </ion-button>
-  </div>
+  <!-- CLIENTE REGISTRADO -->
+    <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado'">
+      <ion-button expand="block" class="boton-menu">
+        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+        Escanear mesa
+      </ion-button>
+    </div>
+
+    <!-- CLIENTE ANÓNIMO -->
+    <div class="menu-opciones" *ngIf="perfil === 'cliente_anonimo'">
+      <ion-button expand="block" routerLink="/ingreso-anonimo" class="boton-menu">
+        <ion-icon name="enter-outline" slot="start"></ion-icon>
+        Ingresar al local
+      </ion-button>
+    </div>
 
   <div class="separador"></div>
 
