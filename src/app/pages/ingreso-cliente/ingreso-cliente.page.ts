@@ -4,6 +4,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
 import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { Capacitor } from '@capacitor/core';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 @Component({
   standalone: false,
@@ -23,7 +24,8 @@ export class IngresoClientePage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private pushNotifications: PushNotification
   ) {}
 
   async ngOnInit() {
@@ -102,6 +104,7 @@ export class IngresoClientePage implements OnInit {
 
       this.paso = 'espera';
       await this.mostrarToast('¡Estás en la lista de espera!', 'success');
+      this.pushNotifications.enviarPushNotificationAUsuario("¡Nueva petición!", "Un cliente ha solicitado una mesa.", "metre@verabri.com");
 
     } catch (error: any) {
       console.error('Error:', error);

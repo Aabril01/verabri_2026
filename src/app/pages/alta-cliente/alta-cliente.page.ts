@@ -6,6 +6,7 @@ import { SupabaseService } from 'src/app/services/supabase';
 import { Camera, CameraResultType, CameraSource, CameraPermissionType} from '@capacitor/camera'
 import { Capacitor } from '@capacitor/core';
 import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 const DNI_REGEX = /^\d{7,8}$/;
 
@@ -32,7 +33,8 @@ export class AltaClientePage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private pushNotifications: PushNotification
   ) { }
 
   ngOnInit() {
@@ -122,7 +124,11 @@ export class AltaClientePage implements OnInit {
       await this.supabaseService.crearClienteRegistrado(email, contrasena, {
         apellido, nombre, dni, foto_url: this.fotoUrl    
       });
-       
+      
+      //Envio de notificaciones
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo ciente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo ciente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
+
       await this.mostrarToast('Fuiste registrado con éxito. Espera a que validen tu cuenta.', 'success');
       this.router.navigateByUrl('/login', {replaceUrl:true});
 

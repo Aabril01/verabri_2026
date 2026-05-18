@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 import { addIcons } from 'ionicons';
@@ -19,9 +18,7 @@ export class PendienteRegistrosPage implements OnInit {
   constructor(
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService,
-    private pushNotif: PushNotification
-    
+    private supabaseService: SupabaseService
   ) {
     addIcons({
       'checkmark-circle-outline': checkmarkCircleOutline,

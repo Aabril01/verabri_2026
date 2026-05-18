@@ -58,7 +58,7 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.construirFormulario();
     this.precargarSonidos();
-    //this.cargarFotosPerfiles();
+    this.cargarFotosPerfiles();
   }
 
   // ── FORMULARIO ────────────────────────────────────────────────
@@ -217,7 +217,7 @@ export class LoginPage implements OnInit {
   navegarCrearCliente(){
     this.router.navigateByUrl('/alta-cliente', {replaceUrl:true});
   }
-  /**
+
   private async cargarFotosPerfiles() {
     for (const perfil of this.perfilesRapidos) {
       try {
@@ -230,6 +230,5 @@ export class LoginPage implements OnInit {
       } catch (e) {}
     }
   }
-   */
   
 }

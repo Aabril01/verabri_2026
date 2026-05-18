@@ -5,6 +5,7 @@ import { SupabaseService } from '../../services/supabase';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 @Component({
   standalone: false,
@@ -27,7 +28,8 @@ export class IngresoAnonimoPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private pushNotifications: PushNotification
   ) {}
 
   ngOnInit() {}
@@ -149,6 +151,7 @@ export class IngresoAnonimoPage implements OnInit {
       if (error) throw error;
 
       this.paso = 'espera';
+      this.pushNotifications.enviarPushNotificationAUsuario("¡Nueva petición!", "Un cliente ha solicitado una mesa.", "metre@verabri.com");
       await this.mostrarToast('¡Estás en la lista de espera!', 'success');
 
     } catch (error: any) {

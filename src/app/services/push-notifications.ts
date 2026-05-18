@@ -13,7 +13,6 @@ import { ToastController } from '@ionic/angular';
 export class PushNotification {
   private supabase = inject(SupabaseService);
 
-  private currentUser: User | null = null;
   private _fcmtoken = new BehaviorSubject<string | null>(null);
   fcmtoken$: Observable<string | null> = this._fcmtoken.asObservable();
 
@@ -23,11 +22,7 @@ export class PushNotification {
   constructor(
     private ngZone: NgZone,
     private toastController: ToastController
-  ){
-    this.supabase.client.auth.getSession().then(({data}) =>{
-      this.currentUser = data.session?.user || null;
-    });
-  }
+  ){}
 
   async inicirPushNotifications (usuarioInicial: User | null = null){
     //Si está en android, pedirá permisos para mandar notificaciones
@@ -72,19 +67,6 @@ export class PushNotification {
     } else {
       console.log("Services/Push: Push Notifications no se activará en la plataforma web.");
     }
-  }
-
-  // ── TOAST ──────────────────────────────────
-
-  private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2500,
-      position: 'top',
-      color,
-      icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
-    });
-    await toast.present();
   }
 
   // ── GUARDADO DE TOKENS ──────────────────────────────────
@@ -133,6 +115,19 @@ export class PushNotification {
     } else {
       console.warn("Services/Push: No hay tokens FCM para actualizar.")
     }
+  }
+
+   // ── TOAST ──────────────────────────────────
+
+   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2500,
+      position: 'top',
+      color,
+      icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
+    });
+    await toast.present();
   }
 
   // ── MÉTODOS UTILIZABLES ──────────────────────────────────
@@ -201,7 +196,5 @@ export class PushNotification {
       return {succes: false, error: e.message || "Services/Push: Error desconocido"}
     }
   }
-
-
 
 }
