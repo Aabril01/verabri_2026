@@ -23,14 +23,27 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const sesion = await this.supabaseService.obtenerSesion();
-    if (sesion) {
-      this.userId = sesion.user.id;
-      const usuario = await this.supabaseService.cargarPerfil(sesion.user.id);
-      console.log('USUARIO:', usuario);
+    // Primero intentar desde el BehaviorSubject
+    const usuarioCacheado = this.supabaseService.usuarioActual;
+    if (usuarioCacheado) {
+      this.perfil = usuarioCacheado.perfil || '';
+      this.nombre = usuarioCacheado.nombre || '';
+      const sesion = await this.supabaseService.obtenerSesion();
+      this.userId = sesion?.user?.id || '';
+      return;
+    }
 
-      this.perfil = usuario?.perfil || '';
-      this.nombre = usuario?.nombre || '';
+    // Si no hay caché, intentar desde la sesión
+    try {
+      const sesion = await this.supabaseService.obtenerSesion();
+      if (sesion) {
+        this.userId = sesion.user.id;
+        const usuario = await this.supabaseService.cargarPerfil(sesion.user.id);
+        this.perfil = usuario?.perfil || '';
+        this.nombre = usuario?.nombre || '';
+      }
+    } catch(e) {
+      console.error('Error cargando perfil:', e);
     }
   }
 

@@ -66,12 +66,12 @@
   </div>
 
   <!-- CLIENTE REGISTRADO -->
-    <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado'">
-      <ion-button expand="block" class="boton-menu">
-        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-        Escanear mesa
-      </ion-button>
-    </div>
+  <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado'">
+    <ion-button expand="block" class="boton-menu" (click)="irAMesa()">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      Escanear mesa
+    </ion-button>
+  </div>
 
     <!-- CLIENTE ANÓNIMO -->
     <div class="menu-opciones" *ngIf="perfil === 'cliente_anonimo'">

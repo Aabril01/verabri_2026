@@ -150,12 +150,14 @@ export class LoginPage implements OnInit {
 
     try {
       await this.supabaseService.iniciarSesion(perfil.email, perfil.contrasena);
-      const usuario = this.supabaseService.usuarioActual;
+
+      // CORRECCIÓN: traer usuario completo y cargar perfil en BehaviorSubject
+      const usuario = await this.supabaseService.traerUsuarioPorCorreo(perfil.email);
+      await this.supabaseService.cargarPerfil(usuario.id);
 
       //token para notificaciones
-      const usuarioToken = await this.supabaseService.traerUsuarioPorCorreo(perfil.email);
-      await this.pushNotifications.inicirPushNotifications(usuarioToken);
-      await this.pushNotifications.actualizarTokenConNuevoUsuario(usuarioToken);
+      await this.pushNotifications.inicirPushNotifications(usuario);
+      await this.pushNotifications.actualizarTokenConNuevoUsuario(usuario);
 
       await this.mostrarToast(`Ingresando como ${perfil.nombre}`, 'success');
       this.navegarSegunPerfil(usuario?.perfil || perfil.id);
@@ -217,6 +219,7 @@ export class LoginPage implements OnInit {
   navegarCrearCliente(){
     this.router.navigateByUrl('/alta-cliente', {replaceUrl:true});
   }
+
   /**
   private async cargarFotosPerfiles() {
     for (const perfil of this.perfilesRapidos) {
