@@ -152,7 +152,7 @@ export class PushNotification {
       const {data: tokensData, error: tokenError} = await this.supabase.client
       .from('fcm_tokens')
       .select('token')
-      .in('email_usuario', [email]);
+      .eq('email_usuario', email);
 
       if(tokenError) {
         console.error("Error al obtener tokens: ", tokenError);
@@ -194,6 +194,102 @@ export class PushNotification {
     } catch (e:any){
       console.error("Excepción al llamar Edge Function send-push-notifications: ", e);
       return {succes: false, error: e.message || "Services/Push: Error desconocido"}
+    }
+  }
+
+  /**
+   * Envía notificaciones al usuario con el email correspondiente.
+   * @param title titulo de la notificación
+   * @param body mensaje
+   * @param uuid id de usuario receptor
+   * @param additionalData adicional (ej:url imagen)
+   */
+  async enviarPushNotificationPorID(
+    title: string,
+    body: string,
+    uuid:string,
+    additionalData: {[key:string]: any} ={} 
+  ):Promise<any>{
+    try{
+      let hacerPush = true;
+
+      const {data: tokensData, error: tokenError} = await this.supabase.client
+      .from('fcm_tokens')
+      .select('token')
+      .eq('uuid', uuid);
+
+      if(tokenError) {
+        console.error("Error al obtener tokens: ", tokenError);
+        return {success: false, error:tokenError.message}
+      }
+
+      if(!tokensData || tokensData.length === 0){
+        console.warn("No hay tokens registrados.");
+        hacerPush = false;
+      }
+
+      //Se enviarán la notificacion a esta lista de tokens
+      const tokens = tokensData.map((t:any) => t.token);
+      
+      if(hacerPush){
+        const {data, error} = await this.supabase.client.functions.invoke('send-push-notifications', {
+          body: {
+            title: title,
+            body: body,
+            token: tokens,
+            data: additionalData
+          },
+        });
+
+        if(error){
+          console.error("Services/Push: Error al invocar la Edge Functions: ", error.message);
+          return {success: false, error: error.message}
+        }
+
+        if(data.success){
+          console.log("Services/Push: Notificación enviada :)");
+        } else {
+          console.warn("Services/Push: la Edge Functions no pudo enviar notificacion")
+        }
+        return {success: data.success, results: data.results}
+      }
+
+    } catch (e:any){
+      console.error("Excepción al llamar Edge Function send-push-notifications: ", e);
+      return {succes: false, error: e.message || "Services/Push: Error desconocido"}
+    }
+  }
+
+  /**
+ * Envia una notificación a todos los tokens.
+ * @param title titulo de la notificacion
+ * @param body mensaje
+ * @param additionalData  
+ * @returns 
+ */
+  async sendGlobalPushNotification(
+    title: string,
+    body: string,
+    additionalData: { [key: string]: any } = {}
+  ): Promise<any> {
+    try{
+      const { data, error } = await this.supabase.client.functions.invoke('send-push-notifications', {
+        body: {
+          title: title,
+          body: body,
+          data: additionalData
+        },
+      });
+
+      if(error) {
+        console.error('Services/Push: Error al invocar Edge Functions (Push)');
+        return { success: false, error: error.message};
+      }
+      return {success: data.success, results: data.results};
+
+    } catch (e:any) {
+      console.error('Services/Push: Excepción al mandar token global: ', e);
+      return {success: false, error: e.message || 'Error desconocido'};
     }
   }
 

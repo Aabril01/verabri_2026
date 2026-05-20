@@ -126,8 +126,8 @@ export class AltaClientePage implements OnInit {
       });
       
       //Envio de notificaciones
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo ciente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo ciente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
 
       await this.mostrarToast('Fuiste registrado con éxito. Espera a que validen tu cuenta.', 'success');
       this.router.navigateByUrl('/login', {replaceUrl:true});
