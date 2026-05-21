@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from 'src/app/services/push-notifications';
 
 @Component({
   standalone: false,
@@ -18,7 +19,8 @@ export class ListaEsperaPage implements OnInit {
     private supabaseService: SupabaseService,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private pushNotificatons: PushNotification
   ) {}
 
   async ngOnInit() {
@@ -120,6 +122,9 @@ export class ListaEsperaPage implements OnInit {
         .eq('id', cliente.id);
 
       if (errorEspera) throw errorEspera;
+
+      //Notificación al cliente
+      this.pushNotificatons.enviarPushNotificationPorID("Mesa asignada", "¡Ya puedes solicitar un pedido!", cliente.id);
 
       await this.mostrarToast(`Mesa asignada a ${cliente.nombre} correctamente.`, 'success');
       await this.cargarDatos();
