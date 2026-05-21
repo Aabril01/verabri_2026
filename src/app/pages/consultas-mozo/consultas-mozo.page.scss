@@ -1,0 +1,116 @@
+.consultas-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  gap: 12px;
+
+  ion-icon { font-size: 80px; color: rgba(240,230,211,0.2); }
+  h3 { font-size: 20px; font-weight: 600; color: var(--vb-texto); margin: 0; }
+  p { font-size: 14px; color: var(--vb-texto-suave); margin: 0; }
+}
+
+.lista-contenedor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: var(--vb-texto-suave);
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.mesa-card {
+  background: var(--vb-card);
+  border: 1px solid rgba(240,230,211,0.15);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:active { opacity: 0.8; }
+}
+
+.mesa-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.mesa-numero-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--vb-acento);
+  color: var(--vb-blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.mesa-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .mesa-nombre {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  .mesa-tipo {
+    font-size: 12px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+  }
+}
+
+.mesa-mensajes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+
+  .badge-mensajes {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-label {
+    font-size: 10px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+  }
+}
+
+.icono-flecha {
+  font-size: 18px;
+  color: rgba(240,230,211,0.3);
+  flex-shrink: 0;
+}

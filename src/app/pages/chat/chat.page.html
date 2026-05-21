@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ nombreMesa }} — Mozo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="chat-content">
+
+  <!-- SIN MENSAJES -->
+  <div class="estado-vacio" *ngIf="!cargando && mensajes.length === 0">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <p>No hay mensajes aún</p>
+    <span>Enviá tu primera consulta al mozo</span>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="mensajes-contenedor">
+    <div
+      *ngFor="let mensaje of mensajes"
+      class="mensaje-burbuja"
+      [class.mensaje-propio]="esMiMensaje(mensaje)"
+      [class.mensaje-otro]="!esMiMensaje(mensaje)">
+
+      <div class="mensaje-contenido">
+        <p class="mensaje-remitente" *ngIf="!esMiMensaje(mensaje)">
+          {{ getNombreRemitente(mensaje) }}
+        </p>
+        <!-- CORRECCIÓN: mensaje.texto en lugar de mensaje.contenido -->
+        <p class="mensaje-texto">{{ mensaje.contenido }}</p>
+        <p class="mensaje-hora">{{ formatearHora(mensaje.created_at) }}</p>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- INPUT DE MENSAJE -->
+<ion-footer class="chat-footer">
+  <div class="input-contenedor">
+    <ion-input
+      class="input-mensaje"
+      [(ngModel)]="nuevoMensaje"
+      placeholder="Escribí tu consulta..."
+      (keyup.enter)="enviarMensaje()">
+    </ion-input>
+    <ion-button
+      class="boton-enviar"
+      (click)="enviarMensaje()"
+      [disabled]="!nuevoMensaje.trim()">
+      <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>

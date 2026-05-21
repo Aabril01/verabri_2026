@@ -1,0 +1,128 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mesa {{ mesa?.numero }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="irAlChat()">
+        <ion-icon name="chatbubble-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar-segmento">
+    <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event)">
+      <ion-segment-button value="info">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-label>Mi mesa</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="platos">
+        <ion-icon name="flame-outline"></ion-icon>
+        <ion-label>Platos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="bebidas">
+        <ion-icon name="wine-outline"></ion-icon>
+        <ion-label>Bebidas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mesa-content">
+
+  <!-- INFO DE LA MESA -->
+  <div *ngIf="segmentoActivo === 'info' && mesa">
+    <div class="mesa-card">
+      <img *ngIf="mesa.foto_url" [src]="mesa.foto_url" class="mesa-foto"/>
+      <div class="mesa-detalle">
+        <h2 class="mesa-numero">Mesa {{ mesa.numero }}</h2>
+        <div class="mesa-info-row">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>{{ mesa.capacidad }} comensales</span>
+        </div>
+        <div class="mesa-info-row">
+          <ion-icon name="ribbon-outline"></ion-icon>
+          <span>{{ formatearTipo(mesa.tipo) }}</span>
+        </div>
+        <div class="mesa-info-row">
+          <ion-icon name="ellipse" [color]="mesa.estado === 'ocupada' ? 'danger' : 'success'"></ion-icon>
+          <span>{{ mesa.estado === 'ocupada' ? 'Ocupada' : 'Disponible' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="acciones-contenedor">
+      <ion-button expand="block" class="boton-accion" (click)="irAlChat()">
+        <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+        Consultar al mozo
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- PLATOS -->
+  <div *ngIf="segmentoActivo === 'platos'">
+    <div *ngIf="platos.length === 0" class="estado-vacio">
+      <ion-icon name="flame-outline"></ion-icon>
+      <p>No hay platos disponibles</p>
+    </div>
+
+    <div class="producto-card" *ngFor="let plato of platos">
+      <div class="fotos-contenedor">
+        <div class="foto-item">
+          <img [src]="plato.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
+        </div>
+        <div class="foto-item" *ngIf="plato.foto2_url">
+          <img [src]="plato.foto2_url" class="foto-producto"/>
+        </div>
+        <div class="foto-item" *ngIf="plato.foto3_url">
+          <img [src]="plato.foto3_url" class="foto-producto"/>
+        </div>
+      </div>
+      <div class="producto-info">
+        <h3 class="producto-nombre">{{ plato.nombre }}</h3>
+        <p class="producto-descripcion">{{ plato.descripcion }}</p>
+        <div class="producto-detalles">
+          <span class="producto-precio">${{ plato.precio }}</span>
+          <span class="producto-tiempo">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ plato.tiempo_min }} min
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEBIDAS -->
+  <div *ngIf="segmentoActivo === 'bebidas'">
+    <div *ngIf="bebidas.length === 0" class="estado-vacio">
+      <ion-icon name="wine-outline"></ion-icon>
+      <p>No hay bebidas disponibles</p>
+    </div>
+
+    <div class="producto-card" *ngFor="let bebida of bebidas">
+      <div class="fotos-contenedor">
+        <div class="foto-item">
+          <img [src]="bebida.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
+        </div>
+        <div class="foto-item" *ngIf="bebida.foto2_url">
+          <img [src]="bebida.foto2_url" class="foto-producto"/>
+        </div>
+        <div class="foto-item" *ngIf="bebida.foto3_url">
+          <img [src]="bebida.foto3_url" class="foto-producto"/>
+        </div>
+      </div>
+      <div class="producto-info">
+        <h3 class="producto-nombre">{{ bebida.nombre }}</h3>
+        <p class="producto-descripcion">{{ bebida.descripcion }}</p>
+        <div class="producto-detalles">
+          <span class="producto-precio">${{ bebida.precio }}</span>
+          <span class="producto-tiempo">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ bebida.tiempo_min }} min
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

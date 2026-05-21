@@ -56,13 +56,22 @@ const routes: Routes = [
     loadChildren: () => import('./pages/ingreso-cliente/ingreso-cliente.module').then( m => m.IngresoClientePageModule)
   },
   {
-    path: 'ingreso-cliente',
-    loadChildren: () => import('./pages/ingreso-cliente/ingreso-cliente.module').then(m => m.IngresoClientePageModule)
-  },
-  {
     path: 'menu',
     loadChildren: () => import('./pages/menu/menu.module').then( m => m.MenuPageModule)
   },
+  {
+    path: 'mesa/:id',
+    loadChildren: () => import('./pages/mesa/mesa.module').then( m => m.MesaPageModule)
+  },
+  {
+    path: 'chat/:mesaId',
+    loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'consultas-mozo',
+    loadChildren: () => import('./pages/consultas-mozo/consultas-mozo.module').then( m => m.ConsultasMozoPageModule)
+  },
+
 ];
 
 @NgModule({

@@ -1,0 +1,122 @@
+.chat-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+// ── ESTADO VACÍO ──────────────────────────────────────────────
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  gap: 8px;
+
+  ion-icon { font-size: 64px; color: rgba(240,230,211,0.2); }
+  p { font-size: 16px; font-weight: 600; color: var(--vb-texto); margin: 0; }
+  span { font-size: 13px; color: var(--vb-texto-suave); }
+}
+
+// ── MENSAJES ──────────────────────────────────────────────────
+.mensajes-contenedor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mensaje-burbuja {
+  display: flex;
+  max-width: 80%;
+}
+
+.mensaje-propio {
+  align-self: flex-end;
+
+  .mensaje-contenido {
+    background: var(--vb-acento);
+    border-radius: 16px 16px 4px 16px;
+
+    .mensaje-texto { color: var(--vb-blanco); }
+    .mensaje-hora { color: rgba(255,255,255,0.7); text-align: right; }
+  }
+}
+
+.mensaje-otro {
+  align-self: flex-start;
+
+  .mensaje-contenido {
+    background: var(--vb-card);
+    border: 1px solid rgba(240,230,211,0.15);
+    border-radius: 16px 16px 16px 4px;
+
+    .mensaje-texto { color: var(--vb-texto); }
+    .mensaje-hora { color: var(--vb-texto-suave); }
+  }
+}
+
+.mensaje-contenido {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mensaje-remitente {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--vb-acento);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mensaje-texto {
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.mensaje-hora {
+  font-size: 11px;
+  margin: 0;
+}
+
+// ── FOOTER ────────────────────────────────────────────────────
+.chat-footer {
+  --background: var(--vb-card);
+  border-top: 1px solid rgba(240,230,211,0.15);
+}
+
+.input-contenedor {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+.input-mensaje {
+  flex: 1;
+  --background: var(--vb-fondo);
+  --color: var(--vb-texto);
+  --placeholder-color: rgba(240,230,211,0.4);
+  --border-radius: 20px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border-radius: 20px;
+  height: 44px;
+}
+
+.boton-enviar {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}

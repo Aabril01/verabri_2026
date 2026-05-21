@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Consultas de Clientes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarMesasConMensajes()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="consultas-content">
+
+  <!-- SIN MESAS -->
+  <div class="estado-vacio" *ngIf="!cargando && mesas.length === 0">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <h3>No hay mesas ocupadas</h3>
+    <p>Cuando haya clientes en mesas aparecerán acá</p>
+  </div>
+
+  <!-- LISTA DE MESAS -->
+  <div class="lista-contenedor" *ngIf="mesas.length > 0">
+    <p class="subtitulo">Tocá una mesa para ver y responder las consultas</p>
+
+    <div class="mesa-card" *ngFor="let mesa of mesas" (click)="irAlChat(mesa.id)">
+
+      <div class="mesa-info">
+        <div class="mesa-numero-badge">{{ mesa.numero }}</div>
+        <div class="mesa-detalles">
+          <p class="mesa-nombre">Mesa {{ mesa.numero }}</p>
+          <p class="mesa-tipo">{{ formatearTipo(mesa.tipo) }} · {{ mesa.capacidad }} personas</p>
+        </div>
+      </div>
+
+      <div class="mesa-mensajes">
+        <ion-badge [color]="mesa.cantidad_mensajes > 0 ? 'warning' : 'medium'" class="badge-mensajes">
+          {{ mesa.cantidad_mensajes }}
+        </ion-badge>
+        <p class="badge-label">{{ mesa.cantidad_mensajes === 1 ? 'mensaje' : 'mensajes' }}</p>
+      </div>
+
+      <ion-icon name="chevron-forward-outline" class="icono-flecha"></ion-icon>
+
+    </div>
+  </div>
+
+</ion-content>
