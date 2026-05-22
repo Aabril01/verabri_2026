@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from '../../services/push-notifications';
 
 @Component({
   standalone: false,
@@ -17,6 +18,7 @@ export class PedidosMozoPage implements OnInit {
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
+    private pushNotification: PushNotification,
     private loadingController: LoadingController,
     private toastController: ToastController,
     private alertController: AlertController
@@ -47,8 +49,8 @@ export class PedidosMozoPage implements OnInit {
             productos (nombre, tipo)
           )
         `)
-      .in('estado', ['pendiente', 'rechazado'])        
-      .order('created_at', { ascending: true });
+        .in('estado', ['pendiente', 'rechazado'])
+        .order('created_at', { ascending: true });
 
       if (error) throw error;
       this.pedidos = data || [];
@@ -72,7 +74,7 @@ export class PedidosMozoPage implements OnInit {
         {
           text: 'Confirmar',
           handler: async () => {
-            await this.cambiarEstadoPedido(pedido.id, 'confirmado');
+            await this.cambiarEstadoPedido(pedido, 'confirmado');
           }
         }
       ]
@@ -90,14 +92,15 @@ export class PedidosMozoPage implements OnInit {
         {
           text: 'Rechazar',
           handler: async () => {
-            await this.cambiarEstadoPedido(pedido.id, 'rechazado');          }
+            await this.cambiarEstadoPedido(pedido, 'rechazado');
+          }
         }
       ]
     });
     await alert.present();
   }
 
-  async cambiarEstadoPedido(pedidoId: string, estado: string) {
+  async cambiarEstadoPedido(pedido: any, estado: string) {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
       message: 'Actualizando pedido...',
@@ -109,9 +112,34 @@ export class PedidosMozoPage implements OnInit {
       const { error } = await this.supabaseService.client
         .from('pedidos')
         .update({ estado })
-        .eq('id', pedidoId);
+        .eq('id', pedido.id);
 
       if (error) throw error;
+
+      // ── PUSH NOTIFICATION PUNTO 13 — Mozo rechaza → notificar al cliente ──
+      if (estado === 'rechazado' && pedido.cliente_id) {
+        try {
+          await this.pushNotification.enviarPushNotificationPorID(
+            '❌ Pedido rechazado',
+            `Tu pedido de la Mesa ${pedido.mesas?.numero} fue rechazado. Podés modificarlo.`,
+            pedido.cliente_id
+          );
+        } catch (pushError) {
+          console.warn('No se pudo enviar push al cliente:', pushError);
+        }
+      }
+
+      // ── PUSH NOTIFICATION PUNTO 14 — Mozo confirma → notificar a cocina y bar ──
+      if (estado === 'confirmado') {
+        try {
+          await this.pushNotification.sendGlobalPushNotification(
+            '🍽️ Nuevo pedido confirmado',
+            `Pedido de Mesa ${pedido.mesas?.numero} listo para preparar.`
+          );
+        } catch (pushError) {
+          console.warn('No se pudo enviar push a cocina/bar:', pushError);
+        }
+      }
 
       await this.mostrarToast(
         estado === 'confirmado' ? 'Pedido confirmado y enviado a cocina y bar.' : 'Pedido rechazado.',

@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cocina — Pedidos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarPedidos()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pedidos-content">
+
+  <div class="estado-vacio" *ngIf="!cargando && pedidos.length === 0">
+    <ion-icon name="flame-outline"></ion-icon>
+    <h3>No hay pedidos pendientes</h3>
+    <p>Cuando el mozo confirme un pedido aparecerá acá</p>
+  </div>
+
+  <div class="lista-contenedor" *ngIf="pedidos.length > 0">
+    <div class="pedido-card" *ngFor="let pedido of pedidos">
+
+      <div class="pedido-header">
+        <div class="pedido-mesa">
+          <ion-icon name="restaurant-outline"></ion-icon>
+          <span>Mesa {{ pedido.mesas?.numero }}</span>
+        </div>
+        <div class="pedido-hora">{{ formatearHora(pedido.created_at) }}</div>
+      </div>
+
+      <div class="pedido-items">
+        <div class="item-row" *ngFor="let item of getPlatosDelPedido(pedido)">
+          <span class="item-cantidad">{{ item.cantidad }}x</span>
+          <span class="item-nombre">{{ item.productos?.nombre }}</span>
+          <span class="item-tiempo">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ item.productos?.tiempo_min }} min
+          </span>
+        </div>
+      </div>
+
+      <div class="pedido-acciones">
+        <ion-button expand="block" color="success" (click)="marcarListo(pedido.id)">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Platos listos
+        </ion-button>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from '../../services/push-notifications';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, removeCircleOutline, timeOutline, cartOutline, checkmarkCircleOutline, flameOutline, wineOutline } from 'ionicons/icons';
 
@@ -27,11 +28,13 @@ export class PedidoPage implements OnInit {
   cargando = true;
   usuarioActual: any = null;
   esModificacion = false;
+  numeroMesa: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private supabaseService: SupabaseService,
+    private pushNotification: PushNotification,
     private loadingController: LoadingController,
     private toastController: ToastController
   ) {
@@ -51,6 +54,22 @@ export class PedidoPage implements OnInit {
     this.usuarioActual = this.supabaseService.usuarioActual;
     await this.cargarProductos();
     await this.cargarPedidoExistente();
+    await this.cargarNumeroMesa();
+  }
+
+  async ionViewWillEnter() {
+    if (this.mesaId) {
+      await this.cargarPedidoExistente();
+    }
+  }
+
+  async cargarNumeroMesa() {
+    const { data } = await this.supabaseService.client
+      .from('mesas')
+      .select('numero')
+      .eq('id', this.mesaId)
+      .single();
+    if (data) this.numeroMesa = data.numero;
   }
 
   async cargarProductos() {
@@ -84,12 +103,11 @@ export class PedidoPage implements OnInit {
 
   async cargarPedidoExistente() {
     try {
-      // Buscar pedido pendiente de esta mesa
       const { data: pedido } = await this.supabaseService.client
         .from('pedidos')
         .select(`*, pedido_items(*, productos(*))`)
         .eq('mesa_id', this.mesaId)
-        .eq('estado', 'pendiente')
+        .in('estado', ['pendiente', 'rechazado'])
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -98,7 +116,6 @@ export class PedidoPage implements OnInit {
         this.pedidoExistenteId = pedido.id;
         this.esModificacion = true;
 
-        // Pre-cargar los items del pedido existente
         this.itemsPedido = pedido.pedido_items.map((item: any) => ({
           producto: item.productos,
           cantidad: item.cantidad
@@ -178,7 +195,7 @@ export class PedidoPage implements OnInit {
         // Actualizar pedido existente
         await this.supabaseService.client
           .from('pedidos')
-          .update({ subtotal: this.totalPedido, total: this.totalPedido })
+          .update({ estado: 'pendiente', subtotal: this.totalPedido, total: this.totalPedido })
           .eq('id', pedidoId);
 
         // Borrar items anteriores y reemplazar
@@ -224,6 +241,16 @@ export class PedidoPage implements OnInit {
       console.log('Error insert items:', errorItems);
 
       if (errorItems) throw errorItems;
+
+      // ── PUSH NOTIFICATION AL MOZO (Punto 12) ──────────────────
+      try {
+        await this.pushNotification.sendGlobalPushNotification(
+          '🍽️ Nuevo pedido',
+          `Mesa ${this.numeroMesa} realizó un pedido. ¡Revisalo!`
+        );
+      } catch (pushError) {
+        console.warn('No se pudo enviar la push notification:', pushError);
+      }
 
       await this.mostrarToast(
         this.esModificacion ? '¡Pedido actualizado!' : '¡Pedido enviado! El mozo lo confirmará pronto.',

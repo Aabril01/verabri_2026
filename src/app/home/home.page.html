@@ -36,17 +36,25 @@
 
   <!-- COCINERO -->
   <div class="menu-opciones" *ngIf="perfil === 'cocinero'">
-    <ion-button expand="block" routerLink="/alta-plato" class="boton-menu">
-      <ion-icon name="flame-outline" slot="start"></ion-icon>
-      Alta de plato
-    </ion-button>
-  </div>
+  <ion-button expand="block" routerLink="/alta-plato" class="boton-menu">
+    <ion-icon name="flame-outline" slot="start"></ion-icon>
+    Alta de plato
+  </ion-button>
+  <ion-button expand="block" routerLink="/pedidos-cocina" class="boton-menu">
+    <ion-icon name="receipt-outline" slot="start"></ion-icon>
+    Pedidos pendientes
+  </ion-button>
+</div>
 
   <!-- CANTINERO -->
   <div class="menu-opciones" *ngIf="perfil === 'cantinero'">
     <ion-button expand="block" routerLink="/alta-bebida" class="boton-menu">
       <ion-icon name="wine-outline" slot="start"></ion-icon>
       Alta de bebida
+    </ion-button>
+    <ion-button expand="block" routerLink="/pedidos-bar" class="boton-menu">
+      <ion-icon name="receipt-outline" slot="start"></ion-icon>
+      Pedidos pendientes
     </ion-button>
   </div>
 

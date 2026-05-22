@@ -89,6 +89,23 @@ const routes: Routes = [
     path: 'pedidos-mozo',
     loadChildren: () => import('./pages/pedidos-mozo/pedidos-mozo.module').then(m => m.PedidosMozoPageModule)
   },
+  {
+    path: 'pedidos-cocina',
+    loadChildren: () => import('./pages/pedidos-cocina/pedidos-cocina.module').then( m => m.PedidosCocinaPageModule)
+  },
+  {
+    path: 'pedidos-bar',
+    loadChildren: () => import('./pages/pedidos-bar/pedidos-bar.module').then( m => m.PedidosBarPageModule)
+  },
+
+  {
+    path: 'pedidos-cocina',
+    loadChildren: () => import('./pages/pedidos-cocina/pedidos-cocina.module').then(m => m.PedidosCocinaPageModule)
+  },
+  {
+    path: 'pedidos-bar',
+    loadChildren: () => import('./pages/pedidos-bar/pedidos-bar.module').then(m => m.PedidosBarPageModule)
+  },
 
 ];
 
