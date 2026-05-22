@@ -1,0 +1,53 @@
+.toolbar-verabri {
+    --background: var(--vb-acento);
+    --color: var(--vb-blanco);
+  }
+  
+  .metric-card {
+    --background: #bfa054; /* Color dorado/marrón de tus botones */
+    margin: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  
+    .metric-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+  
+    .metric-value {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin: 5px 0;
+      color: #ffffff;
+    }
+  
+    .metric-title {
+      font-size: 0.85rem;
+      color: #f1f1f1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  ion-card {
+    --background: #4f3b63; /* Violeta ligeramente más oscuro para las tarjetas de contenido */
+    color: #ffffff;
+  
+    ion-card-title {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    
+    ion-card-subtitle {
+      color: #d1c4e9;
+    }
+  }
+  
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.95); /* Fondo blanco claro para resaltar las barras del gráfico */
+    padding: 10px;
+    border-radius: 8px;
+  }

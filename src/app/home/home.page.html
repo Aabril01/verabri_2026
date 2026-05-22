@@ -83,6 +83,11 @@
       <ion-icon name="qr-code-outline" slot="start"></ion-icon>
       Escanear mesa
     </ion-button>
+
+    <ion-button expand="block" class="boton-menu" (click)="irAEstadistica()">
+      <ion-icon name="podium-outline" slot="start"></ion-icon>
+      Ver las estadísticas
+    </ion-button>
   </div>
 
     <!-- CLIENTE ANÓNIMO -->
@@ -90,6 +95,11 @@
       <ion-button expand="block" routerLink="/ingreso-anonimo" class="boton-menu">
         <ion-icon name="enter-outline" slot="start"></ion-icon>
         Ingresar al local
+      </ion-button>
+
+      <ion-button expand="block" class="boton-menu" (click)="irAEstadistica()">
+        <ion-icon name="podium-outline" slot="start"></ion-icon>
+        Ver las estadísticas
       </ion-button>
     </div>
 

@@ -111,4 +111,8 @@ export class HomePage implements OnInit {
     });
     await toast.present();
   }
+
+  irAEstadistica() {
+    this.router.navigateByUrl(`/estadistica`);
+  }
 }

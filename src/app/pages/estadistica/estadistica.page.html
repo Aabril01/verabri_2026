@@ -1,0 +1,84 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Estadísticas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding background-custom">
+
+  <div *ngIf="cargando" class="ion-text-center ion-padding-top">
+    <ion-spinner name="crescent" color="light"></ion-spinner>
+    <p>Calculando métricas del restaurante...</p>
+  </div>
+
+  <div *ngIf="!cargando && totalEncuestas === 0" class="ion-text-center ion-padding">
+    <ion-icon name="analytics-outline" style="font-size: 64px;" color="medium"></ion-icon>
+    <p>Todavía no hay encuestas registradas.</p>
+  </div>
+
+  <div [hidden]="cargando || totalEncuestas === 0">
+
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="metric-card">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="star" color="warning" class="metric-icon"></ion-icon>
+              <h1 class="metric-value">{{ valoracionGeneral }}</h1>
+              <p class="metric-title">Gral. Promedio</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-card class="metric-card">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="heart" class="metric-icon" style="color: #e63946;"></ion-icon>
+              <h1 class="metric-value">{{ porcentajeVolveria }}%</h1>
+              <p class="metric-title">Volverían</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-card class="info-card">
+      <ion-item lines="none" class="transparent-item">
+        <ion-icon slot="start" name="document-text-outline" color="warning"></ion-icon>
+        <ion-label>
+          <h2 style="color: #bfa054; font-weight: bold;">Muestra Total</h2>
+          <p style="color: #e0d8ea;">{{ totalEncuestas }} encuestas completadas por clientes.</p>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+
+    <ion-card class="section-card">
+      <ion-card-header>
+        <ion-card-title>Rendimiento por Aspecto</ion-card-title>
+        <ion-card-subtitle>Desglose promedio de satisfacción</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #barCanvas></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="section-card" *ngIf="comentarios.length > 0">
+      <ion-card-header>
+        <ion-card-title>Sugerencias y Comentarios</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="comentario-bubble" *ngFor="let com of comentarios">
+          <ion-icon name="chatbubble-ellipses-outline" color="warning"></ion-icon>
+          <p>« {{ com }} »</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
+</ion-content>
