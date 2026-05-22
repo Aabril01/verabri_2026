@@ -122,6 +122,11 @@ const routes: Routes = [
     path: 'juego-piedra-papel-tijera/:mesaId/:pedidoId',
     loadChildren: () => import('./pages/juego-piedra-papel-tijera/juego-piedra-papel-tijera.module').then(m => m.JuegoPiedraPapelTijeraPageModule)
   },
+  {
+    path: 'encuesta/:pedidoId/:usuarioId/:mesaId',
+    loadChildren: () => import('./pages/encuesta/encuesta.module').then( m => m.EncuestaPageModule)
+  },
+
 
 ];
 

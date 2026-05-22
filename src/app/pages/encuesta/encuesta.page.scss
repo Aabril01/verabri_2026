@@ -1,0 +1,15 @@
+.toolbar-verabri {
+    --background: var(--vb-acento);
+    --color: var(--vb-blanco);
+  }
+
+  ion-select {
+    // Remueve el fondo blanco del contenedor del select
+    --background: transparent;
+    background: transparent;
+  }
+  
+  ion-item {
+    // Por si el ion-item también está forzando algún fondo interno
+    --background: transparent; 
+  }

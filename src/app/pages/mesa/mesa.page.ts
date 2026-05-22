@@ -18,6 +18,7 @@ export class MesaPage implements OnInit {
   pedidoActual: any = null;
   cargando = true;
   segmentoActivo: 'info' | 'platos' | 'bebidas' = 'info';
+  encuestaHabilitada: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,6 +31,11 @@ export class MesaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('id') || '';
     await this.cargarDatos();
+
+    //La encuesta se habilita UNA vez por ocasión
+    if(this.pedidoActual.encuesta_realizada == false){
+      this.encuestaHabilitada = true;
+    }
   }
 
   async ionViewWillEnter() {
@@ -167,6 +173,10 @@ export class MesaPage implements OnInit {
     this.router.navigateByUrl(`/pedido/${this.mesaId}`);
   }
 
+  irAEncuesta() {
+    this.router.navigateByUrl(`/encuesta/${this.pedidoActual.id}/${this.mesa.cliente_id}/${this.mesaId}`);
+  }
+
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -177,4 +187,5 @@ export class MesaPage implements OnInit {
     });
     await toast.present();
   }
+
 }
