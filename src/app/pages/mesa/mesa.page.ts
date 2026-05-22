@@ -90,6 +90,24 @@ export class MesaPage implements OnInit {
     }
   }
 
+  async confirmarRecepcion() {
+    try {
+      await this.supabaseService.client
+        .from('pedidos')
+        .update({ estado: 'recibido' })
+        .eq('id', this.pedidoActual.id);
+
+      await this.mostrarToast('¡Recepción confirmada! Ya podés pedir la cuenta.', 'success');
+      await this.cargarDatos();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  pedirCuenta() {
+    // Lo implementamos en el punto 21
+  }
+
   cambiarSegmento(evento: any) {
     this.segmentoActivo = evento.detail.value;
   }
@@ -103,16 +121,25 @@ export class MesaPage implements OnInit {
     return tipos[tipo] || tipo;
   }
 
+  getEstadoPreparacion(): string {
+    const p = this.pedidoActual;
+    if (p.cocina_listo && p.bar_listo) return '✅ Todo listo — esperando al mozo';
+    if (p.cocina_listo) return '🍽️ Cocina lista — bar en preparación';
+    if (p.bar_listo) return '🥤 Bar listo — cocina en preparación';
+    return '🔄 En preparación (cocina y bar)';
+  }
+
   getEstadoPedido(): string {
     if (!this.pedidoActual) return '';
     const estados: any = {
       'pendiente': 'Esperando confirmación del mozo',
-      'confirmado': 'Pedido confirmado — en preparación',
+      'confirmado': this.getEstadoPreparacion(),
       'en_cocina': 'En cocina',
       'en_bar': 'En bar',
-      'listo': '¡Pedido listo para entregar!',
-      'entregado': 'Pedido entregado',
+      'listo': '✅ ¡Pedido listo! El mozo lo llevará pronto',
+      'entregado': '¡Tu pedido está en camino! Confirmá cuando llegue.',
       'rechazado': '⚠️ Pedido rechazado — podés modificarlo',
+      'recibido': '✅ Pedido recibido — ¡buen provecho!',
     };
     return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
   }
@@ -127,6 +154,7 @@ export class MesaPage implements OnInit {
       'listo': 'success',
       'entregado': 'success',
       'rechazado': 'danger',
+      'recibido': 'success',
     };
     return colores[this.pedidoActual.estado] || 'medium';
   }

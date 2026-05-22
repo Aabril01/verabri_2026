@@ -27,6 +27,12 @@
       </div>
     </div>
 
+    <!-- AVISO YA JUGÓ ANTES -->
+    <div class="aviso-ya-jugo" *ngIf="yaJugoAntes">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <p>Ya jugaste este juego. Podés seguir jugando por diversión, pero el descuento no se aplicará.</p>
+    </div>
+
     <div class="tablero">
       <div
         *ngFor="let carta of cartas"
@@ -53,8 +59,11 @@
     <p class="resultado-texto" *ngIf="gano">
       Encontraste todos los pares sin errores y ganás un <strong>{{ descuento }}% de descuento</strong>.
     </p>
-    <p class="resultado-texto" *ngIf="!gano">
+    <p class="resultado-texto" *ngIf="!gano && !yaJugoAntes">
       Completaste el juego con {{ intentos }} intentos. Necesitabas {{ totalParejas }} para ganar el descuento.
+    </p>
+    <p class="resultado-texto" *ngIf="!gano && yaJugoAntes">
+      ¡Buen juego! Recordá que ya usaste tu primer intento en este juego.
     </p>
 
     <div class="resultado-stats">

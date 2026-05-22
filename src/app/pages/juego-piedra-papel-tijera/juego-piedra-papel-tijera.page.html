@@ -19,6 +19,12 @@
       </div>
     </div>
 
+    <!-- AVISO YA JUGÓ ANTES -->
+    <div class="aviso-ya-jugo" *ngIf="yaJugoAntes">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <p>Ya jugaste este juego. Podés seguir jugando por diversión, pero el descuento no se aplicará.</p>
+    </div>
+
     <div class="marcador">
       <div class="marcador-item">
         <span class="marcador-numero jugador">{{ victorias }}</span>
@@ -75,17 +81,20 @@
   <!-- RESULTADO FINAL -->
   <div class="resultado-contenedor" *ngIf="juegoTerminado">
 
-    <div class="resultado-icon" [class.resultado-ganador]="gano" [class.resultado-perdedor]="!gano">
-      <ion-icon [name]="gano ? 'trophy-outline' : 'sad-outline'"></ion-icon>
+    <div class="resultado-icon" [class.resultado-ganador]="victorias > derrotas" [class.resultado-perdedor]="victorias <= derrotas">
+      <ion-icon [name]="victorias > derrotas ? 'trophy-outline' : 'sad-outline'"></ion-icon>
     </div>
 
-    <h2 class="resultado-titulo">{{ gano ? '¡Ganaste!' : '¡Perdiste!' }}</h2>
+    <h2 class="resultado-titulo">{{ victorias > derrotas ? '¡Ganaste!' : '¡Perdiste!' }}</h2>
 
     <p class="resultado-texto" *ngIf="gano">
       Ganaste {{ victorias }} de {{ totalRondas }} rondas y te ganás un <strong>{{ descuento }}% de descuento</strong>.
     </p>
-    <p class="resultado-texto" *ngIf="!gano">
+    <p class="resultado-texto" *ngIf="!gano && !yaJugoAntes">
       Ganaste {{ victorias }} de {{ totalRondas }} rondas. Necesitabas ganar 2 para el descuento.
+    </p>
+    <p class="resultado-texto" *ngIf="!gano && yaJugoAntes">
+      ¡Buen juego! Recordá que ya usaste tu primer intento en este juego.
     </p>
 
     <div class="resultado-stats">

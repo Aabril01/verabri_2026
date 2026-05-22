@@ -14,6 +14,7 @@ export class JuegoPiedraPapelTijeraPage implements OnInit {
 
   mesaId: string = '';
   pedidoId: string = '';
+  yaJugoAntes = false;
 
   opciones: Opcion[] = ['piedra', 'papel', 'tijera'];
   emojis: Record<Opcion, string> = {
@@ -42,9 +43,23 @@ export class JuegoPiedraPapelTijeraPage implements OnInit {
     private supabaseService: SupabaseService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
     this.pedidoId = this.route.snapshot.paramMap.get('pedidoId') || '';
+    await this.verificarPrimerIntento();
+  }
+
+  async verificarPrimerIntento() {
+    if (!this.pedidoId) return;
+    const { data } = await this.supabaseService.client
+      .from('pedidos')
+      .select('juegos_jugados')
+      .eq('id', this.pedidoId)
+      .single();
+
+    if (data?.juegos_jugados?.includes('ppt')) {
+      this.yaJugoAntes = true;
+    }
   }
 
   elegir(opcion: Opcion) {
@@ -89,11 +104,35 @@ export class JuegoPiedraPapelTijeraPage implements OnInit {
   }
 
   async terminarJuego() {
-    this.juegoTerminado = true;
-    this.gano = this.victorias > this.derrotas;
+  this.juegoTerminado = true;
+    const ganoElJuego = this.victorias > this.derrotas;
+    this.gano = ganoElJuego && !this.yaJugoAntes;
 
-    if (this.gano && this.pedidoId) {
+    await this.marcarJugado();
+
+    if (ganoElJuego && !this.yaJugoAntes && this.pedidoId) {
       await this.aplicarDescuento();
+    }
+  }
+
+  async marcarJugado() {
+    if (!this.pedidoId || this.yaJugoAntes) return;
+    try {
+      const { data } = await this.supabaseService.client
+        .from('pedidos')
+        .select('juegos_jugados')
+        .eq('id', this.pedidoId)
+        .single();
+
+      const jugados = data?.juegos_jugados || [];
+      if (!jugados.includes('ppt')) {
+        await this.supabaseService.client
+          .from('pedidos')
+          .update({ juegos_jugados: [...jugados, 'ppt'] })
+          .eq('id', this.pedidoId);
+      }
+    } catch (error) {
+      console.error('Error al marcar juego:', error);
     }
   }
 

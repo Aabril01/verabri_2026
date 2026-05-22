@@ -19,6 +19,7 @@ export class JuegoTriviaPage implements OnInit {
 
   mesaId: string = '';
   pedidoId: string = '';
+  yaJugoAntes = false;
 
   preguntas: Pregunta[] = [
     {
@@ -64,9 +65,24 @@ export class JuegoTriviaPage implements OnInit {
     private supabaseService: SupabaseService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
     this.pedidoId = this.route.snapshot.paramMap.get('pedidoId') || '';
+    await this.verificarPrimerIntento();
+  }
+
+  async verificarPrimerIntento() {
+    if (!this.pedidoId) return;
+    const { data } = await this.supabaseService.client
+      .from('pedidos')
+      .select('juegos_jugados')
+      .eq('id', this.pedidoId)
+      .single();
+
+    if (data?.juegos_jugados?.includes('trivia')) {
+      this.yaJugoAntes = true;
+      this.primerIntento = false;
+    }
   }
 
   seleccionarRespuesta(index: number) {
@@ -94,26 +110,46 @@ export class JuegoTriviaPage implements OnInit {
 
   async terminarJuego() {
     this.juegoTerminado = true;
-    this.gano = this.correctas === this.preguntas.length && this.primerIntento;
+    this.gano = this.correctas === this.preguntas.length && this.primerIntento && !this.yaJugoAntes;
+
+    // Marcar que ya jugó este juego
+    await this.marcarJugado();
 
     if (this.gano && this.pedidoId) {
       await this.aplicarDescuento();
     }
   }
 
+  async marcarJugado() {
+    if (!this.pedidoId || this.yaJugoAntes) return;
+    try {
+      const { data } = await this.supabaseService.client
+        .from('pedidos')
+        .select('juegos_jugados')
+        .eq('id', this.pedidoId)
+        .single();
+
+      const jugados = data?.juegos_jugados || [];
+      if (!jugados.includes('trivia')) {
+        await this.supabaseService.client
+          .from('pedidos')
+          .update({ juegos_jugados: [...jugados, 'trivia'] })
+          .eq('id', this.pedidoId);
+      }
+    } catch (error) {
+      console.error('Error al marcar juego:', error);
+    }
+  }
+
   async aplicarDescuento() {
     try {
-      // Verificar que no tenga ya un descuento
       const { data: pedido } = await this.supabaseService.client
         .from('pedidos')
         .select('descuento_pct, total, subtotal')
         .eq('id', this.pedidoId)
         .single();
 
-      if (pedido && pedido.descuento_pct > 0) {
-        // Ya tiene descuento, no aplicar otro
-        return;
-      }
+      if (pedido && pedido.descuento_pct > 0) return;
 
       const subtotal = pedido?.subtotal || 0;
       const nuevoTotal = subtotal * (1 - this.descuento / 100);

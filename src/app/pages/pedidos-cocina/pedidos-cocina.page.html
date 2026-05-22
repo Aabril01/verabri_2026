@@ -28,7 +28,7 @@
           <ion-icon name="restaurant-outline"></ion-icon>
           <span>Mesa {{ pedido.mesas?.numero }}</span>
         </div>
-        <div class="pedido-hora">{{ formatearHora(pedido.created_at) }}</div>
+        <div class="pedido-hora">{{ formatearFecha(pedido.created_at) }}</div>
       </div>
 
       <div class="pedido-items">
@@ -43,7 +43,7 @@
       </div>
 
       <div class="pedido-acciones">
-        <ion-button expand="block" color="success" (click)="marcarListo(pedido.id)">
+        <ion-button expand="block" color="success" (click)="marcarListo(pedido)">
           <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
           Platos listos
         </ion-button>

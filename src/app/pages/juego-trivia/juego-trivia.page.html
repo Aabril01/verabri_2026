@@ -22,6 +22,11 @@
       <span>Ganás {{ descuento }}% de descuento</span>
     </div>
 
+    <div class="aviso-ya-jugo" *ngIf="yaJugoAntes">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <p>Ya jugaste este juego. Podés seguir jugando por diversión, pero el descuento no se aplicará.</p>
+    </div>
+
     <div class="pregunta-card">
       <p class="pregunta-texto">{{ preguntas[preguntaActual].texto }}</p>
     </div>

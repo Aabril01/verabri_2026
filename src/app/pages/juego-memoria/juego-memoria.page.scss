@@ -183,3 +183,17 @@
   height: 52px;
   font-weight: 600;
 }
+
+.aviso-ya-jugo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(255, 196, 9, 0.15);
+  border: 1px solid var(--ion-color-warning);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 4px;
+
+  ion-icon { font-size: 20px; color: var(--ion-color-warning); flex-shrink: 0; margin-top: 2px; }
+  p { font-size: 13px; color: var(--vb-texto); margin: 0; line-height: 1.5; }
+}

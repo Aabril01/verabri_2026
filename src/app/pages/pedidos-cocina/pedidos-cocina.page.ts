@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from '../../services/push-notifications';
 
 @Component({
   standalone: false,
@@ -15,6 +16,7 @@ export class PedidosCocinaPage implements OnInit {
 
   constructor(
     private supabaseService: SupabaseService,
+    private pushNotification: PushNotification,
     private loadingController: LoadingController,
     private toastController: ToastController
   ) {}
@@ -47,6 +49,7 @@ export class PedidosCocinaPage implements OnInit {
           )
         `)
         .in('estado', ['confirmado', 'en_cocina'])
+        .eq('cocina_listo', false)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -69,7 +72,7 @@ export class PedidosCocinaPage implements OnInit {
     return pedido.pedido_items.filter((item: any) => item.productos?.tipo === 'plato');
   }
 
-  async marcarListo(pedidoId: string) {
+  async marcarListo(pedido: any) {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
       message: 'Actualizando...',
@@ -78,14 +81,43 @@ export class PedidosCocinaPage implements OnInit {
     await loading.present();
 
     try {
-      const { error } = await this.supabaseService.client
+      // Marcar cocina como lista
+      await this.supabaseService.client
         .from('pedidos')
-        .update({ estado: 'listo' })
-        .eq('id', pedidoId);
+        .update({ cocina_listo: true })
+        .eq('id', pedido.id);
 
-      if (error) throw error;
+      // Verificar si el bar también está listo
+      const { data: pedidoActual } = await this.supabaseService.client
+        .from('pedidos')
+        .select('bar_listo, cocina_listo, mesas(numero)')
+        .eq('id', pedido.id)
+        .single();
 
-      await this.mostrarToast('¡Platos listos! El mozo fue notificado.', 'success');
+      const tieneBebidas = pedido.pedido_items.some((item: any) => item.productos?.tipo === 'bebida');
+
+      // Si no tiene bebidas o el bar ya terminó → pedido completo
+      if (!tieneBebidas || pedidoActual?.bar_listo) {
+        await this.supabaseService.client
+          .from('pedidos')
+          .update({ estado: 'listo' })
+          .eq('id', pedido.id);
+
+        // Push al mozo
+        try {
+          await this.pushNotification.sendGlobalPushNotification(
+            '✅ Pedido listo',
+            `El pedido de Mesa ${pedido.mesas?.numero} está completo para entregar.`
+          );
+        } catch (e) {
+          console.warn('Error push:', e);
+        }
+
+        await this.mostrarToast('¡Pedido completo! El mozo fue notificado.', 'success');
+      } else {
+        await this.mostrarToast('¡Platos listos! Esperando que el bar termine.', 'success');
+      }
+
       await this.cargarPedidos();
 
     } catch (error: any) {
@@ -96,10 +128,11 @@ export class PedidosCocinaPage implements OnInit {
     }
   }
 
-  formatearHora(fecha: string): string {
+  formatearFecha(fecha: string): string {
     if (!fecha) return '';
     const d = new Date(fecha);
-    return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }) +
+      ' ' + d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
   }
 
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {

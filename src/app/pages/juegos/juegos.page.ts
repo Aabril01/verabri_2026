@@ -50,7 +50,7 @@ export class JuegosPage implements OnInit {
   }
 
   async cargarPedido() {
-    const { data } = await this.supabaseService.client
+    const { data, error } = await this.supabaseService.client
       .from('pedidos')
       .select('id, descuento_pct')
       .eq('mesa_id', this.mesaId)
@@ -59,6 +59,9 @@ export class JuegosPage implements OnInit {
       .limit(1)
       .maybeSingle();
 
+      console.log('Pedido data:', data);
+      console.log('Pedido error:', error);
+
     if (data) {
       this.pedidoId = data.id;
       this.tieneDescuento = data.descuento_pct > 0;
@@ -66,6 +69,8 @@ export class JuegosPage implements OnInit {
   }
 
   irAlJuego(clave: string) {
+      console.log('mesaId:', this.mesaId);
+      console.log('pedidoId:', this.pedidoId);
     this.router.navigateByUrl(`/juego-${clave === 'ppt' ? 'piedra-papel-tijera' : clave}/${this.mesaId}/${this.pedidoId}`);
   }
 }

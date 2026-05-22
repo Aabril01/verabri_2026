@@ -80,16 +80,40 @@
         <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
         Consultar al mozo
       </ion-button>
+
+      <!-- HACER/MODIFICAR PEDIDO -->
       <ion-button expand="block" class="boton-accion" (click)="irAlPedido()"
         *ngIf="!pedidoActual || pedidoActual.estado === 'pendiente' || pedidoActual.estado === 'rechazado'">
         <ion-icon name="cart-outline" slot="start"></ion-icon>
         {{ (pedidoActual?.estado === 'pendiente' || pedidoActual?.estado === 'rechazado') ? 'Modificar pedido' : 'Hacer pedido' }}
       </ion-button>
+
+      <!-- JUEGOS -->
       <ion-button expand="block" class="boton-accion" [routerLink]="['/juegos', mesaId]"
         *ngIf="pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'">
         <ion-icon name="game-controller-outline" slot="start"></ion-icon>
         Juegos y descuentos
       </ion-button>
+
+      <!-- CONFIRMAR RECEPCION -->
+      <ion-button expand="block" class="boton-accion boton-recepcion" (click)="confirmarRecepcion()"
+        *ngIf="pedidoActual?.estado === 'entregado'">
+        <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+        Confirmar recepción
+      </ion-button>
+
+      <!-- ENCUESTA Y CUENTA (después de recibido) -->
+      <ion-button expand="block" class="boton-accion" routerLink="/encuesta"
+        *ngIf="pedidoActual?.estado === 'recibido'">
+        <ion-icon name="star-outline" slot="start"></ion-icon>
+        Completar encuesta
+      </ion-button>
+      <ion-button expand="block" class="boton-accion" (click)="pedirCuenta()"
+        *ngIf="pedidoActual?.estado === 'recibido'">
+        <ion-icon name="receipt-outline" slot="start"></ion-icon>
+        Pedir la cuenta
+      </ion-button>
+
     </div>
   </div>
 

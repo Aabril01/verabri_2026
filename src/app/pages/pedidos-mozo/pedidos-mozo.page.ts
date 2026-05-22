@@ -28,6 +28,10 @@ export class PedidosMozoPage implements OnInit {
     await this.cargarPedidos();
   }
 
+  async ionViewWillEnter() {
+    await this.cargarPedidos();
+  }
+
   async cargarPedidos() {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
@@ -49,7 +53,7 @@ export class PedidosMozoPage implements OnInit {
             productos (nombre, tipo)
           )
         `)
-        .in('estado', ['pendiente', 'rechazado'])
+        .in('estado', ['pendiente', 'rechazado', 'confirmado', 'listo'])
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -62,6 +66,22 @@ export class PedidosMozoPage implements OnInit {
       await loading.dismiss();
       this.cargando = false;
     }
+  }
+
+  getEstadoPreparacion(pedido: any): string {
+    if (pedido.estado === 'listo') return '✅ Listo para entregar';
+    if (pedido.cocina_listo && pedido.bar_listo) return '✅ Todo listo';
+    if (pedido.cocina_listo) return '🍽️ Cocina lista — bar en preparación';
+    if (pedido.bar_listo) return '🥤 Bar listo — cocina en preparación';
+    return '🔄 En preparación';
+  }
+
+  getColorEstado(pedido: any): string {
+    if (pedido.estado === 'listo') return 'success';
+    if (pedido.estado === 'rechazado') return 'danger';
+    if (pedido.estado === 'pendiente') return 'warning';
+    if (pedido.cocina_listo || pedido.bar_listo) return 'tertiary';
+    return 'primary';
   }
 
   async confirmarPedido(pedido: any) {
@@ -100,6 +120,24 @@ export class PedidosMozoPage implements OnInit {
     await alert.present();
   }
 
+  async entregarPedido(pedido: any) {
+    const alert = await this.alertController.create({
+      header: 'Entregar pedido',
+      message: `¿Confirmás la entrega del pedido a la Mesa ${pedido.mesas?.numero}?`,
+      cssClass: 'alerta-verabri',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Entregar',
+          handler: async () => {
+            await this.cambiarEstadoPedido(pedido, 'entregado');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async cambiarEstadoPedido(pedido: any, estado: string) {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
@@ -116,7 +154,7 @@ export class PedidosMozoPage implements OnInit {
 
       if (error) throw error;
 
-      // ── PUSH NOTIFICATION PUNTO 13 — Mozo rechaza → notificar al cliente ──
+      // ── PUSH PUNTO 13 — Mozo rechaza → notificar al cliente ──
       if (estado === 'rechazado' && pedido.cliente_id) {
         try {
           await this.pushNotification.enviarPushNotificationPorID(
@@ -129,7 +167,7 @@ export class PedidosMozoPage implements OnInit {
         }
       }
 
-      // ── PUSH NOTIFICATION PUNTO 14 — Mozo confirma → notificar a cocina y bar ──
+      // ── PUSH PUNTO 14 — Mozo confirma → notificar a cocina y bar ──
       if (estado === 'confirmado') {
         try {
           await this.pushNotification.sendGlobalPushNotification(
@@ -141,10 +179,26 @@ export class PedidosMozoPage implements OnInit {
         }
       }
 
-      await this.mostrarToast(
-        estado === 'confirmado' ? 'Pedido confirmado y enviado a cocina y bar.' : 'Pedido rechazado.',
-        'success'
-      );
+      // ── PUSH PUNTO 19 — Mozo entrega → notificar al cliente ──
+      if (estado === 'entregado' && pedido.cliente_id) {
+        try {
+          await this.pushNotification.enviarPushNotificationPorID(
+            '🍽️ ¡Tu pedido llegó!',
+            `El mozo entregó tu pedido en la Mesa ${pedido.mesas?.numero}. ¡Buen provecho!`,
+            pedido.cliente_id
+          );
+        } catch (pushError) {
+          console.warn('No se pudo enviar push al cliente:', pushError);
+        }
+      }
+
+      const mensajes: any = {
+        'confirmado': 'Pedido confirmado y enviado a cocina y bar.',
+        'rechazado': 'Pedido rechazado.',
+        'entregado': 'Pedido entregado al cliente.'
+      };
+
+      await this.mostrarToast(mensajes[estado] || 'Pedido actualizado.', 'success');
       await this.cargarPedidos();
 
     } catch (error: any) {

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
     </ion-buttons>
-    <ion-title>Pedidos Pendientes</ion-title>
+    <ion-title>Pedidos</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cargarPedidos()">
         <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
@@ -35,6 +35,13 @@
         <div class="pedido-hora">{{ formatearHora(pedido.created_at) }}</div>
       </div>
 
+      <!-- ESTADO DE PREPARACION -->
+      <div class="pedido-estado" *ngIf="pedido.estado === 'confirmado' || pedido.estado === 'listo'">
+        <ion-badge [color]="getColorEstado(pedido)">
+          {{ getEstadoPreparacion(pedido) }}
+        </ion-badge>
+      </div>
+
       <!-- ITEMS DEL PEDIDO -->
       <div class="pedido-items">
         <div class="item-row" *ngFor="let item of pedido.pedido_items">
@@ -53,13 +60,21 @@
         <span class="total-monto">${{ pedido.total }}</span>
       </div>
 
-      <!-- BOTONES -->
-      <div class="pedido-acciones">
+      <!-- BOTONES PENDIENTE/RECHAZADO -->
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente' || pedido.estado === 'rechazado'">
         <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)">
           Rechazar
         </ion-button>
         <ion-button expand="block" color="success" (click)="confirmarPedido(pedido)">
           Confirmar
+        </ion-button>
+      </div>
+
+      <!-- BOTÓN ENTREGAR -->
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'listo'">
+        <ion-button expand="block" color="success" (click)="entregarPedido(pedido)">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Entregar pedido
         </ion-button>
       </div>
 
