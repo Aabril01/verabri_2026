@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Piedra Papel Tijera</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ppt-content">
+
+  <!-- JUEGO EN CURSO -->
+  <div class="juego-contenedor" *ngIf="!juegoTerminado">
+
+    <div class="info-header">
+      <div class="premio-badge">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <span>Ganás {{ descuento }}% si ganás 2 de 3</span>
+      </div>
+    </div>
+
+    <div class="marcador">
+      <div class="marcador-item">
+        <span class="marcador-numero jugador">{{ victorias }}</span>
+        <span class="marcador-label">Vos</span>
+      </div>
+      <div class="marcador-ronda">
+        <span>Ronda {{ rondaActual }} de {{ totalRondas }}</span>
+      </div>
+      <div class="marcador-item">
+        <span class="marcador-numero maquina">{{ derrotas }}</span>
+        <span class="marcador-label">Máquina</span>
+      </div>
+    </div>
+
+    <!-- ARENA -->
+    <div class="arena">
+      <div class="jugador-lado">
+        <p class="lado-label">Vos</p>
+        <div class="emoji-grande" [class.animando]="animando">
+          {{ eleccionJugador ? emojis[eleccionJugador] : '❓' }}
+        </div>
+      </div>
+
+      <div class="vs-texto">VS</div>
+
+      <div class="jugador-lado">
+        <p class="lado-label">Máquina</p>
+        <div class="emoji-grande" [class.animando]="animando">
+          {{ eleccionMaquina ? emojis[eleccionMaquina] : '❓' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADO RONDA -->
+    <div class="resultado-ronda" *ngIf="resultadoRonda">
+      <ion-chip [color]="getColorResultado()">
+        {{ getTextoResultado() }}
+      </ion-chip>
+    </div>
+
+    <!-- OPCIONES -->
+    <div class="opciones-contenedor" *ngIf="!animando && !resultadoRonda">
+      <p class="opciones-label">Elegí tu jugada:</p>
+      <div class="opciones-grid">
+        <div class="opcion-btn" *ngFor="let opcion of opciones" (click)="elegir(opcion)">
+          <span class="opcion-emoji">{{ emojis[opcion] }}</span>
+          <span class="opcion-nombre">{{ opcion | titlecase }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTADO FINAL -->
+  <div class="resultado-contenedor" *ngIf="juegoTerminado">
+
+    <div class="resultado-icon" [class.resultado-ganador]="gano" [class.resultado-perdedor]="!gano">
+      <ion-icon [name]="gano ? 'trophy-outline' : 'sad-outline'"></ion-icon>
+    </div>
+
+    <h2 class="resultado-titulo">{{ gano ? '¡Ganaste!' : '¡Perdiste!' }}</h2>
+
+    <p class="resultado-texto" *ngIf="gano">
+      Ganaste {{ victorias }} de {{ totalRondas }} rondas y te ganás un <strong>{{ descuento }}% de descuento</strong>.
+    </p>
+    <p class="resultado-texto" *ngIf="!gano">
+      Ganaste {{ victorias }} de {{ totalRondas }} rondas. Necesitabas ganar 2 para el descuento.
+    </p>
+
+    <div class="resultado-stats">
+      <div class="stat-item">
+        <span class="stat-numero jugador">{{ victorias }}</span>
+        <span class="stat-label">Victorias</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero maquina">{{ derrotas }}</span>
+        <span class="stat-label">Derrotas</span>
+      </div>
+    </div>
+
+    <ion-button expand="block" class="boton-volver" (click)="volver()">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Volver a los juegos
+    </ion-button>
+
+  </div>
+
+</ion-content>

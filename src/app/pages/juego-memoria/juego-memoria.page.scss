@@ -1,0 +1,185 @@
+.memoria-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.juego-contenedor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── INFO HEADER ───────────────────────────────────────────────
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vb-texto-suave);
+
+  ion-icon { font-size: 16px; }
+}
+
+.premio-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201, 148, 58, 0.2);
+  border: 1px solid var(--vb-acento);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vb-acento);
+
+  ion-icon { font-size: 14px; }
+}
+
+// ── TABLERO ───────────────────────────────────────────────────
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.carta {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+
+  &.carta-volteada {
+    transform: rotateY(180deg);
+  }
+
+  &.carta-encontrada {
+    transform: rotateY(180deg);
+    .carta-dorso {
+      background: rgba(45, 211, 111, 0.2);
+      border-color: var(--ion-color-success);
+    }
+  }
+}
+
+.carta-frente,
+.carta-dorso {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+
+.carta-frente {
+  background: var(--vb-card);
+  border: 2px solid rgba(240,230,211,0.2);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--vb-acento);
+}
+
+.carta-dorso {
+  background: var(--vb-card);
+  border: 2px solid var(--vb-acento);
+  font-size: 32px;
+  transform: rotateY(180deg);
+}
+
+// ── RESULTADO ─────────────────────────────────────────────────
+.resultado-contenedor {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.resultado-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon { font-size: 56px; }
+
+  &.resultado-ganador {
+    background: rgba(201, 148, 58, 0.2);
+    border: 3px solid var(--vb-acento);
+    ion-icon { color: var(--vb-acento); }
+  }
+
+  &.resultado-perdedor {
+    background: rgba(235, 68, 90, 0.1);
+    border: 3px solid var(--ion-color-danger);
+    ion-icon { color: var(--ion-color-danger); }
+  }
+}
+
+.resultado-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--vb-texto);
+  margin: 0;
+}
+
+.resultado-texto {
+  font-size: 15px;
+  color: var(--vb-texto-suave);
+  margin: 0;
+  line-height: 1.6;
+
+  strong { color: var(--vb-acento); }
+}
+
+.resultado-stats {
+  display: flex;
+  gap: 32px;
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    .stat-numero {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--vb-acento);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--vb-texto-suave);
+    }
+  }
+}
+
+.boton-volver {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  width: 100%;
+  height: 52px;
+  font-weight: 600;
+}

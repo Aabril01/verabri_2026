@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Trivia Gastronómica</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="trivia-content">
+
+  <!-- JUEGO EN CURSO -->
+  <div class="juego-contenedor" *ngIf="!juegoTerminado">
+
+    <div class="progreso-header">
+      <span class="progreso-texto">Pregunta {{ preguntaActual + 1 }} de {{ preguntas.length }}</span>
+      <ion-progress-bar [value]="progreso / 100" color="warning"></ion-progress-bar>
+    </div>
+
+    <div class="premio-badge">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <span>Ganás {{ descuento }}% de descuento</span>
+    </div>
+
+    <div class="pregunta-card">
+      <p class="pregunta-texto">{{ preguntas[preguntaActual].texto }}</p>
+    </div>
+
+    <div class="opciones-contenedor">
+      <div
+        *ngFor="let opcion of preguntas[preguntaActual].opciones; let i = index"
+        class="opcion-btn"
+        [class.opcion-correcta]="respondido && esCorrecta(i)"
+        [class.opcion-incorrecta]="esIncorrecta(i)"
+        [class.opcion-disabled]="respondido"
+        (click)="seleccionarRespuesta(i)">
+        <span class="opcion-letra">{{ ['A', 'B', 'C', 'D'][i] }}</span>
+        <span class="opcion-texto">{{ opcion }}</span>
+        <ion-icon name="checkmark-circle" *ngIf="respondido && esCorrecta(i)" class="icono-resultado correcto"></ion-icon>
+        <ion-icon name="close-circle" *ngIf="esIncorrecta(i)" class="icono-resultado incorrecto"></ion-icon>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTADO FINAL -->
+  <div class="resultado-contenedor" *ngIf="juegoTerminado">
+
+    <div class="resultado-icon" [class.resultado-ganador]="gano" [class.resultado-perdedor]="!gano">
+      <ion-icon [name]="gano ? 'trophy-outline' : 'sad-outline'"></ion-icon>
+    </div>
+
+    <h2 class="resultado-titulo">{{ gano ? '¡Ganaste!' : '¡Casi!' }}</h2>
+
+    <p class="resultado-texto" *ngIf="gano">
+      Respondiste todo bien y ganás un <strong>{{ descuento }}% de descuento</strong> en tu cuenta.
+    </p>
+    <p class="resultado-texto" *ngIf="!gano">
+      Respondiste {{ correctas }} de {{ preguntas.length }} correctamente. El descuento solo se aplica si respondés todo bien en el primer intento.
+    </p>
+
+    <div class="resultado-stats">
+      <div class="stat-item">
+        <span class="stat-numero">{{ correctas }}</span>
+        <span class="stat-label">Correctas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero">{{ preguntas.length - correctas }}</span>
+        <span class="stat-label">Incorrectas</span>
+      </div>
+    </div>
+
+    <ion-button expand="block" class="boton-volver" (click)="volver()">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Volver a los juegos
+    </ion-button>
+
+  </div>
+
+</ion-content>

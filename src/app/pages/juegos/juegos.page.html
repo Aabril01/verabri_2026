@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Juegos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="juegos-content" fullscreen>
+
+  <div class="juegos-header">
+    <ion-icon name="game-controller-outline" class="header-icon"></ion-icon>
+    <h2>¡Jugá y ganá descuentos!</h2>
+    <p *ngIf="!tieneDescuento">Solo se aplica el primer descuento que obtengas ganando en el primer intento</p>
+    <div class="descuento-obtenido" *ngIf="tieneDescuento">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <p>¡Ya tenés un descuento aplicado! Podés seguir jugando libremente.</p>
+    </div>
+  </div>
+
+  <div class="juegos-lista">
+    <div class="juego-card" *ngFor="let juego of juegos" (click)="irAlJuego(juego.clave)">
+
+      <div class="juego-emoji">{{ juego.emoji }}</div>
+
+      <div class="juego-info">
+        <h3 class="juego-nombre">{{ juego.nombre }}</h3>
+        <p class="juego-descripcion">{{ juego.descripcion }}</p>
+      </div>
+
+      <div class="juego-descuento" [class.descuento-bloqueado]="tieneDescuento">
+        <span class="descuento-numero">{{ juego.descuento }}%</span>
+        <span class="descuento-label">OFF</span>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>

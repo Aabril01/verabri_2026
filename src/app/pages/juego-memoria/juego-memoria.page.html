@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Juego de Memoria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="memoria-content">
+
+  <!-- JUEGO EN CURSO -->
+  <div class="juego-contenedor" *ngIf="!juegoTerminado">
+
+    <div class="info-header">
+      <div class="info-item">
+        <ion-icon name="grid-outline"></ion-icon>
+        <span>{{ parejas }}/{{ totalParejas }} pares</span>
+      </div>
+      <div class="premio-badge">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <span>{{ descuento }}% sin errores</span>
+      </div>
+      <div class="info-item">
+        <ion-icon name="refresh-outline"></ion-icon>
+        <span>{{ intentos }} intentos</span>
+      </div>
+    </div>
+
+    <div class="tablero">
+      <div
+        *ngFor="let carta of cartas"
+        class="carta"
+        [class.carta-volteada]="carta.volteada || carta.encontrada"
+        [class.carta-encontrada]="carta.encontrada"
+        (click)="voltearCarta(carta)">
+        <div class="carta-frente">?</div>
+        <div class="carta-dorso">{{ carta.emoji }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTADO FINAL -->
+  <div class="resultado-contenedor" *ngIf="juegoTerminado">
+
+    <div class="resultado-icon" [class.resultado-ganador]="gano" [class.resultado-perdedor]="!gano">
+      <ion-icon [name]="gano ? 'trophy-outline' : 'sad-outline'"></ion-icon>
+    </div>
+
+    <h2 class="resultado-titulo">{{ gano ? '¡Ganaste!' : '¡Casi!' }}</h2>
+
+    <p class="resultado-texto" *ngIf="gano">
+      Encontraste todos los pares sin errores y ganás un <strong>{{ descuento }}% de descuento</strong>.
+    </p>
+    <p class="resultado-texto" *ngIf="!gano">
+      Completaste el juego con {{ intentos }} intentos. Necesitabas {{ totalParejas }} para ganar el descuento.
+    </p>
+
+    <div class="resultado-stats">
+      <div class="stat-item">
+        <span class="stat-numero">{{ intentos }}</span>
+        <span class="stat-label">Intentos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero">{{ totalParejas }}</span>
+        <span class="stat-label">Necesarios</span>
+      </div>
+    </div>
+
+    <ion-button expand="block" class="boton-volver" (click)="volver()">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Volver a los juegos
+    </ion-button>
+
+  </div>
+
+</ion-content>

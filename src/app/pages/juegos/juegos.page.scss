@@ -1,0 +1,132 @@
+.juegos-content {
+  --background: var(--vb-fondo);
+  height: 100%;
+}
+
+.juegos-lista {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 32px;
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.juegos-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 24px 8px;
+  gap: 8px;
+
+  .header-icon {
+    font-size: 64px;
+    color: var(--vb-acento);
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.juego-card {
+  background: var(--vb-card);
+  border: 1px solid rgba(240,230,211,0.15);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+    border-color: var(--vb-acento);
+  }
+}
+
+.juego-emoji {
+  font-size: 44px;
+  flex-shrink: 0;
+}
+
+.juego-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .juego-nombre {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  .juego-descripcion {
+    font-size: 12px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.juego-descuento {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(201, 148, 58, 0.2);
+  border: 1px solid var(--vb-acento);
+  border-radius: 12px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+
+  .descuento-numero {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--vb-acento);
+    line-height: 1;
+  }
+
+  .descuento-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--vb-acento);
+    letter-spacing: 1px;
+  }
+
+  .descuento-obtenido {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45, 211, 111, 0.15);
+  border: 1px solid var(--ion-color-success);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: 4px;
+
+  ion-icon { font-size: 20px; color: var(--ion-color-success); flex-shrink: 0; }
+  p { font-size: 13px; color: var(--ion-color-success); margin: 0; }
+}
+
+.descuento-bloqueado {
+  opacity: 0.4;
+}
+
+}

@@ -1,0 +1,204 @@
+.trivia-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.juego-contenedor {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── PROGRESO ──────────────────────────────────────────────────
+.progreso-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .progreso-texto {
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+    text-align: center;
+  }
+}
+
+// ── BADGE PREMIO ──────────────────────────────────────────────
+.premio-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(201, 148, 58, 0.2);
+  border: 1px solid var(--vb-acento);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vb-acento);
+
+  ion-icon { font-size: 18px; }
+}
+
+// ── PREGUNTA ──────────────────────────────────────────────────
+.pregunta-card {
+  background: var(--vb-card);
+  border: 1px solid rgba(240,230,211,0.15);
+  border-radius: 16px;
+  padding: 24px;
+
+  .pregunta-texto {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--vb-texto);
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+  }
+}
+
+// ── OPCIONES ──────────────────────────────────────────────────
+.opciones-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opcion-btn {
+  background: var(--vb-card);
+  border: 2px solid rgba(240,230,211,0.2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:active:not(.opcion-disabled) { opacity: 0.8; }
+
+  &.opcion-correcta {
+    background: rgba(45, 211, 111, 0.2);
+    border-color: var(--ion-color-success);
+  }
+
+  &.opcion-incorrecta {
+    background: rgba(235, 68, 90, 0.2);
+    border-color: var(--ion-color-danger);
+  }
+
+  &.opcion-disabled { cursor: default; }
+
+  .opcion-letra {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--vb-acento);
+    color: var(--vb-blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .opcion-texto {
+    flex: 1;
+    font-size: 15px;
+    color: var(--vb-texto);
+  }
+
+  .icono-resultado {
+    font-size: 22px;
+    flex-shrink: 0;
+
+    &.correcto { color: var(--ion-color-success); }
+    &.incorrecto { color: var(--ion-color-danger); }
+  }
+}
+
+// ── RESULTADO ─────────────────────────────────────────────────
+.resultado-contenedor {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.resultado-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon { font-size: 56px; }
+
+  &.resultado-ganador {
+    background: rgba(201, 148, 58, 0.2);
+    border: 3px solid var(--vb-acento);
+    ion-icon { color: var(--vb-acento); }
+  }
+
+  &.resultado-perdedor {
+    background: rgba(235, 68, 90, 0.1);
+    border: 3px solid var(--ion-color-danger);
+    ion-icon { color: var(--ion-color-danger); }
+  }
+}
+
+.resultado-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--vb-texto);
+  margin: 0;
+}
+
+.resultado-texto {
+  font-size: 15px;
+  color: var(--vb-texto-suave);
+  margin: 0;
+  line-height: 1.6;
+
+  strong { color: var(--vb-acento); }
+}
+
+.resultado-stats {
+  display: flex;
+  gap: 32px;
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    .stat-numero {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--vb-acento);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--vb-texto-suave);
+    }
+  }
+}
+
+.boton-volver {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  width: 100%;
+  height: 52px;
+  font-weight: 600;
+}

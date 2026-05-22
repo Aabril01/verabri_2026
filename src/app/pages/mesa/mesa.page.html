@@ -85,6 +85,11 @@
         <ion-icon name="cart-outline" slot="start"></ion-icon>
         {{ (pedidoActual?.estado === 'pendiente' || pedidoActual?.estado === 'rechazado') ? 'Modificar pedido' : 'Hacer pedido' }}
       </ion-button>
+      <ion-button expand="block" class="boton-accion" [routerLink]="['/juegos', mesaId]"
+        *ngIf="pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'">
+        <ion-icon name="game-controller-outline" slot="start"></ion-icon>
+        Juegos y descuentos
+      </ion-button>
     </div>
   </div>
 

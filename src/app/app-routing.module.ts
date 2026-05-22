@@ -106,6 +106,22 @@ const routes: Routes = [
     path: 'pedidos-bar',
     loadChildren: () => import('./pages/pedidos-bar/pedidos-bar.module').then(m => m.PedidosBarPageModule)
   },
+  {
+    path: 'juegos/:mesaId',
+    loadChildren: () => import('./pages/juegos/juegos.module').then(m => m.JuegosPageModule)
+  },
+  {
+    path: 'juego-trivia/:mesaId/:pedidoId',
+    loadChildren: () => import('./pages/juego-trivia/juego-trivia.module').then(m => m.JuegoTriviaPageModule)
+  },
+  {
+    path: 'juego-memoria/:mesaId/:pedidoId',
+    loadChildren: () => import('./pages/juego-memoria/juego-memoria.module').then(m => m.JuegoMemoriaPageModule)
+  },
+  {
+    path: 'juego-piedra-papel-tijera/:mesaId/:pedidoId',
+    loadChildren: () => import('./pages/juego-piedra-papel-tijera/juego-piedra-papel-tijera.module').then(m => m.JuegoPiedraPapelTijeraPageModule)
+  },
 
 ];
 
