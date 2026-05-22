@@ -45,6 +45,19 @@ ion-footer {
   --background: var(--vb-acento);
 }
 
+.alerta-verabri {
+  --background: #6B4E7A;
+  --backdrop-opacity: 0.7;
+
+  .alert-title { color: #F0E6D3; font-weight: 700; }
+  .alert-message { color: rgba(240,230,211,0.8); }
+  .alert-button { color: #C9943A; font-weight: 600; }
+}
+
+ion-back-button {
+  --color: var(--vb-blanco);
+}
+
 /* ── PÁGINAS ESPECÍFICAS ──────────────────────────────── */
 .splash-content,
 .login-content {

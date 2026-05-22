@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pedidos Pendientes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarPedidos()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pedidos-content">
+
+  <!-- SIN PEDIDOS -->
+  <div class="estado-vacio" *ngIf="!cargando && pedidos.length === 0">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <h3>No hay pedidos pendientes</h3>
+    <p>Cuando un cliente haga un pedido aparecerá acá</p>
+  </div>
+
+  <!-- LISTA DE PEDIDOS -->
+  <div class="lista-contenedor" *ngIf="pedidos.length > 0">
+
+    <div class="pedido-card" *ngFor="let pedido of pedidos">
+
+      <!-- HEADER DEL PEDIDO -->
+      <div class="pedido-header">
+        <div class="pedido-mesa">
+          <ion-icon name="restaurant-outline"></ion-icon>
+          <span>Mesa {{ pedido.mesas?.numero }}</span>
+        </div>
+        <div class="pedido-hora">{{ formatearHora(pedido.created_at) }}</div>
+      </div>
+
+      <!-- ITEMS DEL PEDIDO -->
+      <div class="pedido-items">
+        <div class="item-row" *ngFor="let item of pedido.pedido_items">
+          <span class="item-cantidad">{{ item.cantidad }}x</span>
+          <span class="item-nombre">{{ item.productos?.nombre }}</span>
+          <span class="item-tipo" [class.tipo-plato]="item.productos?.tipo === 'plato'" [class.tipo-bebida]="item.productos?.tipo === 'bebida'">
+            {{ item.productos?.tipo === 'plato' ? '🍽️' : '🥤' }}
+          </span>
+          <span class="item-precio">${{ item.subtotal }}</span>
+        </div>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="pedido-total">
+        <span>Total</span>
+        <span class="total-monto">${{ pedido.total }}</span>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="pedido-acciones">
+        <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)">
+          Rechazar
+        </ion-button>
+        <ion-button expand="block" color="success" (click)="confirmarPedido(pedido)">
+          Confirmar
+        </ion-button>
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

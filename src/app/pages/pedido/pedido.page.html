@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Hacer Pedido</ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar-segmento">
+    <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event)">
+      <ion-segment-button value="platos">
+        <ion-icon name="flame-outline"></ion-icon>
+        <ion-label>Platos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="bebidas">
+        <ion-icon name="wine-outline"></ion-icon>
+        <ion-label>Bebidas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pedido-content">
+
+  <!-- PLATOS -->
+  <div *ngIf="segmentoActivo === 'platos'">
+    <div *ngIf="platos.length === 0" class="estado-vacio">
+      <ion-icon name="flame-outline"></ion-icon>
+      <p>No hay platos disponibles</p>
+    </div>
+
+    <div class="producto-card" *ngFor="let plato of platos">
+      <img [src]="plato.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
+      <div class="producto-info">
+        <h3 class="producto-nombre">{{ plato.nombre }}</h3>
+        <p class="producto-descripcion">{{ plato.descripcion }}</p>
+        <div class="producto-detalles">
+          <span class="producto-precio">${{ plato.precio }}</span>
+          <span class="producto-tiempo">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ plato.tiempo_min }} min
+          </span>
+        </div>
+      </div>
+      <div class="cantidad-control">
+        <ion-button size="small" fill="solid" color="medium" (click)="quitarProducto(plato)">−</ion-button>
+        <span class="cantidad-numero">{{ getCantidad(plato.id) }}</span>
+        <ion-button size="small" fill="solid" color="warning" (click)="agregarProducto(plato)">+</ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEBIDAS -->
+  <div *ngIf="segmentoActivo === 'bebidas'">
+    <div *ngIf="bebidas.length === 0" class="estado-vacio">
+      <ion-icon name="wine-outline"></ion-icon>
+      <p>No hay bebidas disponibles</p>
+    </div>
+
+    <div class="producto-card" *ngFor="let bebida of bebidas">
+      <img [src]="bebida.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
+      <div class="producto-info">
+        <h3 class="producto-nombre">{{ bebida.nombre }}</h3>
+        <p class="producto-descripcion">{{ bebida.descripcion }}</p>
+        <div class="producto-detalles">
+          <span class="producto-precio">${{ bebida.precio }}</span>
+          <span class="producto-tiempo">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ bebida.tiempo_min }} min
+          </span>
+        </div>
+      </div>
+      <div class="cantidad-control">
+        <ion-button size="small" fill="solid" color="medium" (click)="quitarProducto(bebida)">−</ion-button>
+        <span class="cantidad-numero">{{ getCantidad(bebida.id) }}</span>
+        <ion-button size="small" fill="solid" color="warning" (click)="agregarProducto(bebida)">+</ion-button>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- FOOTER CON TOTAL Y BOTÓN CONFIRMAR -->
+<ion-footer class="pedido-footer" *ngIf="itemsPedido.length > 0">
+  <div class="footer-info">
+    <div class="footer-row">
+      <span class="footer-label">
+        <ion-icon name="cart-outline"></ion-icon>
+        {{ cantidadItems }} {{ cantidadItems === 1 ? 'producto' : 'productos' }}
+      </span>
+      <span class="footer-tiempo">
+        <ion-icon name="time-outline"></ion-icon>
+        ~{{ tiempoEstimado }} min
+      </span>
+    </div>
+    <div class="footer-total">
+      <span>Total</span>
+      <span class="total-monto">${{ totalPedido }}</span>
+    </div>
+  </div>
+  <ion-button expand="block" class="boton-confirmar" (click)="confirmarPedido()">
+    <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+    Confirmar pedido
+  </ion-button>
+</ion-footer>

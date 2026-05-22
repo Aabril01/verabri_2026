@@ -71,6 +71,24 @@ const routes: Routes = [
     path: 'consultas-mozo',
     loadChildren: () => import('./pages/consultas-mozo/consultas-mozo.module').then( m => m.ConsultasMozoPageModule)
   },
+  {
+    path: 'pedido',
+    loadChildren: () => import('./pages/pedido/pedido.module').then( m => m.PedidoPageModule)
+  },
+
+  {
+    path: 'pedido/:mesaId',
+    loadChildren: () => import('./pages/pedido/pedido.module').then(m => m.PedidoPageModule)
+  },
+  {
+    path: 'pedidos-mozo',
+    loadChildren: () => import('./pages/pedidos-mozo/pedidos-mozo.module').then( m => m.PedidosMozoPageModule)
+  },
+
+  {
+    path: 'pedidos-mozo',
+    loadChildren: () => import('./pages/pedidos-mozo/pedidos-mozo.module').then(m => m.PedidosMozoPageModule)
+  },
 
 ];
 

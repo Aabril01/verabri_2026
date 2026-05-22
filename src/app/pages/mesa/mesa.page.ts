@@ -15,6 +15,7 @@ export class MesaPage implements OnInit {
   mesa: any = null;
   platos: any[] = [];
   bebidas: any[] = [];
+  pedidoActual: any = null;
   cargando = true;
   segmentoActivo: 'info' | 'platos' | 'bebidas' = 'info';
 
@@ -29,6 +30,12 @@ export class MesaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('id') || '';
     await this.cargarDatos();
+  }
+
+  async ionViewWillEnter() {
+    if (this.mesaId) {
+      await this.cargarDatos();
+    }
   }
 
   async cargarDatos() {
@@ -49,6 +56,18 @@ export class MesaPage implements OnInit {
 
       if (errorMesa) throw errorMesa;
       this.mesa = mesaData;
+
+      // Cargar pedido actual de la mesa
+      const { data: pedidoData } = await this.supabaseService.client
+        .from('pedidos')
+        .select(`*, pedido_items(*, productos(nombre, precio, tiempo_min))`)
+        .eq('mesa_id', this.mesaId)
+        .not('estado', 'eq', 'pagado')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      this.pedidoActual = pedidoData;
 
       // Cargar productos
       const { data: productosData, error: errorProductos } = await this.supabaseService.client
@@ -84,8 +103,40 @@ export class MesaPage implements OnInit {
     return tipos[tipo] || tipo;
   }
 
+  getEstadoPedido(): string {
+    if (!this.pedidoActual) return '';
+    const estados: any = {
+      'pendiente': 'Esperando confirmación del mozo',
+      'confirmado': 'Pedido confirmado — en preparación',
+      'en_cocina': 'En cocina',
+      'en_bar': 'En bar',
+      'listo': '¡Pedido listo para entregar!',
+      'entregado': 'Pedido entregado',
+      'rechazado': '⚠️ Pedido rechazado — podés modificarlo',
+    };
+    return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
+  }
+
+  getColorEstado(): string {
+    if (!this.pedidoActual) return 'medium';
+    const colores: any = {
+      'pendiente': 'warning',
+      'confirmado': 'primary',
+      'en_cocina': 'tertiary',
+      'en_bar': 'tertiary',
+      'listo': 'success',
+      'entregado': 'success',
+      'rechazado': 'danger',
+    };
+    return colores[this.pedidoActual.estado] || 'medium';
+  }
+
   irAlChat() {
     this.router.navigateByUrl(`/chat/${this.mesaId}`);
+  }
+
+  irAlPedido() {
+    this.router.navigateByUrl(`/pedido/${this.mesaId}`);
   }
 
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {

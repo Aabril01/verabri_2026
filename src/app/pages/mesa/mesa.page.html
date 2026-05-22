@@ -51,10 +51,39 @@
       </div>
     </div>
 
+    <!-- ESTADO Y DETALLE DEL PEDIDO -->
+    <div class="estado-pedido-card" *ngIf="pedidoActual">
+      <div class="estado-pedido-header">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <span>Estado del pedido</span>
+      </div>
+      <ion-badge [color]="getColorEstado()" class="badge-estado-pedido">
+        {{ getEstadoPedido() }}
+      </ion-badge>
+
+      <!-- DETALLE DE ITEMS -->
+      <div class="pedido-items" *ngIf="pedidoActual.pedido_items?.length > 0">
+        <div class="item-row" *ngFor="let item of pedidoActual.pedido_items">
+          <span class="item-cantidad">{{ item.cantidad }}x</span>
+          <span class="item-nombre">{{ item.productos?.nombre }}</span>
+          <span class="item-precio">${{ item.subtotal }}</span>
+        </div>
+        <div class="pedido-total-row">
+          <span>Total</span>
+          <span class="total-monto">${{ pedidoActual.total }}</span>
+        </div>
+      </div>
+    </div>
+
     <div class="acciones-contenedor">
       <ion-button expand="block" class="boton-accion" (click)="irAlChat()">
         <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
         Consultar al mozo
+      </ion-button>
+      <ion-button expand="block" class="boton-accion" (click)="irAlPedido()"
+        *ngIf="!pedidoActual || pedidoActual.estado === 'pendiente' || pedidoActual.estado === 'rechazado'">
+        <ion-icon name="cart-outline" slot="start"></ion-icon>
+        {{ (pedidoActual?.estado === 'pendiente' || pedidoActual?.estado === 'rechazado') ? 'Modificar pedido' : 'Hacer pedido' }}
       </ion-button>
     </div>
   </div>

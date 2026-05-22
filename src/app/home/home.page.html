@@ -59,13 +59,13 @@
   </div>
   <!-- MOZO -->
   <div class="menu-opciones" *ngIf="perfil === 'mozo'">
-    <ion-button expand="block" class="boton-menu">
-      <ion-icon name="receipt-outline" slot="start"></ion-icon>
-      Pedidos pendientes
-    </ion-button>
     <ion-button expand="block" routerLink="/consultas-mozo" class="boton-menu">
       <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
       Consultas de clientes
+    </ion-button>
+    <ion-button expand="block" routerLink="/pedidos-mozo" class="boton-menu">
+      <ion-icon name="receipt-outline" slot="start"></ion-icon>
+      Pedidos pendientes
     </ion-button>
   </div>
 
