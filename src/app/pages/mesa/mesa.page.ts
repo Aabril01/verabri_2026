@@ -31,11 +31,6 @@ export class MesaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('id') || '';
     await this.cargarDatos();
-
-    //La encuesta se habilita UNA vez por ocasión
-    if(this.pedidoActual.encuesta_realizada == false){
-      this.encuestaHabilitada = true;
-    }
   }
 
   async ionViewWillEnter() {
@@ -74,6 +69,13 @@ export class MesaPage implements OnInit {
         .maybeSingle();
 
       this.pedidoActual = pedidoData;
+
+      // Habilitar encuesta solo si no fue realizada
+      if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
+        this.encuestaHabilitada = true;
+      } else {
+        this.encuestaHabilitada = false;
+      }
 
       // Cargar productos
       const { data: productosData, error: errorProductos } = await this.supabaseService.client
@@ -143,9 +145,9 @@ export class MesaPage implements OnInit {
       'en_cocina': 'En cocina',
       'en_bar': 'En bar',
       'listo': '✅ ¡Pedido listo! El mozo lo llevará pronto',
-      'entregado': '¡Tu pedido está en camino! Confirmá cuando llegue.',
+      'entregado': '🚀 ¡Tu pedido está en camino! Confirmá cuando llegue.',
       'rechazado': '⚠️ Pedido rechazado — podés modificarlo',
-      'recibido': '✅ Pedido recibido — ¡buen provecho!',
+      'recibido': '✅ ¡Recibido! Que lo disfrutes.',
     };
     return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
   }
@@ -191,8 +193,8 @@ export class MesaPage implements OnInit {
     });
     await toast.present();
   }
+
   get usuarioActual() {
     return this.supabaseService.usuarioActual;
   }
-
 }
