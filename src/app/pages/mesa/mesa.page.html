@@ -102,13 +102,21 @@
         Confirmar recepción
       </ion-button>
 
-      <!-- ENCUESTA Y CUENTA (después de recibido) -->
-      <ion-button expand="block" class="boton-accion" 
-        [routerLink]="['/encuesta', pedidoActual.id, usuarioActual?.id, mesaId]"
-        *ngIf="pedidoActual?.estado === 'recibido'">
+      <!-- ENCUESTA (si no la hizo todavía) -->
+      <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()"
+        *ngIf="pedidoActual?.estado === 'recibido' && encuestaHabilitada">
         <ion-icon name="star-outline" slot="start"></ion-icon>
         Completar encuesta
       </ion-button>
+
+      <!-- ESTADÍSTICAS (si ya hizo la encuesta) -->
+      <ion-button expand="block" class="boton-accion" (click)="irAEstadistica()"
+        *ngIf="pedidoActual?.estado === 'recibido' && !encuestaHabilitada">
+        <ion-icon name="podium-outline" slot="start"></ion-icon>
+        Ver las estadísticas
+      </ion-button>
+
+      <!-- PEDIR LA CUENTA -->
       <ion-button expand="block" class="boton-accion" (click)="pedirCuenta()"
         *ngIf="pedidoActual?.estado === 'recibido'">
         <ion-icon name="receipt-outline" slot="start"></ion-icon>
