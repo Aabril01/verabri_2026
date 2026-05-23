@@ -187,5 +187,8 @@ export class MesaPage implements OnInit {
     });
     await toast.present();
   }
+  get usuarioActual() {
+    return this.supabaseService.usuarioActual;
+  }
 
 }

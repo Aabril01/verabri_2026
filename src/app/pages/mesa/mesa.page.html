@@ -103,7 +103,8 @@
       </ion-button>
 
       <!-- ENCUESTA Y CUENTA (después de recibido) -->
-      <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()" [disabled]="!encuestaHabilitada"
+      <ion-button expand="block" class="boton-accion" 
+        [routerLink]="['/encuesta', pedidoActual.id, usuarioActual?.id, mesaId]"
         *ngIf="pedidoActual?.estado === 'recibido'">
         <ion-icon name="star-outline" slot="start"></ion-icon>
         Completar encuesta
