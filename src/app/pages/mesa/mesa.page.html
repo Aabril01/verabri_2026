@@ -103,11 +103,19 @@
       </ion-button>
 
       <!-- ENCUESTA Y CUENTA (después de recibido) -->
-      <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()" [disabled]="!encuestaHabilitada"
-        *ngIf="pedidoActual?.estado === 'recibido'">
+      <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()"
+        *ngIf="pedidoActual?.estado === 'recibido' && encuestaHabilitada">
         <ion-icon name="star-outline" slot="start"></ion-icon>
         Completar encuesta
       </ion-button>
+
+       <!-- ver ESTADISTICAS tras realizar encuesta -->
+      <ion-button expand="block" class="boton-accion" (click)="irAEstadistica()"
+        *ngIf="pedidoActual?.estado === 'recibido' && !encuestaHabilitada">
+        <ion-icon name="podium-outline" slot="start"></ion-icon>
+        Ver las estadísticas
+      </ion-button>
+
       <ion-button expand="block" class="boton-accion" (click)="pedirCuenta()"
         *ngIf="pedidoActual?.estado === 'recibido'">
         <ion-icon name="receipt-outline" slot="start"></ion-icon>

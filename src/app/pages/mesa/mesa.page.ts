@@ -177,6 +177,10 @@ export class MesaPage implements OnInit {
     this.router.navigateByUrl(`/encuesta/${this.pedidoActual.id}/${this.mesa.cliente_id}/${this.mesaId}`);
   }
 
+  irAEstadistica() {
+    this.router.navigateByUrl(`/estadistica`);
+  }
+
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({
       message: mensaje,
