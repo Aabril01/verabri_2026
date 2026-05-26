@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PushNotification } from './services/push-notifications';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private pushService: PushNotification) {
+    this.pushService.inicirPushNotifications();
+  }
 }
