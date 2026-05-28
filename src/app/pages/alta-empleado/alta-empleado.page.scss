@@ -112,3 +112,9 @@
   font-weight: 600;
   margin-top: 16px;
 }
+
+ion-select {
+  // Remueve el fondo blanco del contenedor del select
+  --background: transparent;
+  background: transparent;
+}

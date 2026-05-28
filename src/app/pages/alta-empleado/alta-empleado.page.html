@@ -131,7 +131,8 @@
       <ion-item class="campo-item" [class.campo-error]="campoInvalido('perfil')">
         <ion-icon name="briefcase-outline" slot="start" class="icono-campo"></ion-icon>
         <ion-label position="stacked">Perfil</ion-label>
-        <ion-select formControlName="perfil" placeholder="Seleccioná un perfil">
+        <ion-select fill="none" formControlName="perfil" placeholder="Seleccioná un perfil"
+            okText="Aceptar" cancelText="Cancelar">
           <ion-select-option value="metre">Metre</ion-select-option>
           <ion-select-option value="mozo">Mozo</ion-select-option>
           <ion-select-option value="cocinero">Cocinero</ion-select-option>
