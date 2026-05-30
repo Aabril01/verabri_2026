@@ -173,7 +173,7 @@ export class PushNotification {
           body: {
             title: title,
             body: body,
-            token: tokens,
+            tokens: tokens,
             data: additionalData
           },
         });
@@ -236,7 +236,7 @@ export class PushNotification {
           body: {
             title: title,
             body: body,
-            token: tokens,
+            tokens: tokens,
             data: additionalData
           },
         });

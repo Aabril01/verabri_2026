@@ -77,58 +77,74 @@ serve(async (req) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS", // Métodos permitidos
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
   };
 
-  // Manejar las peticiones OPTIONS (preflight requests)
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  // --- El resto de tu código de la función ---
-  // A partir de aquí, cada Response que crees debe incluir estas cabeceras.
-
   try {
-    const { title, body, userId, data } = await req.json();
+    // 1. Agregamos 'token' y 'tokens' a la destructuración para capturar lo que envía tu servicio
+    const { title, body, userId, token, tokens: explicitTokens, data } = await req.json();
 
     if (!title || !body) {
       return new Response(JSON.stringify({ error: "Title and body are required." }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" }, // Añadir Content-Type también
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    let tokens: string[] = [];
+    let tokensToSend: string[] = [];
 
-    if (userId) {
+    // 2. ORDEN DE PRIORIDAD PARA EVALUAR QUÉ TOKENS USAR:
+    
+    if (explicitTokens && Array.isArray(explicitTokens) && explicitTokens.length > 0) {
+      // Prioridad 1: Si mandás un array de strings directo ('tokens') desde tu servicio estructurado
+      tokensToSend = explicitTokens;
+    } else if (token) {
+      // Prioridad 2: Si mandás un único token como string o array bajo la clave 'token'
+      tokensToSend = Array.isArray(token) ? token : [token];
+    } else if (userId) {
+      // Prioridad 3: Si mandás un userId, los va a buscar a la base de datos
       const { data: userTokens, error: tokensError } = await supabase
         .from("fcm_tokens")
         .select("token")
         .eq("uuid", userId);
 
       if (tokensError) throw tokensError;
-      tokens = userTokens.map((t) => t.token);
+      tokensToSend = userTokens.map((t) => t.token);
     } else {
+      // ⚠️ Alerta / Broadcast Global: Solo si explícitamente no mandaste nada de lo anterior,
+      // podés elegir si buscar todos o frenar la ejecución para evitar spam indeseado.
+      console.warn("DEBUG: No se especificaron destinatarios. Buscando todos los tokens activos.");
       const { data: allTokens, error: tokensError } = await supabase
         .from("fcm_tokens")
         .select("token");
+      
       if (tokensError) throw tokensError;
-      tokens = allTokens.map((t) => t.token);
+      tokensToSend = allTokens.map((t) => t.token);
     }
 
-    if (tokens.length === 0) {
-      return new Response(JSON.stringify({ message: "No se encontraron tokens para enviar la notificación." }), {
+    // Remover posibles duplicados o strings vacíos indeseados
+    tokensToSend = [...new Set(tokensToSend)].filter(t => !!t);
+
+    if (tokensToSend.length === 0) {
+      return new Response(JSON.stringify({ success: false, message: "No se encontraron tokens válidos para enviar." }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
+    console.log(`DEBUG: Enviando notificaciones a ${tokensToSend.length} dispositivos.`);
+
     const firebaseAccessToken = await getFirebaseAccessToken();
 
-    const results = await Promise.all(tokens.map(async (token) => {
+    // 3. Mapeo y envío individual a Firebase v1 HTTP
+    const results = await Promise.all(tokensToSend.map(async (fcmToken) => {
         const fcmPayload = {
             message: {
-                token: token,
+                token: fcmToken,
                 notification: {
                     title: title,
                     body: body,
@@ -152,11 +168,11 @@ serve(async (req) => {
 
         if (!fcmResponse.ok) {
             const errorText = await fcmResponse.text();
-            console.error(`Error de FCM para token ${token}: ${errorText}`);
-            return { token, success: false, error: errorText };
+            console.error(`Error de FCM para token ${fcmToken}: ${errorText}`);
+            return { token: fcmToken, success: false, error: errorText };
         }
 
-        return { token, success: true, result: await fcmResponse.json() };
+        return { token: fcmToken, success: true, result: await fcmResponse.json() };
     }));
 
     return new Response(JSON.stringify({ success: true, results }), {
@@ -164,8 +180,6 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error: any) {
-    // Si el error viene de un JSON.parse o de getFirebaseAccessToken,
-    // este log aparecerá en la consola de Supabase.
     console.error("Fallo crítico en Edge Function:", error.message);
 
     return new Response(JSON.stringify({ 

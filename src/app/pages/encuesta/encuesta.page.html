@@ -12,6 +12,7 @@
 
     <h3 class="ion-padding-horizontal">Puntúa tu experencia general</h3>
 
+    <!-- PUNTUACIÓN PRINCIPAL -->
     <ion-item lines="none">
       <ion-label position="stacked">Calificación General (1 al 5)</ion-label>
       <ion-range min="1" max="5" step="1" snaps="true" ticks="true" formControlName="calificacion" color="warning">
@@ -20,8 +21,8 @@
       </ion-range>
     </ion-item>
 
+    <!-- ASPECTOS -->
     <h3 class="ion-padding-horizontal">Aspectos en Detalle</h3>
-    
     <div formGroupName="aspectos">
       <ion-item>
         <ion-label>Calidad de la Comida</ion-label>
@@ -42,14 +43,17 @@
       </ion-item>
     </div>
 
+    <!-- VOLVERIA O NO -->
     <ion-item class="ion-margin-top">
       <ion-label>¿Volverías a elegirnos?</ion-label>
       <ion-toggle formControlName="volveria" color="success"></ion-toggle>
     </ion-item>
 
+    <!-- COMO CONOCIO -->
     <ion-item>
       <ion-label position="stacked">¿Cómo nos conociste?</ion-label>
-      <ion-select placeholder="Selecciona una opción" formControlName="como_conocio" fill="none">
+      <ion-select placeholder="Selecciona una opción" formControlName="como_conocio" fill="none"
+          okText="Aceptar" cancelText="Cancelar">
         <ion-select-option value="redes_sociales">Redes sociales</ion-select-option>
         <ion-select-option value="recomendacion">Me lo recomendaron</ion-select-option>
         <ion-select-option value="pasando">Pasé por el local</ion-select-option>
@@ -57,6 +61,7 @@
       </ion-select>
     </ion-item>
 
+    <!-- COMENTARIO/SUGERENCIAS -->
     <ion-item lines="none">
       <ion-label position="stacked">Comentarios o sugerencias</ion-label>
       <ion-textarea 
@@ -67,6 +72,7 @@
       </ion-textarea>
     </ion-item>
 
+    <!-- BOTON GUARDADO -->
     <div class="ion-padding">
       <ion-button (click)="guardarEncuesta()" expand="block" [disabled]="encuestaForm.invalid">
         Enviar Encuesta
