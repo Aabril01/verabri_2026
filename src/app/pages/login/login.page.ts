@@ -6,9 +6,6 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
 import { PushNotification } from 'src/app/services/push-notifications';
 
-// Descomenta cuando tengas Capacitor instalado:
-// import { Haptics, ImpactStyle } from '@capacitor/haptics';
-// import { NativeAudio } from '@capacitor-community/native-audio';
 
 interface PerfilRapido {
   id: string;
@@ -182,9 +179,7 @@ export class LoginPage implements OnInit {
   // ── UTILIDADES ────────────────────────────────────────────────
 
   private async vibrarError() {
-    // Con Capacitor instalado:
-    // await Haptics.impact({ style: ImpactStyle.Medium });
-    console.log('📳 Vibración de error');
+    await this.supabaseService.vibrarError();
   }
 
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {

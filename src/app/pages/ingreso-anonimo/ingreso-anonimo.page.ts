@@ -85,11 +85,13 @@ export class IngresoAnonimoPage implements OnInit {
 
     if (!this.nombre || this.nombre.trim().length < 2) {
       this.errorNombre = 'El nombre es obligatorio (mínimo 2 caracteres).';
+      await this.supabaseService.vibrarError();
       return;
     }
 
     if (!this.fotoUrl || !this.fotoArchivo) {
       this.errorFoto = 'La foto es obligatoria.';
+      await this.supabaseService.vibrarError();
       return;
     }
 
@@ -156,6 +158,7 @@ export class IngresoAnonimoPage implements OnInit {
 
     } catch (error: any) {
       console.error('Error:', error);
+      await this.supabaseService.vibrarError();
       this.errorGeneral = error?.message || 'No se pudo registrar. Intentá de nuevo.';
     } finally {
       await loading.dismiss();

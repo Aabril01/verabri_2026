@@ -90,10 +90,14 @@ export class AltaBebidaPage implements OnInit {
     const fotosCompletas = this.fotos.every(f => f !== null);
     if (!fotosCompletas) {
       this.errorFotos = 'Las 3 fotos de la bebida son obligatorias.';
+      await this.supabaseService.vibrarError();
       return;
     }
 
-    if (this.formulario.invalid) return;
+    if (this.formulario.invalid) {
+      await this.supabaseService.vibrarError();
+      return;
+    }
 
     this.cargando = true;
     this.errorGeneral = '';
@@ -108,7 +112,6 @@ export class AltaBebidaPage implements OnInit {
     try {
       const { nombre, descripcion, tiempo_min, precio } = this.formulario.value;
 
-      // CAMBIO: .maybeSingle() en lugar de .single() para evitar error cuando no existe
       const { data: bebidaExistente } = await this.supabaseService.client
         .from('productos')
         .select('id')
@@ -118,12 +121,12 @@ export class AltaBebidaPage implements OnInit {
 
       if (bebidaExistente) {
         this.errorGeneral = `La bebida "${nombre}" ya existe en el menú.`;
+        await this.supabaseService.vibrarError();
         await loading.dismiss();
         this.cargando = false;
         return;
       }
 
-      // Subir las 3 fotos a Supabase
       const urlsFotos = await Promise.all(
         this.fotosArchivos.map(archivo =>
           this.supabaseService.subirFoto(archivo!, 'bebidas')
@@ -133,12 +136,8 @@ export class AltaBebidaPage implements OnInit {
       const { error } = await this.supabaseService.client
         .from('productos')
         .insert({
-          nombre,
-          descripcion,
-          tiempo_min,
-          precio,
-          tipo: 'bebida',
-          activo: true,
+          nombre, descripcion, tiempo_min, precio,
+          tipo: 'bebida', activo: true,
           foto1_url: urlsFotos[0],
           foto2_url: urlsFotos[1],
           foto3_url: urlsFotos[2]
@@ -150,15 +149,13 @@ export class AltaBebidaPage implements OnInit {
       this.router.navigateByUrl('/home', { replaceUrl: true });
 
     } catch (error: any) {
-      // CAMBIO: mostramos el error real en consola y en pantalla
-      console.error('ERROR REAL:', error);
+      await this.supabaseService.vibrarError();
       this.errorGeneral = error?.message || 'No se pudo guardar la bebida.';
     } finally {
       await loading.dismiss();
       this.cargando = false;
     }
   }
-
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({
       message: mensaje,

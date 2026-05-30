@@ -83,17 +83,20 @@ export class AltaPlatoPage implements OnInit {
       // Usuario canceló
     }
   }
-
   async guardarPlato() {
     this.formulario.markAllAsTouched();
 
     const fotasCompletas = this.fotos.every(f => f !== null);
     if (!fotasCompletas) {
       this.errorFotos = 'Las 3 fotos del plato son obligatorias.';
+      await this.supabaseService.vibrarError();
       return;
     }
 
-    if (this.formulario.invalid) return;
+    if (this.formulario.invalid) {
+      await this.supabaseService.vibrarError();
+      return;
+    }
 
     this.cargando = true;
     this.errorGeneral = '';
@@ -117,12 +120,12 @@ export class AltaPlatoPage implements OnInit {
 
       if (platoExistente) {
         this.errorGeneral = `El plato "${nombre}" ya existe en el menú.`;
+        await this.supabaseService.vibrarError();
         await loading.dismiss();
         this.cargando = false;
         return;
       }
 
-      // Subir las 3 fotos a Supabase
       const urlsFotos = await Promise.all(
         this.fotosArchivos.map(archivo =>
           this.supabaseService.subirFoto(archivo!, 'platos')
@@ -132,12 +135,8 @@ export class AltaPlatoPage implements OnInit {
       const { error } = await this.supabaseService.client
         .from('productos')
         .insert({
-          nombre,
-          descripcion,
-          tiempo_min,
-          precio,
-          tipo: 'plato',
-          activo: true,
+          nombre, descripcion, tiempo_min, precio,
+          tipo: 'plato', activo: true,
           foto1_url: urlsFotos[0],
           foto2_url: urlsFotos[1],
           foto3_url: urlsFotos[2]
@@ -149,13 +148,14 @@ export class AltaPlatoPage implements OnInit {
       this.router.navigateByUrl('/home', { replaceUrl: true });
 
     } catch (error: any) {
-      console.error('ERROR REAL:', error);
+      await this.supabaseService.vibrarError();
       this.errorGeneral = error?.message || 'No se pudo guardar el plato.';
     } finally {
       await loading.dismiss();
       this.cargando = false;
     }
   }
+    
 
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({

@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-
+import { NativeAudio } from '@capacitor-community/native-audio';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +41,10 @@ export class SupabaseService {
   }
 
   async cerrarSesion() {
+    try {
+      await NativeAudio.play({ assetId: 'cierre' });
+    } catch (e) {}
+    
     const { error } = await this.supabase.auth.signOut();
     if (error) throw error;
     this._usuarioActual.next(null);
@@ -189,5 +194,10 @@ export class SupabaseService {
     if (error) {
       throw new Error(error.message || 'Error al enviar el correo');
     }
+  }
+  async vibrarError() {
+    try {
+      await Haptics.impact({ style: ImpactStyle.Heavy });
+    } catch (e) {}
   }
 }

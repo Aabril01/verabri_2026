@@ -95,10 +95,14 @@ export class AltaMesaPage implements OnInit {
 
     if (!this.fotoUrl) {
       this.errorFoto = 'La foto de la mesa es obligatoria.';
+      await this.supabaseService.vibrarError();
       return;
     }
 
-    if (this.formulario.invalid) return;
+    if (this.formulario.invalid){
+      await this.supabaseService.vibrarError();
+     return;
+    } 
 
     this.cargando = true;
     this.errorGeneral = '';
@@ -122,6 +126,7 @@ export class AltaMesaPage implements OnInit {
 
       if (mesaExistente) {
         this.errorGeneral = `La mesa número ${numero} ya existe.`;
+        await this.supabaseService.vibrarError();
         await loading.dismiss();
         this.cargando = false;
         return;
@@ -196,6 +201,7 @@ export class AltaMesaPage implements OnInit {
       await this.mostrarToast(`Mesa ${numero} guardada correctamente`, 'success');
 
     } catch (error: any) {
+      await this.supabaseService.vibrarError();
       this.errorGeneral = 'No se pudo guardar la mesa. Verificá los datos e intentá nuevamente.';
     } finally {
       await loading.dismiss();

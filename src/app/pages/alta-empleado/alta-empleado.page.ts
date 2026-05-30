@@ -144,10 +144,11 @@ export class AltaEmpleadoPage implements OnInit {
       this.cargando = false;
     }
   }
-
   private async vibrarError() {
-    console.log('📳 Vibración de error');
+    await this.supabaseService.vibrarError();
   }
+  
+  
 
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({

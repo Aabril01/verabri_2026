@@ -125,11 +125,15 @@ const routes: Routes = [
   {
     path: 'encuesta/:pedidoId/:usuarioId/:mesaId',
     loadChildren: () => import('./pages/encuesta/encuesta.module').then( m => m.EncuestaPageModule)
-  },  {
+  },
+  {
     path: 'estadistica',
     loadChildren: () => import('./pages/estadistica/estadistica.module').then( m => m.EstadisticaPageModule)
   },
-
+  {
+    path: 'cuenta/:mesaId',
+    loadChildren: () => import('./pages/cuenta/cuenta.module').then( m => m.CuentaPageModule)
+  },
 
 
 ];

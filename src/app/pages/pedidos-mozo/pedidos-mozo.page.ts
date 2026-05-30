@@ -53,7 +53,7 @@ export class PedidosMozoPage implements OnInit {
             productos (nombre, tipo)
           )
         `)
-        .in('estado', ['pendiente', 'rechazado', 'confirmado', 'listo'])
+        .in('estado', ['pendiente', 'rechazado', 'confirmado', 'listo', 'pagado'])
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -224,5 +224,61 @@ export class PedidosMozoPage implements OnInit {
       icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
     });
     await toast.present();
+  }
+  async confirmarPago(pedido: any) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar pago',
+      message: `¿Confirmás el pago de la Mesa ${pedido.mesas?.numero}? La mesa quedará libre.`,
+      cssClass: 'alerta-verabri',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Confirmar pago',
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              spinner: 'crescent',
+              message: 'Liberando mesa...',
+              cssClass: 'spinner-verabri',
+            });
+            await loading.present();
+
+            try {
+              // Liberar la mesa
+              await this.supabaseService.client
+                .from('mesas')
+                .update({ estado: 'vacia' })
+                .eq('id', pedido.mesa_id);
+
+              // Marcar pedido como pagado (ya está) — solo actualizamos updated_at
+              await this.supabaseService.client
+                .from('pedidos')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', pedido.id);
+
+              // Push al dueño y supervisor
+              await this.pushNotification.enviarPushNotificationAUsuario(
+                '✅ Pago confirmado',
+                `La Mesa ${pedido.mesas?.numero} pagó y fue liberada.`,
+                'dueno@verabri.com'
+              );
+              await this.pushNotification.enviarPushNotificationAUsuario(
+                '✅ Pago confirmado',
+                `La Mesa ${pedido.mesas?.numero} pagó y fue liberada.`,
+                'supervisor@verabri.com'
+              );
+
+              await this.mostrarToast('¡Pago confirmado! Mesa liberada.', 'success');
+              await this.cargarPedidos();
+
+            } catch (error: any) {
+              await this.mostrarToast('Error al confirmar el pago.', 'danger');
+            } finally {
+              await loading.dismiss();
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }

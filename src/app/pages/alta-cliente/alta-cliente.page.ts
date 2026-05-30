@@ -89,7 +89,7 @@ export class AltaClientePage implements OnInit {
   }
 
   private async vibrarError(){
-    console.log('Brrr, Brrr, vibración por un error');
+    await this.supabaseService.vibrarError();
   }
 
   // ── GUARDADO DE DATOS ──────────────────────────────────────────────────────

@@ -173,6 +173,7 @@ export class PedidoPage implements OnInit {
 
   async confirmarPedido() {
     if (this.itemsPedido.length === 0) {
+      await this.supabaseService.vibrarError();
       await this.mostrarToast('Seleccioná al menos un producto.', 'warning');
       return;
     }

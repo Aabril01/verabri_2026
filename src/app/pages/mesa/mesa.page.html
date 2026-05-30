@@ -117,7 +117,7 @@
       </ion-button>
 
       <!-- PEDIR LA CUENTA -->
-      <ion-button expand="block" class="boton-accion" (click)="pedirCuenta()"
+      <ion-button expand="block" class="boton-accion" [routerLink]="['/cuenta', mesaId]"
         *ngIf="pedidoActual?.estado === 'recibido'">
         <ion-icon name="receipt-outline" slot="start"></ion-icon>
         Pedir la cuenta
