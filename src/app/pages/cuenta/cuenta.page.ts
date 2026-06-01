@@ -15,6 +15,7 @@ import { Capacitor } from '@capacitor/core';
 export class CuentaPage implements OnInit {
 
   mesaId = '';
+  numeroMesa: number | null = null;
   pedido: any = null;
   items: any[] = [];
   propinaPct = 0;
@@ -33,7 +34,6 @@ export class CuentaPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private supabase: SupabaseService,
     private push: PushNotification,
     private loadingController: LoadingController,
@@ -43,6 +43,7 @@ export class CuentaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
     await this.cargarPedido();
+    await this.cargarDatosMesa();
   }
 
   async cargarPedido() {
@@ -62,6 +63,23 @@ export class CuentaPage implements OnInit {
     } catch (e) {
       await this.mostrarToast('Error al cargar el pedido.', 'danger');
     } finally {
+      this.cargando = false;
+    }
+  }
+
+  async cargarDatosMesa(){
+    try{
+      const { data, error } = await this.supabase.client
+      .from('mesas')
+      .select('*')
+      .eq('mesa', this.mesaId)
+      .single();
+
+      if(error) throw error;
+      this.numeroMesa = data.numero;
+    } catch(e){
+      await this.mostrarToast('Error al cargar los datos', 'danger');
+    } finally{
       this.cargando = false;
     }
   }
@@ -140,9 +158,9 @@ export class CuentaPage implements OnInit {
       if (error) throw error;
 
       // Push al mozo, dueño y supervisor
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.mesaId} realizó el pago. ¡Confirmalo!`, 'mozo@verabri.com');
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa realizó el pago.`, 'dueno@verabri.com');
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa realizó el pago.`, 'supervisor@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago. ¡Confirmalo!`, 'mozo@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago.`, 'dueno@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago.`, 'supervisor@verabri.com');
 
       this.pagoRealizado = true;
       await this.mostrarToast('¡Pago enviado! Esperá la confirmación del mozo.', 'success');

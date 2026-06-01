@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
-import { Camera, CameraResultType, CameraSource, CameraPermissionType} from '@capacitor/camera'
+import { Camera, CameraResultType, CameraSource} from '@capacitor/camera'
 import { Capacitor } from '@capacitor/core';
 import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { PushNotification } from 'src/app/services/push-notifications';
@@ -73,73 +73,6 @@ export class AltaClientePage implements OnInit {
       this.mostrarToast('No se ha tomado ninguna foto.', 'warning');
     }
     
-  }
-
-  // ── MENSAJES TOAST ──────────────────────────────────────────────────────
-
-  private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2500,
-      position: 'top',
-      color,
-      icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
-    });
-    await toast.present();
-  }
-
-  private async vibrarError(){
-    await this.supabaseService.vibrarError();
-  }
-
-  // ── GUARDADO DE DATOS ──────────────────────────────────────────────────────
-
-  async guardarCliente(){
-    this.formulario.markAllAsTouched();
-
-    if(!this.fotoUrl){
-      this.errorFoto = 'Es necesaria una foto del cliente.';
-      await this.vibrarError();
-      return;
-    }
-
-    if(this.formulario.invalid){
-      await this.vibrarError();
-      return;
-    }
-
-    this.cargando = true; 
-    this.errorGeneral = '';
-
-    const loading = await this.loadingController.create({
-      spinner: 'crescent',
-      message: 'Guardando los datos...',
-      cssClass: 'spinner-verabri',
-    });
-    await loading.present();
-
-    try{
-      const { apellido, nombre, dni, email, contrasena} = this.formulario.value;
-      
-      await this.supabaseService.crearClienteRegistrado(email, contrasena, {
-        apellido, nombre, dni, foto_url: this.fotoUrl    
-      });
-      
-      //Envio de notificaciones
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
-
-      await this.mostrarToast('Fuiste registrado con éxito. Espera a que validen tu cuenta.', 'success');
-      this.router.navigateByUrl('/login', {replaceUrl:true});
-
-    } catch (error:any){
-      await this.vibrarError();
-      this.errorGeneral = 'Ocurrió un error al registrar. Verifica los datos e intenta nuevamente.'
-      
-    } finally {
-      await loading.dismiss();
-      this.cargando = false;
-    }
   }
 
 // ── LECTURA DNI ──────────────────────────────────────────────────────
@@ -261,6 +194,73 @@ export class AltaClientePage implements OnInit {
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-zñ ]/g, '')
       .trim();
+  }
+
+   // ── GUARDADO DE DATOS ──────────────────────────────────────────────────────
+
+   async guardarCliente(){
+    this.formulario.markAllAsTouched();
+
+    if(!this.fotoUrl){
+      this.errorFoto = 'Es necesaria una foto del cliente.';
+      await this.vibrarError();
+      return;
+    }
+
+    if(this.formulario.invalid){
+      await this.vibrarError();
+      return;
+    }
+
+    this.cargando = true; 
+    this.errorGeneral = '';
+
+    const loading = await this.loadingController.create({
+      spinner: 'crescent',
+      message: 'Guardando los datos...',
+      cssClass: 'spinner-verabri',
+    });
+    await loading.present();
+
+    try{
+      const { apellido, nombre, dni, email, contrasena} = this.formulario.value;
+      
+      await this.supabaseService.crearClienteRegistrado(email, contrasena, {
+        apellido, nombre, dni, foto_url: this.fotoUrl    
+      });
+      
+      //Envio de notificaciones
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
+
+      await this.mostrarToast('Fuiste registrado con éxito. Espera a que validen tu cuenta.', 'success');
+      this.router.navigateByUrl('/login', {replaceUrl:true});
+
+    } catch (error:any){
+      await this.vibrarError();
+      this.errorGeneral = 'Ocurrió un error al registrar. Verifica los datos e intenta nuevamente.'
+      
+    } finally {
+      await loading.dismiss();
+      this.cargando = false;
+    }
+  }
+
+  // ── MENSAJES TOAST ──────────────────────────────────────────────────────
+
+  private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2500,
+      position: 'top',
+      color,
+      icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
+    });
+    await toast.present();
+  }
+
+  private async vibrarError(){
+    await this.supabaseService.vibrarError();
   }
 
 }

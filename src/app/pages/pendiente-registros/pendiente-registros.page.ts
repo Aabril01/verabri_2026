@@ -3,7 +3,6 @@ import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
-import { PushNotification } from 'src/app/services/push-notifications';
 
 @Component({
   standalone: false,
@@ -63,16 +62,13 @@ export class PendienteRegistrosPage implements OnInit {
 
       // Cambiar estado en la base de datos
       await this.supabaseService.cambiarEstado(correo, estado);
-      if (estado === "aceptado") {
-        this.mostrarToast("El cliente fue aceptado.", "success");
-      }
+  
       // Enviar mail automático via Edge Function
       await this.supabaseService.enviarEmailEstado(correo, nombre, estado);
 
       if (estado === 'aceptado') {
         await this.mostrarToast('El cliente fue aceptado y notificado por mail.', 'success');
       } else {
-        this.mostrarToast("El cliente fue rechazado.", "success");
         await this.mostrarToast('El cliente fue rechazado y notificado por mail.', 'success');
       }
 

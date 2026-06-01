@@ -170,10 +170,17 @@ export class PedidosMozoPage implements OnInit {
       // ── PUSH PUNTO 14 — Mozo confirma → notificar a cocina y bar ──
       if (estado === 'confirmado') {
         try {
-          await this.pushNotification.sendGlobalPushNotification(
+          await this.pushNotification.enviarPushNotificationAUsuario(
             '🍽️ Nuevo pedido confirmado',
-            `Pedido de Mesa ${pedido.mesas?.numero} listo para preparar.`
+            `Pedido de Mesa ${pedido.mesas?.numero} listo para preparar.`,
+            "cocinero@verabri.com"
           );
+          await this.pushNotification.enviarPushNotificationAUsuario(
+            '🍽️ Nuevo pedido confirmado',
+            `Pedido de Mesa ${pedido.mesas?.numero} listo para preparar.`,
+            "cantinero@verabri.com"
+          );
+
         } catch (pushError) {
           console.warn('No se pudo enviar push a cocina/bar:', pushError);
         }
@@ -225,6 +232,8 @@ export class PedidosMozoPage implements OnInit {
     });
     await toast.present();
   }
+
+   // ── PUNTO 22 — Mozo confirma pago → liberar mesa y notificar──
   async confirmarPago(pedido: any) {
     const alert = await this.alertController.create({
       header: 'Confirmar pago',
@@ -265,6 +274,12 @@ export class PedidosMozoPage implements OnInit {
                 '✅ Pago confirmado',
                 `La Mesa ${pedido.mesas?.numero} pagó y fue liberada.`,
                 'supervisor@verabri.com'
+              );
+
+              await this.pushNotification.enviarPushNotificationPorID(
+                '✅ Pago confirmado',
+                `El mozo validó el pago. ¡Gracias por tu estadía!`,
+                pedido.cliente_id
               );
 
               await this.mostrarToast('¡Pago confirmado! Mesa liberada.', 'success');
