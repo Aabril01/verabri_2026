@@ -113,6 +113,7 @@ export class ChatPage implements OnInit, OnDestroy {
           mesa_id: this.mesaId,
           remitente_id: this.usuarioActual?.id || null,
           contenido: contenido,
+          perfil_remitente: this.usuarioActual?.perfil || 'cliente',
           created_at: new Date().toISOString()
 
         });
@@ -131,7 +132,14 @@ export class ChatPage implements OnInit, OnDestroy {
 
   getNombreRemitente(mensaje: any): string {
     if (this.esMiMensaje(mensaje)) return 'Yo';
-    return mensaje.perfil_remitente === 'mozo' ? 'Mozo' : 'Cliente';
+    const perfil = mensaje.perfil_remitente || '';
+    if (perfil === 'mozo') return 'Mozo';
+    if (perfil === 'metre') return 'Metre';
+    if (perfil === 'cocinero') return 'Cocinero';
+    if (perfil === 'cantinero') return 'Cantinero';
+    if (perfil === 'dueno') return 'Dueño';
+    if (perfil === 'supervisor') return 'Supervisor';
+    return 'Cliente';
   }
 
   formatearHora(fecha: string): string {

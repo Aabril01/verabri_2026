@@ -67,19 +67,19 @@ export class CuentaPage implements OnInit {
     }
   }
 
-  async cargarDatosMesa(){
-    try{
+  async cargarDatosMesa() {
+    try {
       const { data, error } = await this.supabase.client
-      .from('mesas')
-      .select('*')
-      .eq('mesa', this.mesaId)
-      .single();
+        .from('mesas')
+        .select('numero')
+        .eq('id', this.mesaId)
+        .single();
 
-      if(error) throw error;
+      if (error) throw error;
       this.numeroMesa = data.numero;
-    } catch(e){
-      await this.mostrarToast('Error al cargar los datos', 'danger');
-    } finally{
+    } catch (e) {
+      console.error('Error al cargar mesa:', e);
+    } finally {
       this.cargando = false;
     }
   }

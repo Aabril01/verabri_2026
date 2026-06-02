@@ -140,14 +140,18 @@ export class IngresoAnonimoPage implements OnInit {
       // Subir foto
       const urlFoto = await this.supabaseService.subirFoto(this.fotoArchivo!, 'anonimos');
 
-      // Insertar en lista_espera con un id generado
+      // Obtener token FCM si está disponible
+      const fcmToken = this.pushNotifications.getFCMToken();
+
+      // Insertar en lista_espera
       const { error } = await this.supabaseService.client
         .from('lista_espera')
         .insert({
           cliente_id: crypto.randomUUID(),
           nombre: this.nombre.trim(),
           foto_url: urlFoto,
-          estado: 'esperando'
+          estado: 'esperando',
+          fcm_token: fcmToken || null
         });
 
       if (error) throw error;

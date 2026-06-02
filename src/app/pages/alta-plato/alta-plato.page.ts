@@ -69,7 +69,7 @@ export class AltaPlatoPage implements OnInit {
         quality: 85,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera
+        source: CameraSource.Prompt // ← esto muestra el selector cámara/galería
       });
 
       if (image.dataUrl) {

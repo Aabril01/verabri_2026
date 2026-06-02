@@ -127,7 +127,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/encuesta/encuesta.module').then( m => m.EncuestaPageModule)
   },
   {
-    path: 'estadistica',
+    path: 'estadistica/:origen',
     loadChildren: () => import('./pages/estadistica/estadistica.module').then( m => m.EstadisticaPageModule)
   },
   {

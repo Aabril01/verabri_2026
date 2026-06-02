@@ -48,7 +48,6 @@ export class MesaPage implements OnInit {
     await loading.present();
 
     try {
-      // Cargar info de la mesa
       const { data: mesaData, error: errorMesa } = await this.supabaseService.client
         .from('mesas')
         .select('*')
@@ -58,7 +57,9 @@ export class MesaPage implements OnInit {
       if (errorMesa) throw errorMesa;
       this.mesa = mesaData;
 
-      // Cargar pedido actual de la mesa
+      // Validar acceso del cliente
+      await this.validarAccesoCliente();
+
       const { data: pedidoData } = await this.supabaseService.client
         .from('pedidos')
         .select(`*, pedido_items(*, productos(nombre, precio, tiempo_min))`)
@@ -70,14 +71,12 @@ export class MesaPage implements OnInit {
 
       this.pedidoActual = pedidoData;
 
-      // Habilitar encuesta solo si no fue realizada
       if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
         this.encuestaHabilitada = true;
       } else {
         this.encuestaHabilitada = false;
       }
 
-      // Cargar productos
       const { data: productosData, error: errorProductos } = await this.supabaseService.client
         .from('productos')
         .select('*')
@@ -98,6 +97,20 @@ export class MesaPage implements OnInit {
     }
   }
 
+  async validarAccesoCliente() {
+    const usuario = this.supabaseService.usuarioActual;
+    if (!usuario) return;
+
+    const perfil = usuario.perfil;
+    const esCliente = perfil === 'cliente_registrado' || perfil === 'cliente_anonimo';
+    if (!esCliente) return;
+
+    if (this.mesa?.cliente_id !== usuario.id) {
+      await this.mostrarToast('Esta mesa no está asignada a vos. Esperá a que el metre te asigne una.', 'warning');
+      this.router.navigateByUrl('/home', { replaceUrl: true });
+    }
+  }
+
   async confirmarRecepcion() {
     try {
       await this.supabaseService.client
@@ -112,9 +125,7 @@ export class MesaPage implements OnInit {
     }
   }
 
-  pedirCuenta() {
-    // Lo implementamos en el punto 21
-  }
+  pedirCuenta() {}
 
   cambiarSegmento(evento: any) {
     this.segmentoActivo = evento.detail.value;
@@ -180,7 +191,7 @@ export class MesaPage implements OnInit {
   }
 
   irAEstadistica() {
-    this.router.navigateByUrl(`/estadistica`);
+    this.router.navigateByUrl(`/estadistica/mesa`);
   }
 
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {

@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from 'src/app/services/supabase';
 import { Chart, registerables } from 'chart.js';
 
@@ -23,10 +24,17 @@ export class EstadisticaPage implements OnInit {
   chartBar: any;
 
   constructor(
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const origen = this.route.snapshot.paramMap.get('origen');
+    if (!origen) {
+      await this.router.navigateByUrl('/home', { replaceUrl: true });
+      return;
+    }
     this.cargarEstadisticas();
   }
 
@@ -39,25 +47,20 @@ export class EstadisticaPage implements OnInit {
 
       if (error) throw error;
 
-      //Si hay encuestas
       if (encuestas && encuestas.length > 0) {
         this.totalEncuestas = encuestas.length;
 
-        //Promedio de Valoración General
         const sumaCalificacion = encuestas.reduce((acc, curr) => acc + curr.calificacion, 0);
         this.valoracionGeneral = Number((sumaCalificacion / this.totalEncuestas).toFixed(1));
 
-        //Porcentaje de usuarios que volverían
         const cuantosVolverian = encuestas.filter(e => e.volveria === true).length;
         this.porcentajeVolveria = Math.round((cuantosVolverian / this.totalEncuestas) * 100);
 
-        //Mapeo de comentarios recientes (filtrando nulos o vacíos)
         this.comentarios = encuestas
           .map(e => e.comentario)
           .filter(c => c && c.trim() !== '')
-          .slice(0, 5); // últimos 5 registros
+          .slice(0, 5);
 
-        //Acumuladores para el objeto JSONB de aspectos
         let sumaComida = 0;
         let sumaServicio = 0;
         let sumaLimpieza = 0;
@@ -70,7 +73,6 @@ export class EstadisticaPage implements OnInit {
           sumaAmbiente += e.aspectos?.ambiente || 0;
         });
 
-        //Promedio
         const pComida = Number((sumaComida / this.totalEncuestas).toFixed(1));
         const pServicio = Number((sumaServicio / this.totalEncuestas).toFixed(1));
         const pLimpieza = Number((sumaLimpieza / this.totalEncuestas).toFixed(1));
@@ -78,7 +80,6 @@ export class EstadisticaPage implements OnInit {
 
         this.cargando = false;
 
-        //Paso datos a la barra
         setTimeout(() => {
           this.generarGrafico(pComida, pServicio, pLimpieza, pAmbiente);
         }, 50);
@@ -99,7 +100,6 @@ export class EstadisticaPage implements OnInit {
       return;
     }
 
-    //Por si ya hay barras creadas
     if (this.chartBar) {
       this.chartBar.destroy(); 
     }
@@ -112,10 +112,10 @@ export class EstadisticaPage implements OnInit {
           label: 'Puntaje Promedio',
           data: [comida, servicio, limpieza, ambiente],
           backgroundColor: [
-            'rgba(251, 188, 5, 0.7)',  // Dorado para Comida
-            'rgba(54, 162, 235, 0.7)', // Azul para Servicio
-            'rgba(75, 192, 192, 0.7)', // Verde para Limpieza
-            'rgba(153, 102, 255, 0.7)' // Violeta para Ambiente
+            'rgba(251, 188, 5, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)'
           ],
           borderColor: ['#fbbc05', '#36a2eb', '#4bc1c0', '#9966ff'],
           borderWidth: 1.5
@@ -137,5 +137,4 @@ export class EstadisticaPage implements OnInit {
       }
     });
   }
-
 }

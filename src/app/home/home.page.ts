@@ -113,6 +113,6 @@ export class HomePage implements OnInit {
   }
 
   irAEstadistica() {
-    this.router.navigateByUrl(`/estadistica`);
+    this.router.navigateByUrl(`/estadistica/home`);
   }
 }

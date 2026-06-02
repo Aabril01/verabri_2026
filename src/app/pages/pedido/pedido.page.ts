@@ -103,11 +103,12 @@ export class PedidoPage implements OnInit {
 
   async cargarPedidoExistente() {
     try {
+      // Solo carga pedidos rechazados (los pendientes no se pueden modificar)
       const { data: pedido } = await this.supabaseService.client
         .from('pedidos')
         .select(`*, pedido_items(*, productos(*))`)
         .eq('mesa_id', this.mesaId)
-        .in('estado', ['pendiente', 'rechazado'])
+        .eq('estado', 'rechazado')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -120,6 +121,19 @@ export class PedidoPage implements OnInit {
           producto: item.productos,
           cantidad: item.cantidad
         }));
+      } else {
+        // Verificar si hay un pedido pendiente — en ese caso bloquear
+        const { data: pedidoPendiente } = await this.supabaseService.client
+          .from('pedidos')
+          .select('id')
+          .eq('mesa_id', this.mesaId)
+          .eq('estado', 'pendiente')
+          .maybeSingle();
+
+        if (pedidoPendiente) {
+          await this.mostrarToast('Tu pedido está siendo revisado por el mozo. No podés modificarlo aún.', 'warning');
+          this.router.navigateByUrl(`/mesa/${this.mesaId}`, { replaceUrl: true });
+        }
       }
     } catch (error) {
       console.error('Error al cargar pedido existente:', error);
@@ -244,10 +258,12 @@ export class PedidoPage implements OnInit {
       if (errorItems) throw errorItems;
 
       // ── PUSH NOTIFICATION AL MOZO (Punto 12) ──────────────────
+      // ── PUSH NOTIFICATION AL MOZO (Punto 12) ──────────────────
       try {
-        await this.pushNotification.sendGlobalPushNotification(
+        await this.pushNotification.enviarPushNotificationAUsuario(
           '🍽️ Nuevo pedido',
-          `Mesa ${this.numeroMesa} realizó un pedido. ¡Revisalo!`
+          `Mesa ${this.numeroMesa} realizó un pedido. ¡Revisalo!`,
+          'mozo@verabri.com'
         );
       } catch (pushError) {
         console.warn('No se pudo enviar la push notification:', pushError);
