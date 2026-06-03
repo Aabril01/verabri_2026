@@ -70,6 +70,7 @@
       Registrar nuevo cliente
     </ion-button>
   </div>
+
   <!-- MOZO -->
   <div class="menu-opciones" *ngIf="perfil === 'mozo'">
     <ion-button expand="block" routerLink="/consultas-mozo" class="boton-menu">
@@ -84,9 +85,15 @@
 
   <!-- CLIENTE REGISTRADO -->
   <div class="menu-opciones" *ngIf="perfil === 'cliente_registrado'">
+
+    <div class="mensaje-mesa"  *ngIf="tieneMesa">
+      <h2>Te asignaron la mesa N°{{numeroMesaAsignada}}</h2>
+      <p>Para ingresar, escaneá su QR</p>
+    </div>
+
     <ion-button expand="block" class="boton-menu" (click)="irAMesa()">
       <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-      Escanear mesa
+      Escanear QR
     </ion-button>
 
     <ion-button expand="block" class="boton-menu" (click)="irAEstadistica()">
@@ -95,18 +102,18 @@
     </ion-button>
   </div>
 
-    <!-- CLIENTE ANÓNIMO -->
-    <div class="menu-opciones" *ngIf="perfil === 'cliente_anonimo'">
-      <ion-button expand="block" routerLink="/ingreso-anonimo" class="boton-menu">
-        <ion-icon name="enter-outline" slot="start"></ion-icon>
-        Ingresar al local
-      </ion-button>
+  <!-- CLIENTE ANÓNIMO -->
+  <div class="menu-opciones" *ngIf="perfil === 'cliente_anonimo'">
+    <ion-button expand="block" routerLink="/ingreso-anonimo" class="boton-menu">
+      <ion-icon name="enter-outline" slot="start"></ion-icon>
+      Ingresar al local
+    </ion-button>
 
-      <ion-button expand="block" class="boton-menu" (click)="irAEstadistica()">
-        <ion-icon name="podium-outline" slot="start"></ion-icon>
-        Ver las estadísticas
-      </ion-button>
-    </div>
+    <ion-button expand="block" class="boton-menu" (click)="irAEstadistica()">
+      <ion-icon name="podium-outline" slot="start"></ion-icon>
+      Ver las estadísticas
+    </ion-button>
+  </div>
 
   <div class="separador"></div>
 

@@ -13,7 +13,7 @@ export class SplashPage implements OnInit, OnDestroy {
   animacionIniciada = false;
   progreso = 0;
   mensajeCarga = 'Iniciando...';
-  nombreTercero = 'Gabriel Llopi';
+  nombreTercero = 'Llopi, Gabriel';
 
   private intervalProgreso: any;
 
