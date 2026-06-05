@@ -25,6 +25,10 @@
   --color: var(--vb-texto-suave);
   --border-color: rgba(240,230,211,0.3);
   --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  height: 44px;
+  font-size: 14px;
   margin-top: 8px;
 }
 
@@ -117,4 +121,85 @@
   font-size: 12px;
   height: 36px;
   flex-shrink: 0;
+}
+.selector-mesa {
+  background: var(--vb-card);
+  border-radius: 16px;
+  margin: 16px;
+  padding: 20px;
+  border: 1px solid rgba(240,230,211,0.2);
+}
+
+.selector-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--vb-acento);
+  margin-bottom: 16px;
+}
+
+.opciones-mesa {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.opcion-mesa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(240,230,211,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(240,230,211,0.05);
+
+  &.seleccionada {
+    border-color: var(--vb-dorado);
+    background: rgba(201,148,58,0.2);
+
+    .mesa-numero {
+      color: var(--vb-dorado);
+    }
+
+    &::after {
+      content: '✓';
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--vb-dorado);
+    }
+  }
+
+  .mesa-numero {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--vb-texto);
+  }
+
+  .mesa-tipo {
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+  }
+
+  .mesa-capacidad {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+  }
+}
+
+.botones-selector {
+  display: flex;
+  gap: 10px;
+
+  ion-button {
+    flex: 1;
+    --border-radius: 12px;
+  }
 }

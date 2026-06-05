@@ -127,26 +127,47 @@
     </div>
 
     <!-- PERFIL -->
-    <div class="campo-contenedor">
-      <ion-item class="campo-item" [class.campo-error]="campoInvalido('perfil')">
-        <ion-icon name="briefcase-outline" slot="start" class="icono-campo"></ion-icon>
-        <ion-label position="stacked">Perfil</ion-label>
-        <ion-select fill="none" formControlName="perfil" placeholder="Seleccioná un perfil"
-            okText="Aceptar" cancelText="Cancelar">
-          <ion-select-option value="metre">Metre</ion-select-option>
-          <ion-select-option value="mozo">Mozo</ion-select-option>
-          <ion-select-option value="cocinero">Cocinero</ion-select-option>
-          <ion-select-option value="cantinero">Cantinero</ion-select-option>
-          <ion-select-option value="supervisor">Supervisor</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <div class="mensajes-error" *ngIf="campoInvalido('perfil')">
-        <ion-note color="danger">
-          <ion-icon name="alert-circle-outline"></ion-icon>
-          Seleccioná un perfil para el empleado.
-        </ion-note>
+  <div class="campo-contenedor">
+    <p class="perfil-label">Seleccioná el perfil</p>
+    <div class="opciones-perfil">
+      <div class="opcion-perfil"
+        [class.seleccionado]="formulario.get('perfil')?.value === 'metre'"
+        (click)="formulario.get('perfil')?.setValue('metre')">
+        <ion-icon name="people-outline"></ion-icon>
+        <span>Metre</span>
+      </div>
+      <div class="opcion-perfil"
+        [class.seleccionado]="formulario.get('perfil')?.value === 'mozo'"
+        (click)="formulario.get('perfil')?.setValue('mozo')">
+        <ion-icon name="restaurant-outline"></ion-icon>
+        <span>Mozo</span>
+      </div>
+      <div class="opcion-perfil"
+        [class.seleccionado]="formulario.get('perfil')?.value === 'cocinero'"
+        (click)="formulario.get('perfil')?.setValue('cocinero')">
+        <ion-icon name="flame-outline"></ion-icon>
+        <span>Cocinero</span>
+      </div>
+      <div class="opcion-perfil"
+        [class.seleccionado]="formulario.get('perfil')?.value === 'cantinero'"
+        (click)="formulario.get('perfil')?.setValue('cantinero')">
+        <ion-icon name="wine-outline"></ion-icon>
+        <span>Cantinero</span>
+      </div>
+      <div class="opcion-perfil"
+        [class.seleccionado]="formulario.get('perfil')?.value === 'supervisor'"
+        (click)="formulario.get('perfil')?.setValue('supervisor')">
+        <ion-icon name="shield-outline"></ion-icon>
+        <span>Supervisor</span>
       </div>
     </div>
+    <div class="mensajes-error" *ngIf="campoInvalido('perfil')">
+      <ion-note color="danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        Seleccioná un perfil para el empleado.
+      </ion-note>
+    </div>
+  </div>
 
     <!-- ERROR GENERAL -->
     <div class="error-general" *ngIf="errorGeneral">

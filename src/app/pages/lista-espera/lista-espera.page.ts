@@ -14,6 +14,8 @@ export class ListaEsperaPage implements OnInit {
   clientes: any[] = [];
   mesas: any[] = [];
   cargando = true;
+  clienteSeleccionado: any = null;
+  mesaSeleccionadaId: string = '';
 
   constructor(
     private supabaseService: SupabaseService,
@@ -68,36 +70,20 @@ export class ListaEsperaPage implements OnInit {
       await this.mostrarToast('No hay mesas disponibles en este momento.', 'warning');
       return;
     }
+    this.clienteSeleccionado = cliente;
+    this.mesaSeleccionadaId = '';
+  }
 
-    const inputs = this.mesas.map(mesa => ({
-      type: 'radio' as const,
-      label: `Mesa ${mesa.numero} — ${this.formatearTipo(mesa.tipo)} (${mesa.capacidad} personas)`,
-      value: mesa.id
-    }));
+  cancelarSeleccion() {
+    this.clienteSeleccionado = null;
+    this.mesaSeleccionadaId = '';
+  }
 
-    const alert = await this.alertController.create({
-      header: `Asignar mesa a ${cliente.nombre}`,
-      inputs,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Asignar',
-          handler: async (mesaId) => {
-            if (!mesaId) {
-              await this.mostrarToast('Seleccioná una mesa.', 'warning');
-              return false;
-            }
-            await this.confirmarAsignacion(cliente, mesaId);
-            return true;
-          }
-        }
-      ]
-    });
-
-    await alert.present();
+  async confirmarSeleccionMesa() {
+    if (!this.mesaSeleccionadaId || !this.clienteSeleccionado) return;
+    await this.confirmarAsignacion(this.clienteSeleccionado, this.mesaSeleccionadaId);
+    this.clienteSeleccionado = null;
+    this.mesaSeleccionadaId = '';
   }
 
   async confirmarAsignacion(cliente: any, mesaId: string) {
@@ -123,8 +109,11 @@ export class ListaEsperaPage implements OnInit {
 
       if (errorEspera) throw errorEspera;
 
-      //Notificación al cliente
-      this.pushNotificatons.enviarPushNotificationPorID("Mesa asignada", "¡Ya puedes solicitar un pedido!", cliente.id);
+      this.pushNotificatons.enviarPushNotificationPorID(
+        'Mesa asignada',
+        '¡Ya podés solicitar un pedido!',
+        cliente.cliente_id
+      );
 
       await this.mostrarToast(`Mesa asignada a ${cliente.nombre} correctamente.`, 'success');
       await this.cargarDatos();

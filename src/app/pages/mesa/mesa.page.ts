@@ -156,7 +156,7 @@ export class MesaPage implements OnInit {
       'en_cocina': 'En cocina',
       'en_bar': 'En bar',
       'listo': '✅ ¡Pedido listo! El mozo lo llevará pronto',
-      'entregado': '🚀 ¡Tu pedido ya está en camino!',
+      'entregado': '🚀 ¡En camino!',
       'rechazado': '⚠️ Pedido rechazado — podés modificarlo',
       'recibido': '✅ ¡Recibido! Que lo disfrutes.',
     };

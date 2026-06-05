@@ -50,16 +50,35 @@
     </ion-item>
 
     <!-- COMO CONOCIO -->
-    <ion-item>
-      <ion-label position="stacked">¿Cómo nos conociste?</ion-label>
-      <ion-select placeholder="Selecciona una opción" formControlName="como_conocio" fill="none"
-          okText="Aceptar" cancelText="Cancelar">
-        <ion-select-option value="redes_sociales">Redes sociales</ion-select-option>
-        <ion-select-option value="recomendacion">Me lo recomendaron</ion-select-option>
-        <ion-select-option value="pasando">Pasé por el local</ion-select-option>
-        <ion-select-option value="otro">Otros motivos</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <div class="ion-padding-horizontal ion-margin-top">
+      <p class="seccion-label">¿Cómo nos conociste?</p>
+      <div class="opciones-conocio">
+        <div class="opcion-conocio"
+          [class.seleccionada]="encuestaForm.get('como_conocio')?.value === 'redes_sociales'"
+          (click)="encuestaForm.get('como_conocio')?.setValue('redes_sociales')">
+          <ion-icon name="logo-instagram"></ion-icon>
+          <span>Redes sociales</span>
+        </div>
+        <div class="opcion-conocio"
+          [class.seleccionada]="encuestaForm.get('como_conocio')?.value === 'recomendacion'"
+          (click)="encuestaForm.get('como_conocio')?.setValue('recomendacion')">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Me lo recomendaron</span>
+        </div>
+        <div class="opcion-conocio"
+          [class.seleccionada]="encuestaForm.get('como_conocio')?.value === 'pasando'"
+          (click)="encuestaForm.get('como_conocio')?.setValue('pasando')">
+          <ion-icon name="walk-outline"></ion-icon>
+          <span>Pasé por el local</span>
+        </div>
+        <div class="opcion-conocio"
+          [class.seleccionada]="encuestaForm.get('como_conocio')?.value === 'otro'"
+          (click)="encuestaForm.get('como_conocio')?.setValue('otro')">
+          <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+          <span>Otros motivos</span>
+        </div>
+      </div>
+    </div>
 
     <!-- COMENTARIO/SUGERENCIAS -->
     <ion-item lines="none">

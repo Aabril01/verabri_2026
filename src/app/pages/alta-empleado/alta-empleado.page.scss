@@ -118,3 +118,51 @@ ion-select {
   --background: transparent;
   background: transparent;
 }
+
+.perfil-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--vb-texto);
+  margin: 16px 16px 8px;
+}
+
+.opciones-perfil {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.opcion-perfil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 8px;
+  border-radius: 12px;
+  border: 2px solid rgba(240,230,211,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--vb-card);
+
+  ion-icon {
+    font-size: 28px;
+    color: var(--vb-texto-suave);
+  }
+
+  span {
+    font-size: 13px;
+    text-align: center;
+    color: var(--vb-texto);
+  }
+
+  &.seleccionado {
+    border-color: var(--vb-dorado);
+    background: rgba(201,148,58,0.15);
+
+    ion-icon {
+      color: var(--vb-dorado);
+    }
+  }
+}

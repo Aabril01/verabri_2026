@@ -62,7 +62,8 @@
 
       <!-- BOTONES PENDIENTE/RECHAZADO -->
       <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente' || pedido.estado === 'rechazado'">
-        <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)">
+        <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)"
+          *ngIf="pedido.estado === 'pendiente'">
           Rechazar
         </ion-button>
         <ion-button expand="block" color="success" (click)="confirmarPedido(pedido)">

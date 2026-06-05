@@ -49,8 +49,8 @@ ion-segment-button {
 }
 
 .foto-producto {
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   border-radius: 10px;
   object-fit: cover;
   flex-shrink: 0;
@@ -64,14 +64,14 @@ ion-segment-button {
 }
 
 .producto-nombre {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--vb-texto);
   margin: 0;
 }
 
 .producto-descripcion {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--vb-texto-suave);
   margin: 0;
   line-height: 1.4;
@@ -89,7 +89,7 @@ ion-segment-button {
 }
 
 .producto-precio {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--vb-acento);
 }

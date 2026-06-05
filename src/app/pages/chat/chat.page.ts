@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from '../../services/push-notifications';
 
 @Component({
   standalone: false,
@@ -24,6 +25,7 @@ export class ChatPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private supabaseService: SupabaseService,
+    private pushNotification: PushNotification,
     private loadingController: LoadingController,
     private toastController: ToastController
   ) {}
@@ -104,21 +106,50 @@ export class ChatPage implements OnInit, OnDestroy {
 
     const contenido = this.nuevoMensaje.trim();
     this.nuevoMensaje = '';
+    const perfil = this.usuarioActual?.perfil || 'cliente';
 
     try {
-      // CORRECCIÓN: columna 'texto' en lugar de 'contenido'
       const { error } = await this.supabaseService.client
         .from('mensajes')
         .insert({
           mesa_id: this.mesaId,
           remitente_id: this.usuarioActual?.id || null,
           contenido: contenido,
-          perfil_remitente: this.usuarioActual?.perfil || 'cliente',
+          perfil_remitente: perfil,
           created_at: new Date().toISOString()
-
         });
 
       if (error) throw error;
+
+      // Push según quién envía
+      const esCliente = perfil === 'cliente_registrado' || perfil === 'cliente_anonimo';
+      try {
+        if (esCliente) {
+          // Cliente escribe → notificar a todos los mozos
+          await this.pushNotification.enviarPushNotificationAUsuario(
+            '💬 Nueva consulta',
+            `${this.nombreMesa}: "${contenido}"`,
+            'mozo@verabri.com'
+          );
+        } else {
+          // Mozo escribe → notificar al cliente de la mesa
+          const { data: mesa } = await this.supabaseService.client
+            .from('mesas')
+            .select('cliente_id')
+            .eq('id', this.mesaId)
+            .single();
+
+          if (mesa?.cliente_id) {
+            await this.pushNotification.enviarPushNotificationPorID(
+              '💬 Respuesta del mozo',
+              `${this.nombreMesa}: "${contenido}"`,
+              mesa.cliente_id
+            );
+          }
+        }
+      } catch (pushError) {
+        console.warn('No se pudo enviar push:', pushError);
+      }
 
     } catch (error: any) {
       console.error('Error:', error);
