@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../services/supabase';
+import { Capacitor } from '@capacitor/core';
+import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   standalone: false,
@@ -14,6 +16,8 @@ export class HomePage implements OnInit {
   perfil: string = '';
   nombre: string = '';
   userId: string = '';
+  numeroMesaAsignada: number | null = null
+  tieneMesa: boolean = false
 
   constructor(
     private router: Router,
@@ -30,6 +34,11 @@ export class HomePage implements OnInit {
       this.nombre = usuarioCacheado.nombre || '';
       const sesion = await this.supabaseService.obtenerSesion();
       this.userId = sesion?.user?.id || '';
+
+      //Para saber cual mesa debe escanear
+      if(this.perfil === "cliente_registrado"){
+        await this.cargarDatos();
+      }
       return;
     }
 
@@ -41,9 +50,29 @@ export class HomePage implements OnInit {
         const usuario = await this.supabaseService.cargarPerfil(sesion.user.id);
         this.perfil = usuario?.perfil || '';
         this.nombre = usuario?.nombre || '';
+
+        if(this.perfil === "cliente_registrado"){
+          await this.cargarDatos();
+        }
       }
+
     } catch(e) {
       console.error('Error cargando perfil:', e);
+    }
+  }
+
+  async cargarDatos(){
+    // Verificar si ya tiene mesa asignada
+    const { data: mesaAsignada } = await this.supabaseService.client
+    .from('mesas')
+    .select('*')
+    .eq('cliente_id', this.userId)
+    .eq('estado', 'ocupada')
+    .maybeSingle();
+
+    this.numeroMesaAsignada = mesaAsignada?.numero || null;
+    if(this.numeroMesaAsignada){
+      this.tieneMesa = true;
     }
   }
 
@@ -81,12 +110,46 @@ export class HomePage implements OnInit {
 
       await loading.dismiss();
 
-      if (mesaAsignada) {
-        // Tiene mesa asignada, ir a la mesa
-        this.router.navigateByUrl(`/mesa/${mesaAsignada.id}`);
-      } else {
+      if (!mesaAsignada) {
         // No tiene mesa ni está en espera, mandarlo a anotarse
         this.router.navigateByUrl('/ingreso-cliente');
+      
+      } else {
+        //Tiene mesa, ahora debe escanear su QR  
+        //Omitimos si es PC
+        if(Capacitor.getPlatform() === "web"){
+          this.router.navigateByUrl(`/mesa/${mesaAsignada.id}`);
+          
+        } else {
+          await this.installGoogleBarcodeScannerModule();
+          const { barcodes } = await BarcodeScanner.scan();
+
+          if(barcodes.length === 0){
+            await this.mostrarToast("No se pudo obtener datos al escanear", "danger");
+            return
+          } 
+
+          try{
+             //Conversion de datos
+            const qrRawData = barcodes[0].displayValue; 
+            const datosMesa = JSON.parse(qrRawData);
+
+            // Validar que sea de una mesa
+            if (datosMesa.tipo !== "mesa") {
+              return await this.mostrarToast("El código QR no pertenece a una mesa", "danger");
+            }
+
+            //Validar que sea la mesa asignada
+            if (datosMesa.numero !== mesaAsignada.numero) {
+              return await this.mostrarToast("Esta no es tu mesa.", "warning");
+            }
+
+            await this.mostrarToast("Escaneo exitoso, redirigendo al menú", "success");
+            this.router.navigateByUrl(`/mesa/${mesaAsignada.id}`);  
+          }catch(e:any){
+            console.warn("error al escanear: "+ e.message);
+          }
+        }
       }
 
     } catch (error: any) {
@@ -115,4 +178,15 @@ export class HomePage implements OnInit {
   irAEstadistica() {
     this.router.navigateByUrl(`/estadistica/home`);
   }
+
+  //instalamos el escaner en caso de que no esté habilitado
+  private async installGoogleBarcodeScannerModule() {
+    if (Capacitor.getPlatform() === 'android') {
+      const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+      if (!available) {
+        await BarcodeScanner.installGoogleBarcodeScannerModule();
+      }
+    }
+  }
+
 }

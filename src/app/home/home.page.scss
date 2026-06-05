@@ -105,3 +105,25 @@
     letter-spacing: 1px;
   }
 }
+
+.mensaje-mesa {
+  text-align: center;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--vb-texto-suave);
+    margin: 0;
+  }
+}
