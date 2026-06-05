@@ -28,7 +28,7 @@
             <ion-card-content class="ion-text-center">
               <ion-icon name="star" color="warning" class="metric-icon"></ion-icon>
               <h1 class="metric-value">{{ valoracionGeneral }}</h1>
-              <p class="metric-title">Gral. Promedio</p>
+              <p class="metric-title">Promedio general</p>
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -38,7 +38,7 @@
             <ion-card-content class="ion-text-center">
               <ion-icon name="heart" class="metric-icon" style="color: #e63946;"></ion-icon>
               <h1 class="metric-value">{{ porcentajeVolveria }}%</h1>
-              <p class="metric-title">Volverían</p>
+              <p class="metric-title">dice que volverá</p>
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -49,7 +49,7 @@
       <ion-item lines="none" class="transparent-item">
         <ion-icon slot="start" name="document-text-outline" color="warning"></ion-icon>
         <ion-label>
-          <h2 style="color: #bfa054; font-weight: bold;">Muestra Total</h2>
+          <h2 style="color: #bfa054; font-weight: bold;">Muestra total</h2>
           <p style="color: #e0d8ea;">{{ totalEncuestas }} encuestas completadas por clientes.</p>
         </ion-label>
       </ion-item>
@@ -57,7 +57,7 @@
 
     <ion-card class="section-card">
       <ion-card-header>
-        <ion-card-title>Rendimiento por Aspecto</ion-card-title>
+        <ion-card-title>Rendimiento por aspecto</ion-card-title>
         <ion-card-subtitle>Desglose promedio de satisfacción</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
@@ -69,7 +69,7 @@
 
     <ion-card class="section-card" *ngIf="comentarios.length > 0">
       <ion-card-header>
-        <ion-card-title>Sugerencias y Comentarios</ion-card-title>
+        <ion-card-title>Sugerencias y comentarios</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <div class="comentario-bubble" *ngFor="let com of comentarios">

@@ -14,7 +14,7 @@
 
     <!-- PUNTUACIÓN PRINCIPAL -->
     <ion-item lines="none">
-      <ion-label position="stacked">Calificación General (1 al 5)</ion-label>
+      <ion-label position="stacked">Calificación general (1 al 5)</ion-label>
       <ion-range min="1" max="5" step="1" snaps="true" ticks="true" formControlName="calificacion" color="warning">
         <ion-icon slot="start" name="star-outline"></ion-icon>
         <ion-icon slot="end" name="star"></ion-icon>
@@ -22,7 +22,7 @@
     </ion-item>
 
     <!-- ASPECTOS -->
-    <h3 class="ion-padding-horizontal">Aspectos en Detalle</h3>
+    <h3 class="ion-padding-horizontal">Aspectos en detalle</h3>
     <div formGroupName="aspectos">
       <ion-item>
         <ion-label>Calidad de la Comida</ion-label>
@@ -94,7 +94,7 @@
     <!-- BOTON GUARDADO -->
     <div class="ion-padding">
       <ion-button (click)="guardarEncuesta()" expand="block" [disabled]="encuestaForm.invalid">
-        Enviar Encuesta
+        Enviar encuesta
       </ion-button>
     </div>
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
@@ -17,7 +17,8 @@ export class PendienteRegistrosPage implements OnInit {
   constructor(
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private alertController: AlertController
   ) {
     addIcons({
       'checkmark-circle-outline': checkmarkCircleOutline,
@@ -46,6 +47,24 @@ export class PendienteRegistrosPage implements OnInit {
 
   // ── CAMBIOS DE ESTADO ─────────────────────────────────────────────────────
 
+  async confirmarRechazo(correo:string, estado:string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar rechazo',
+      message: `¿Seguro que querés rechazar a este cliente?`,
+      cssClass: 'alerta-verabri',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            await this.cambiarEstado(correo, estado);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async cambiarEstado(correo: string, estado: string) {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
@@ -67,9 +86,9 @@ export class PendienteRegistrosPage implements OnInit {
       await this.supabaseService.enviarEmailEstado(correo, nombre, estado);
 
       if (estado === 'aceptado') {
-        await this.mostrarToast('El cliente fue aceptado y notificado por mail.', 'success');
+        await this.mostrarToast('El cliente fue aceptado y notificado por correo.', 'success');
       } else {
-        await this.mostrarToast('El cliente fue rechazado y notificado por mail.', 'success');
+        await this.mostrarToast('El cliente fue rechazado y notificado por correo.', 'success');
       }
 
       await this.traerUsuariosPendientes();

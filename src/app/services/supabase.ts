@@ -190,11 +190,12 @@ export class SupabaseService {
     const { data, error } = await this.supabase.functions.invoke('enviar-email', {
       body: { email, nombre, estado }
     });
-  
+
     if (error) {
       throw new Error(error.message || 'Error al enviar el correo');
     }
   }
+  
   async vibrarError() {
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });
