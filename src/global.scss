@@ -38,7 +38,8 @@ ion-header, ion-toolbar {
 ion-title {
   color: var(--vb-blanco);
   font-family: serif;
-  letter-spacing: 2px;
+  font-size: clamp(14px, 4vw, 18px) !important; //cambio!!
+  letter-spacing: 1px;
 }
 
 ion-footer {
@@ -156,6 +157,47 @@ ion-toast.toast-danger {
     color: var(--vb-texto);
     font-family: serif;
   }
+
+  // Ocultar spinner por defecto y mostrar logo
+  ion-spinner {
+    display: none !important;
+  }
+
+  .loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    background: var(--vb-card);
+    border-radius: 16px;
+    border: 1px solid rgba(201, 148, 58, 0.3);
+
+    &::before {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 60px;
+      background-image: url('/assets/logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+  }
+
+  .loading-content {
+    color: var(--vb-texto);
+    font-family: serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+}
+
+@keyframes pulse {
+  0%   { opacity: 1; transform: scale(1); }
+  50%  { opacity: 0.5; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* ── TEXTOS GENERALES ─────────────────────────────────── */
@@ -170,3 +212,15 @@ p, span {
 
 /* ── MODO OSCURO DESACTIVADO ──────────────────────────── */
 /* @import "@ionic/angular/css/palettes/dark.system.css"; */
+/* ── RESPONSIVE GLOBAL ────────────────────────────────── */
+:root {
+  --vb-font-xs:   clamp(10px, 2.5vw, 12px);
+  --vb-font-sm:   clamp(12px, 3vw, 14px);
+  --vb-font-md:   clamp(14px, 3.5vw, 16px);
+  --vb-font-lg:   clamp(16px, 4vw, 20px);
+  --vb-font-xl:   clamp(20px, 5vw, 26px);
+  --vb-padding:   clamp(12px, 4vw, 20px);
+  --vb-gap:       clamp(8px, 2vw, 14px);
+  --vb-radius:    clamp(10px, 3vw, 16px);
+  --vb-btn-h:     clamp(42px, 10vw, 52px);
+}

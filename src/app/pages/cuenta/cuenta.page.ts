@@ -43,6 +43,16 @@ export class CuentaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
     await this.cargarPedido();
+    // Push al mozo avisando que el cliente quiere la cuenta
+    try {
+      await this.push.enviarPushNotificationAUsuario(
+        '🧾 Solicitud de cuenta',
+        `El cliente de la Mesa ${this.mesaId} está pidiendo la cuenta.`,
+        'mozo@verabri.com'
+      );
+    } catch (e) {
+      console.warn('No se pudo enviar push:', e);
+    }
     await this.cargarDatosMesa();
   }
 
@@ -183,5 +193,18 @@ export class CuentaPage implements OnInit {
       icon: color === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'
     });
     await toast.present();
+  }
+  getQRData(op: any): string {
+    return encodeURIComponent(JSON.stringify({
+      tipo: 'propina',
+      label: op.label,
+      pct: op.pct
+    }));
+  }
+
+  seleccionarPropinaDirecta(pct: number, label: string) {
+    this.propinaPct = pct;
+    this.propinaEscaneada = true;
+    this.mostrarToast(`Propina seleccionada: ${label} (${pct}%)`, 'success');
   }
 }

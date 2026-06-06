@@ -51,3 +51,16 @@
     padding: 10px;
     border-radius: 8px;
   }
+.toolbar-segmento {
+  --background: var(--vb-card);
+
+  ion-segment {
+    --background: var(--vb-card);
+  }
+
+  ion-segment-button {
+    --color: rgba(240,230,211,0.5);
+    --color-checked: var(--vb-acento);
+    --indicator-color: var(--vb-acento);
+  }
+}

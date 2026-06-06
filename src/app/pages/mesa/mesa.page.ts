@@ -57,19 +57,28 @@ export class MesaPage implements OnInit {
       if (errorMesa) throw errorMesa;
       this.mesa = mesaData;
 
-      // Validar acceso del cliente
       await this.validarAccesoCliente();
 
       const { data: pedidoData } = await this.supabaseService.client
         .from('pedidos')
         .select(`*, pedido_items(*, productos(nombre, precio, tiempo_min))`)
         .eq('mesa_id', this.mesaId)
-        .not('estado', 'eq', 'pagado')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
       this.pedidoActual = pedidoData;
+
+      // Si el pedido fue pagado, redirigir al cliente al home
+      if (this.pedidoActual?.estado === 'pagado') {
+        const usuario = this.supabaseService.usuarioActual;
+        if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo') {
+          await loading.dismiss();
+          await this.mostrarToast('¡Gracias por tu visita! Hasta pronto.', 'success');
+          this.router.navigateByUrl('/home', { replaceUrl: true });
+          return;
+        }
+      }
 
       if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
         this.encuestaHabilitada = true;
@@ -96,6 +105,7 @@ export class MesaPage implements OnInit {
       this.cargando = false;
     }
   }
+
 
   async validarAccesoCliente() {
     const usuario = this.supabaseService.usuarioActual;

@@ -5,6 +5,8 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
+
 @Component({
   standalone: false,
   selector: 'app-alta-empleado',
@@ -95,9 +97,73 @@ export class AltaEmpleadoPage implements OnInit {
 
   // ── QR DNI ────────────────────────────────────────────────────
 
-  escanearQRDni() {
-    // Por ahora simulado — con Capacitor se activa la cámara
-    this.mostrarToast('Lector QR disponible en el celular', 'warning');
+  async escanearQRDni() {
+    try {
+      if (Capacitor.getPlatform() === 'web') {
+        await this.mostrarToast('Esta función solo funciona en dispositivos Android.', 'warning');
+        return;
+      }
+
+      const { camera } = await BarcodeScanner.requestPermissions();
+      if (camera === 'denied') {
+        await this.mostrarToast('El acceso a la cámara fue denegado.', 'danger');
+        return;
+      }
+
+      if (Capacitor.getPlatform() === 'android') {
+        const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+        if (!available) {
+          await BarcodeScanner.installGoogleBarcodeScannerModule();
+        }
+      }
+
+      const { barcodes } = await BarcodeScanner.scan({
+        formats: [BarcodeFormat.Pdf417, BarcodeFormat.QrCode]
+      });
+
+      if (!barcodes || barcodes.length === 0) {
+        await this.mostrarToast('No se detectó ningún código.', 'danger');
+        return;
+      }
+
+      const raw = barcodes[0].rawValue || '';
+      const parsed = this.parseDNIQr(raw);
+
+      if (!parsed || !parsed.dni || !parsed.nombre || !parsed.apellido) {
+        await this.mostrarToast('No se pudo interpretar el código del DNI.', 'danger');
+        return;
+      }
+
+      const { nombre, apellido, dni } = parsed;
+      if (!this.formulario.get('nombre')?.value) this.formulario.get('nombre')?.setValue(nombre);
+      if (!this.formulario.get('apellido')?.value) this.formulario.get('apellido')?.setValue(apellido);
+      if (!this.formulario.get('dni')?.value) this.formulario.get('dni')?.setValue(dni);
+
+      await this.mostrarToast('Datos del DNI cargados correctamente.', 'success');
+
+    } catch (e: any) {
+      await this.mostrarToast('Error al abrir el escáner.', 'danger');
+    }
+  }
+
+  private parseDNIQr(raw: string): { nombre: string; apellido: string; dni: string } | null {
+    const parts = raw.split('@').map(s => s?.trim() || '');
+    const DNI_REGEX = /^\d{7,8}$/;
+
+    if (parts.length >= 6) {
+      const apellido = this.capitalizar(parts[1]);
+      const nombre = this.capitalizar(parts[2]);
+      const dni = (parts[4] || '').replace(/\D/g, '');
+      if (apellido && nombre && DNI_REGEX.test(dni)) {
+        return { nombre, apellido, dni };
+      }
+    }
+    return null;
+  }
+
+  private capitalizar(s: string) {
+    return s.toLowerCase().split(' ').filter(Boolean)
+      .map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
   }
 
   // ── GUARDAR ───────────────────────────────────────────────────
@@ -128,12 +194,11 @@ export class AltaEmpleadoPage implements OnInit {
 
     try {
       const { apellido, nombre, dni, cuil, email, contrasena, perfil } = this.formulario.value;
-       // Subir foto a Supabase
+
       let fotoStorageUrl = '';
       if (this.fotoArchivo) {
         fotoStorageUrl = await this.supabaseService.subirFoto(this.fotoArchivo, 'empleados');
       } else if (this.fotoUrl) {
-        // En web, convertir base64 a File
         const response = await fetch(this.fotoUrl);
         const blob = await response.blob();
         const archivo = new File([blob], `empleado-${Date.now()}.jpg`, { type: 'image/jpeg' });
@@ -155,11 +220,10 @@ export class AltaEmpleadoPage implements OnInit {
       this.cargando = false;
     }
   }
+
   private async vibrarError() {
     await this.supabaseService.vibrarError();
   }
-  
-  
 
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({

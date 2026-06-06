@@ -255,7 +255,7 @@ export class PedidosMozoPage implements OnInit {
               // Liberar la mesa
               await this.supabaseService.client
                 .from('mesas')
-                .update({ estado: 'vacia' })
+                .update({ estado: 'vacia', cliente_id: null })
                 .eq('id', pedido.mesa_id);
 
               // Marcar pedido como pagado (ya está) — solo actualizamos updated_at

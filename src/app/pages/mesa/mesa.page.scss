@@ -220,3 +220,13 @@ ion-segment-button {
 
   .total-monto { font-size: 18px; font-weight: 700; color: var(--vb-acento); }
 }
+.badge-estado-pedido {
+  white-space: normal !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+  text-align: center;
+}
+
+.boton-recepcion {
+  --background: var(--vb-exito);
+}

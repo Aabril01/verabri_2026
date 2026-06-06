@@ -1,5 +1,5 @@
 .cuenta-content {
-  --background: var(--ion-color-light);
+  --background: var(--vb-fondo);
 }
 
 .estado-vacio {
@@ -9,24 +9,25 @@
   justify-content: center;
   height: 60vh;
   gap: 16px;
-  color: var(--ion-color-medium);
 
   ion-icon {
     font-size: 64px;
+    color: var(--vb-texto-suave);
   }
 
   p {
     font-size: 16px;
     text-align: center;
+    color: var(--vb-texto-suave);
   }
 }
 
 .seccion-card {
-  background: white;
+  background: var(--vb-card);
   border-radius: 16px;
   margin: 16px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid rgba(240,230,211,0.2);
 }
 
 .seccion-titulo {
@@ -35,12 +36,12 @@
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: var(--ion-color-dark);
+  color: var(--vb-acento);
   margin-bottom: 12px;
 
   ion-icon {
     font-size: 20px;
-    color: var(--ion-color-primary);
+    color: var(--vb-acento);
   }
 }
 
@@ -48,15 +49,16 @@
   display: flex;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid var(--ion-color-light);
+  border-bottom: 1px solid rgba(240,230,211,0.15);
 
   .item-nombre {
     flex: 1;
     font-size: 14px;
+    color: var(--vb-texto);
   }
 
   .item-cantidad {
-    color: var(--ion-color-medium);
+    color: var(--vb-texto-suave);
     font-size: 13px;
     margin-right: 12px;
   }
@@ -64,6 +66,7 @@
   .item-precio {
     font-weight: 600;
     font-size: 14px;
+    color: var(--vb-texto);
   }
 }
 
@@ -73,15 +76,17 @@
   padding-top: 12px;
   font-weight: 600;
   font-size: 15px;
+  color: var(--vb-texto);
 }
 
 .descuento-row {
   display: flex;
   justify-content: space-between;
   font-size: 15px;
+  color: var(--vb-texto);
 
   .descuento-monto {
-    color: var(--ion-color-success);
+    color: var(--vb-exito);
     font-weight: 600;
   }
 }
@@ -99,24 +104,25 @@
   align-items: center;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 2px solid var(--ion-color-light);
+  border: 2px solid rgba(240,230,211,0.2);
   cursor: pointer;
   transition: all 0.2s;
 
   &.seleccionada {
-    border-color: var(--ion-color-primary);
-    background: var(--ion-color-primary-tint);
+    border-color: var(--vb-dorado);
+    background: rgba(201,148,58,0.15);
   }
 
   .opcion-label {
     font-size: 15px;
     font-weight: 500;
+    color: var(--vb-texto);
   }
 
   .opcion-pct {
     font-size: 15px;
     font-weight: 700;
-    color: var(--ion-color-primary);
+    color: var(--vb-dorado);
   }
 }
 
@@ -126,11 +132,11 @@
   font-size: 15px;
   padding-top: 8px;
   font-weight: 600;
-  color: var(--ion-color-primary);
+  color: var(--vb-acento);
 }
 
 .total-card {
-  background: var(--ion-color-primary);
+  background: var(--vb-acento);
   border-radius: 16px;
   margin: 16px;
   padding: 24px;
@@ -140,21 +146,21 @@
   gap: 8px;
 
   .total-label {
-    color: white;
+    color: var(--vb-blanco);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 1px;
   }
 
   .total-monto {
-    color: white;
+    color: var(--vb-blanco);
     font-size: 42px;
     font-weight: 800;
   }
 }
 
 .boton-pagar {
-  --background: var(--ion-color-success);
+  --background: var(--vb-exito);
   --border-radius: 12px;
   height: 52px;
   font-size: 16px;
@@ -167,7 +173,7 @@
 }
 
 .pago-confirmado-card {
-  background: var(--ion-color-success-tint);
+  background: rgba(42,140,80,0.2);
   border-radius: 16px;
   margin: 16px;
   padding: 24px;
@@ -176,15 +182,71 @@
   align-items: center;
   gap: 12px;
   text-align: center;
+  border: 1px solid rgba(42,140,80,0.4);
 
   ion-icon {
     font-size: 48px;
-    color: var(--ion-color-success);
+    color: var(--vb-exito);
   }
 
   p {
     font-size: 16px;
     font-weight: 600;
-    color: var(--ion-color-success-shade);
+    color: var(--vb-texto);
   }
+}
+
+.qr-propinas-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qr-instruccion {
+  font-size: 14px;
+  color: var(--vb-texto-suave);
+  text-align: center;
+  margin: 0;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.qr-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  border: 2px solid rgba(240,230,211,0.2);
+  transition: all 0.2s;
+
+  &:active {
+    border-color: var(--vb-dorado);
+    background: rgba(201,148,58,0.15);
+  }
+}
+
+.qr-imagen {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+}
+
+.qr-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--vb-texto);
+}
+
+.qr-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vb-dorado);
 }

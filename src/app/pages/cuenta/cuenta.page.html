@@ -60,12 +60,23 @@
         Propina
       </h3>
 
-      <ion-button expand="block" class="boton-qr" (click)="escanearQRPropina()" *ngIf="!propinaEscaneada">
-        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-        Escanear QR de propina
-      </ion-button>
+      <!-- QR DE PROPINAS EN PANTALLA -->
+      <div *ngIf="!propinaEscaneada" class="qr-propinas-contenedor">
+        <p class="qr-instruccion">Escaneá el QR según tu nivel de satisfacción:</p>
+        <div class="qr-grid">
+          <div class="qr-item" *ngFor="let op of opcionesPropina" (click)="seleccionarPropinaDirecta(op.pct, op.label)">
+            <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + getQRData(op)" class="qr-imagen"/>
+            <span class="qr-label">{{ op.label }}</span>
+            <span class="qr-pct">{{ op.pct }}%</span>
+          </div>
+        </div>
+        <ion-button expand="block" fill="outline" class="boton-qr" (click)="escanearQRPropina()">
+          <ion-icon name="scan-outline" slot="start"></ion-icon>
+          Escanear con cámara
+        </ion-button>
+      </div>
 
-      <!-- Opciones de propina (web o después de escanear) -->
+      <!-- PROPINA SELECCIONADA -->
       <div *ngIf="propinaEscaneada" class="opciones-propina">
         <div class="opcion-propina"
           *ngFor="let op of opcionesPropina"
@@ -81,7 +92,6 @@
         <span>+${{ propinaMonto }}</span>
       </div>
     </div>
-
     <!-- TOTAL -->
     <div class="total-card">
       <span class="total-label">TOTAL A ABONAR</span>
