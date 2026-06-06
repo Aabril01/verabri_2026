@@ -5,6 +5,8 @@ import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
 import { NativeAudio } from '@capacitor-community/native-audio';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import emailjs from '@emailjs/browser';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -186,16 +188,23 @@ export class SupabaseService {
   // ── EMAIL AUTOMÁTICO ───────────────────────────────────────────
 
   async enviarEmailEstado(email: string, nombre: string, estado: string): Promise<void> {
-    // En lugar de usar fetch manual, usamos el cliente nativo de Supabase
-    const { data, error } = await this.supabase.functions.invoke('enviar-email', {
-      body: { email, nombre, estado }
-    });
+    const estadoTexto = estado === 'aceptado' ? 'aprobada' : 'rechazada';
+    const colorEstado = estado === 'aceptado' ? '#2A8C50' : '#C0392B';
+    const detalle = estado === 'aceptado'
+      ? 'Ya podés ingresar a la aplicación.'
+      : 'Si creés que es un error, comunicate con el restaurante.';
 
-    if (error) {
-      throw new Error(error.message || 'Error al enviar el correo');
+    try {
+      await emailjs.send(
+        'verabrioff@gmail.com',
+        'template_gn0l3c7',
+        { email, nombre, estado: estadoTexto, color: colorEstado, detalle },
+        'BthBN2OaJ9HDcpClC'
+      );
+    } catch (e) {
+      console.warn('EmailJS:', e);
     }
   }
-  
   async vibrarError() {
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });

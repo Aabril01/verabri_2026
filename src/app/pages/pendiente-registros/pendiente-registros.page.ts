@@ -51,7 +51,6 @@ export class PendienteRegistrosPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Confirmar rechazo',
       message: `¿Seguro que querés rechazar a este cliente?`,
-      cssClass: 'alerta-verabri',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
