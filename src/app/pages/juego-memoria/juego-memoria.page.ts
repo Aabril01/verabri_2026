@@ -116,7 +116,7 @@ export class JuegoMemoriaPage implements OnInit {
     // Gana si completó todas las parejas en el primer intento por pareja
     // es decir, si los intentos fallidos son 0
     const intentosFallidos = this.intentos - this.totalParejas;
-    this.gano = intentosFallidos === 0 && !this.yaJugoAntes;
+    this.gano = intentosFallidos <= 3 && !this.yaJugoAntes;
 
     await this.marcarJugado();
 

@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-title>Verabri</ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar-segmento">
+    <ion-segment [value]="graficaActiva" (ionChange)="cambiarGrafica($event)">
+      <ion-segment-button value="barra">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        <ion-label>Barras</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="torta">
+        <ion-icon name="pie-chart-outline"></ion-icon>
+        <ion-label>Torta</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="lineal">
+        <ion-icon name="trending-up-outline"></ion-icon>
+        <ion-label>Lineal</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bienvenida-content">
+
+  <!-- HEADER CON LOGO -->
+  <div class="bienvenida-header">
+    <img src="assets/logo.png" class="bienvenida-logo"/>
+    <h1 class="bienvenida-titulo">VERABRI</h1>
+    <p class="bienvenida-subtitulo">Parrilla & Restaurante</p>
+  </div>
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="ion-text-center ion-padding-top">
+    <ion-spinner name="crescent" color="light"></ion-spinner>
+  </div>
+
+  <!-- SIN ENCUESTAS -->
+  <div *ngIf="!cargando && totalEncuestas === 0" class="ion-text-center ion-padding">
+    <ion-icon name="analytics-outline" style="font-size: 64px;" color="medium"></ion-icon>
+    <p>Todavía no hay encuestas registradas.</p>
+  </div>
+
+  <div [hidden]="cargando || totalEncuestas === 0">
+
+    <!-- MÉTRICAS -->
+    <ion-grid class="ion-no-padding ion-padding-horizontal">
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="metric-card">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="star" color="warning" class="metric-icon"></ion-icon>
+              <h1 class="metric-value">{{ valoracionGeneral }}</h1>
+              <p class="metric-title">Promedio general</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="metric-card">
+            <ion-card-content class="ion-text-center">
+              <ion-icon name="heart" class="metric-icon" style="color: #e63946;"></ion-icon>
+              <h1 class="metric-value">{{ porcentajeVolveria }}%</h1>
+              <p class="metric-title">dice que volverá</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- GRÁFICO BARRAS -->
+    <ion-card class="section-card" *ngIf="graficaActiva === 'barra'">
+      <ion-card-header>
+        <ion-card-title>Rendimiento por aspecto</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #barCanvas></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- GRÁFICO TORTA -->
+    <ion-card class="section-card" *ngIf="graficaActiva === 'torta'">
+      <ion-card-header>
+        <ion-card-title>Distribución de calificaciones</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #pieCanvas></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- GRÁFICO LINEAL -->
+    <ion-card class="section-card" *ngIf="graficaActiva === 'lineal'">
+      <ion-card-header>
+        <ion-card-title>Evolución de encuestas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #lineCanvas></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
+  <!-- BOTONES -->
+  <div class="botones-acceso">
+    <ion-button expand="block" class="boton-menu" (click)="irAMenu()">
+      <ion-icon name="book-outline" slot="start"></ion-icon>
+      Ver el menú
+    </ion-button>
+    <ion-button expand="block" class="boton-espera" (click)="irAListaEspera()">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon>
+      Anotarme en lista de espera
+    </ion-button>
+  </div>
+
+</ion-content>

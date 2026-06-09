@@ -133,7 +133,11 @@ const routes: Routes = [
   {
     path: 'cuenta/:mesaId',
     loadChildren: () => import('./pages/cuenta/cuenta.module').then( m => m.CuentaPageModule)
+  },  {
+    path: 'bienvenida-publica',
+    loadChildren: () => import('./pages/bienvenida-publica/bienvenida-publica.module').then( m => m.BienvenidaPublicaPageModule)
   },
+
 
 
 ];

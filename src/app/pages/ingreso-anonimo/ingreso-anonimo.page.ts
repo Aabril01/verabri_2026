@@ -114,7 +114,7 @@ export class IngresoAnonimoPage implements OnInit {
         const datos = JSON.parse(contenido);
 
         if (datos.tipo === 'ingreso' && datos.accion === 'lista-espera') {
-          await this.procesarIngreso();
+          this.router.navigateByUrl('/bienvenida-publica');
         } else {
           await this.mostrarToast('El código QR no es válido para el ingreso.', 'danger');
         }

@@ -70,7 +70,7 @@ export class MesaPage implements OnInit {
       this.pedidoActual = pedidoData;
 
       // Si el pedido fue pagado, redirigir al cliente al home
-      if (this.pedidoActual?.estado === 'pagado') {
+      if (this.mesa?.estado === 'vacia') {
         const usuario = this.supabaseService.usuarioActual;
         if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo') {
           await loading.dismiss();

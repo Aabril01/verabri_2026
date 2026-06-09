@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastController, LoadingController } from '@ionic/angular';
+import { AlertController, ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
@@ -26,7 +26,8 @@ export class AltaBebidaPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private alertController: AlertController
   ) {}
 
   ngOnInit() {
@@ -41,6 +42,20 @@ export class AltaBebidaPage implements OnInit {
   campoInvalido(campo: string): boolean {
     const control = this.formulario.get(campo);
     return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  private elegirFuente(): Promise<CameraSource | null> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Seleccionar foto',
+        buttons: [
+          { text: 'Cámara', handler: () => resolve(CameraSource.Camera) },
+          { text: 'Galería', handler: () => resolve(CameraSource.Photos) },
+          { text: 'Cancelar', role: 'cancel', handler: () => resolve(null) }
+        ]
+      });
+      await alert.present();
+    });
   }
 
   async seleccionarFoto(index: number) {
@@ -65,11 +80,14 @@ export class AltaBebidaPage implements OnInit {
         return;
       }
 
+      const source = await this.elegirFuente();
+      if (!source) return;
+
       const image = await Camera.getPhoto({
         quality: 85,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt // ← esto muestra el selector cámara/galería
+        source
       });
 
       if (image.dataUrl) {
@@ -156,6 +174,7 @@ export class AltaBebidaPage implements OnInit {
       this.cargando = false;
     }
   }
+
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({
       message: mensaje,

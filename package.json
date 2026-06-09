@@ -38,6 +38,7 @@
     "angularx-qrcode": "^21.0.5",
     "chart.js": "^4.5.1",
     "ionicons": "^7.0.0",
+    "jspdf": "^4.2.1",
     "ng2-charts": "^10.0.0",
     "ngx-qrcode2": "^9.0.0",
     "rxjs": "~7.8.0",

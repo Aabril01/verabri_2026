@@ -224,3 +224,31 @@ p, span {
   --vb-radius:    clamp(10px, 3vw, 16px);
   --vb-btn-h:     clamp(42px, 10vw, 52px);
 }
+/* ── MENSAJES DE ERROR ────────────────────────────────── */
+ion-note[color="danger"] {
+  color: #FFB3B3 !important;
+  font-size: clamp(11px, 3vw, 13px);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+
+  ion-icon {
+    color: #FFB3B3 !important;
+    font-size: 14px;
+  }
+}
+
+.mensajes-error ion-note {
+  color: #FFB3B3 !important;
+  ion-icon {
+    color: #FFB3B3 !important;
+  }
+}
+
+.error-foto {
+  color: #FFB3B3 !important;
+  ion-icon {
+    color: #FFB3B3 !important;
+  }
+}

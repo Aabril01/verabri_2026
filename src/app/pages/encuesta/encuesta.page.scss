@@ -34,27 +34,31 @@
   gap: 8px;
   padding: 16px 8px;
   border-radius: 12px;
-  border: 2px solid var(--ion-color-light);
+  border: 2px solid rgba(240, 230, 211, 0.3);
   cursor: pointer;
   transition: all 0.2s;
 
   ion-icon {
     font-size: 28px;
-    color: var(--ion-color-medium);
+    color: var(--vb-texto);
   }
 
   span {
     font-size: 13px;
     text-align: center;
-    color: var(--ion-color-dark);
+    color: var(--vb-texto);
   }
 
   &.seleccionada {
-    border-color: var(--ion-color-primary);
-    background: var(--ion-color-primary-tint);
+    border-color: var(--vb-acento);
+    background: rgba(201, 148, 58, 0.2);
 
     ion-icon {
-      color: var(--ion-color-primary);
+      color: var(--vb-acento);
+    }
+
+    span {
+      color: var(--vb-acento);
     }
   }
 }

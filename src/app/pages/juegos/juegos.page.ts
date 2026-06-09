@@ -46,6 +46,11 @@ export class JuegosPage implements OnInit {
 
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
+    const usuario = this.supabaseService.usuarioActual;
+    if (usuario?.perfil === 'cliente_anonimo') {
+      this.router.navigateByUrl('/home');
+      return;
+    }
     await this.cargarPedido();
   }
 

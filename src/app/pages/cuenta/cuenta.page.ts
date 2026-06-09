@@ -43,17 +43,18 @@ export class CuentaPage implements OnInit {
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
     await this.cargarPedido();
+    await this.cargarDatosMesa();
     // Push al mozo avisando que el cliente quiere la cuenta
     try {
       await this.push.enviarPushNotificationAUsuario(
         '🧾 Solicitud de cuenta',
-        `El cliente de la Mesa ${this.mesaId} está pidiendo la cuenta.`,
+        `El cliente de la Mesa ${this.numeroMesa} está pidiendo la cuenta.`,
         'mozo@verabri.com'
       );
     } catch (e) {
       console.warn('No se pudo enviar push:', e);
     }
-    await this.cargarDatosMesa();
+    
   }
 
   async cargarPedido() {

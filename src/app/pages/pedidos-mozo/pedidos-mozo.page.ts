@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
 import { PushNotification } from '../../services/push-notifications';
+import jsPDF from 'jspdf';
+import emailjs from '@emailjs/browser';
 
 @Component({
   standalone: false,
@@ -154,7 +156,6 @@ export class PedidosMozoPage implements OnInit {
 
       if (error) throw error;
 
-      // ── PUSH PUNTO 13 — Mozo rechaza → notificar al cliente ──
       if (estado === 'rechazado' && pedido.cliente_id) {
         try {
           await this.pushNotification.enviarPushNotificationPorID(
@@ -167,7 +168,6 @@ export class PedidosMozoPage implements OnInit {
         }
       }
 
-      // ── PUSH PUNTO 14 — Mozo confirma → notificar a cocina y bar ──
       if (estado === 'confirmado') {
         try {
           await this.pushNotification.enviarPushNotificationAUsuario(
@@ -180,13 +180,11 @@ export class PedidosMozoPage implements OnInit {
             `Pedido de Mesa ${pedido.mesas?.numero} listo para preparar.`,
             "cantinero@verabri.com"
           );
-
         } catch (pushError) {
           console.warn('No se pudo enviar push a cocina/bar:', pushError);
         }
       }
 
-      // ── PUSH PUNTO 19 — Mozo entrega → notificar al cliente ──
       if (estado === 'entregado' && pedido.cliente_id) {
         try {
           await this.pushNotification.enviarPushNotificationPorID(
@@ -216,6 +214,114 @@ export class PedidosMozoPage implements OnInit {
     }
   }
 
+  // ── GENERAR PDF ──────────────────────────────────────────────
+
+  generarFacturaPDF(pedido: any, cliente: any): string {
+    const doc = new jsPDF();
+    const fecha = new Date().toLocaleDateString('es-AR');
+    const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
+
+    // Fondo header
+    doc.setFillColor(201, 148, 58);
+    doc.rect(0, 0, 210, 40, 'F');
+
+    // Título
+    doc.setTextColor(245, 238, 240);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('VERABRI', 105, 18, { align: 'center' });
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Parrilla & Restaurante', 105, 26, { align: 'center' });
+    doc.text('Av. Mitre 123, Avellaneda, Buenos Aires', 105, 33, { align: 'center' });
+
+    // Info factura
+    doc.setTextColor(50, 50, 50);
+    doc.setFontSize(10);
+    doc.text(`Fecha: ${fecha}`, 14, 52);
+    doc.text(`N° Factura: ${numeroFactura}`, 14, 59);
+    doc.text(`N° Pedido: ${pedido.id.substring(0, 8).toUpperCase()}`, 14, 66);
+    doc.text(`Mesa: ${pedido.mesas?.numero}`, 14, 73);
+
+    // Datos cliente
+    doc.setFillColor(107, 78, 122);
+    doc.rect(0, 80, 210, 8, 'F');
+    doc.setTextColor(240, 230, 211);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('DATOS DEL CLIENTE', 14, 86);
+
+    doc.setTextColor(50, 50, 50);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Nombre: ${cliente.nombre} ${cliente.apellido || ''}`, 14, 96);
+    if (cliente.email) doc.text(`Email: ${cliente.email}`, 14, 103);
+    if (cliente.dni) doc.text(`DNI: ${cliente.dni}`, 14, 110);
+
+    // Detalle pedido
+    doc.setFillColor(107, 78, 122);
+    doc.rect(0, 117, 210, 8, 'F');
+    doc.setTextColor(240, 230, 211);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('DETALLE DEL PEDIDO', 14, 123);
+
+    // Encabezados tabla
+    doc.setTextColor(50, 50, 50);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Producto', 14, 135);
+    doc.text('Cant.', 120, 135);
+    doc.text('Precio unit.', 145, 135);
+    doc.text('Subtotal', 178, 135);
+    doc.line(14, 137, 196, 137);
+
+    // Items
+    doc.setFont('helvetica', 'normal');
+    let y = 144;
+    const items = pedido.pedido_items || [];
+    items.forEach((item: any) => {
+      doc.text(item.productos?.nombre || '', 14, y);
+      doc.text(`${item.cantidad}`, 123, y);
+      doc.text(`$${item.precio_unit}`, 145, y);
+      doc.text(`$${item.subtotal}`, 178, y);
+      y += 8;
+    });
+
+    // Totales
+    doc.line(14, y + 2, 196, y + 2);
+    y += 10;
+
+    if (pedido.descuento_pct > 0) {
+      doc.text(`Descuento (${pedido.descuento_pct}%):`, 130, y);
+      const descMonto = items.reduce((acc: number, i: any) => acc + i.subtotal, 0) * pedido.descuento_pct / 100;
+      doc.text(`-$${descMonto.toFixed(0)}`, 178, y);
+      y += 8;
+    }
+
+    if (pedido.propina_pct > 0) {
+      doc.text(`Propina (${pedido.propina_pct}%):`, 130, y);
+      doc.text(`$${(pedido.total * pedido.propina_pct / 100).toFixed(0)}`, 178, y);
+      y += 8;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('TOTAL:', 130, y + 2);
+    doc.text(`$${pedido.total}`, 178, y + 2);
+
+    // Footer
+    doc.setFillColor(201, 148, 58);
+    doc.rect(0, 275, 210, 22, 'F');
+    doc.setTextColor(245, 238, 240);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Gracias por elegirnos • VERABRI Parrilla & Restaurante', 105, 283, { align: 'center' });
+    doc.text('© 2026 Verabri — UTN Avellaneda', 105, 290, { align: 'center' });
+
+    return doc.output('datauristring');
+  }
+
   formatearHora(fecha: string): string {
     if (!fecha) return '';
     const d = new Date(fecha);
@@ -233,11 +339,11 @@ export class PedidosMozoPage implements OnInit {
     await toast.present();
   }
 
-   // ── PUNTO 22 — Mozo confirma pago → liberar mesa y notificar──
+  // ── PUNTO 22 — Mozo confirma pago → PDF + email/push + liberar mesa ──
   async confirmarPago(pedido: any) {
     const alert = await this.alertController.create({
       header: 'Confirmar pago',
-      message: `¿Confirmás el pago de la Mesa ${pedido.mesas?.numero}? La mesa quedará libre.`,
+      message: `¿Confirmás el pago de la Mesa ${pedido.mesas?.numero}? Se emitirá la factura.`,
       cssClass: 'alerta-verabri',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -246,22 +352,34 @@ export class PedidosMozoPage implements OnInit {
           handler: async () => {
             const loading = await this.loadingController.create({
               spinner: 'crescent',
-              message: 'Liberando mesa...',
+              message: 'Emitiendo factura...',
               cssClass: 'spinner-verabri',
             });
             await loading.present();
 
             try {
+              // Obtener datos del cliente
+              const { data: clienteData } = await this.supabaseService.client
+                .from('usuarios')
+                .select('nombre, apellido, email, dni, perfil')
+                .eq('id', pedido.cliente_id)
+                .single();
+
+              const cliente = clienteData || { nombre: 'Cliente', apellido: '', email: '', dni: '', perfil: 'cliente_anonimo' };
+
+              // Generar PDF
+              const pdfBase64 = this.generarFacturaPDF(pedido, cliente);
+
               // Liberar la mesa
               await this.supabaseService.client
                 .from('mesas')
                 .update({ estado: 'vacia', cliente_id: null })
                 .eq('id', pedido.mesa_id);
 
-              // Marcar pedido como pagado (ya está) — solo actualizamos updated_at
+              // Marcar pedido como cerrado
               await this.supabaseService.client
                 .from('pedidos')
-                .update({ updated_at: new Date().toISOString() })
+                .update({ estado: 'cerrado' })
                 .eq('id', pedido.id);
 
               // Push al dueño y supervisor
@@ -276,16 +394,49 @@ export class PedidosMozoPage implements OnInit {
                 'supervisor@verabri.com'
               );
 
-              await this.pushNotification.enviarPushNotificationPorID(
-                '✅ Pago confirmado',
-                `El mozo validó el pago. ¡Gracias por tu estadía!`,
-                pedido.cliente_id
-              );
+              // Cliente registrado → email con factura
+              if (cliente.perfil === 'cliente_registrado' && cliente.email) {
+                try {
+                  const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
+                  await emailjs.send(
+                    'verabrioff@gmail.com',
+                    'template_gn0l3c7',
+                    {
+                      email: cliente.email,
+                      nombre: `${cliente.nombre} ${cliente.apellido}`,
+                      mensaje: `Tu factura N° ${numeroFactura} por $${pedido.total} está adjunta. ¡Gracias por visitarnos!`
+                    },
+                    'BthBN2OaJ9HDcpClC'
+                  );
+                } catch (e) {
+                  console.warn('Error enviando email factura:', e);
+                }
+              }
 
-              await this.mostrarToast('¡Pago confirmado! Mesa liberada.', 'success');
+              // Cliente anónimo → push con enlace de descarga
+              if (cliente.perfil === 'cliente_anonimo' && pedido.cliente_id) {
+                try {
+                  await this.pushNotification.enviarPushNotificationPorID(
+                    '🧾 Tu factura está lista',
+                    `Descargá tu factura tocando aquí.`,
+                    pedido.cliente_id
+                  );
+                } catch (e) {
+                  console.warn('Error enviando push factura anónimo:', e);
+                }
+              }
+
+              // Descargar PDF en el dispositivo del mozo
+              const link = document.createElement('a');
+              link.href = pdfBase64;
+              link.download = `factura-mesa-${pedido.mesas?.numero}.pdf`;
+              link.click();
+
+              await this.mostrarToast('¡Pago confirmado! Factura emitida.', 'success');
               await this.cargarPedidos();
 
             } catch (error: any) {
+              console.error('Error:', error);
               await this.mostrarToast('Error al confirmar el pago.', 'danger');
             } finally {
               await loading.dismiss();
