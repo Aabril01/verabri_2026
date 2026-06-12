@@ -115,7 +115,7 @@ export class ListaEsperaPage implements OnInit {
         cliente.cliente_id
       );
 
-      await this.mostrarToast(`Mesa asignada a ${cliente.nombre} correctamente.`, 'success');
+      await this.mostrarToast(`La mesa se asignó a ${cliente.nombre} correctamente.`, 'success');
       await this.cargarDatos();
 
     } catch (error: any) {

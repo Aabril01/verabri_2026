@@ -70,7 +70,7 @@ export class AltaClientePage implements OnInit {
       this.fotoUrl = image.dataUrl ?? null;
       this.fotoArchivo = image.exif
     } catch {
-      this.mostrarToast('No se ha tomado ninguna foto.', 'warning');
+      this.mostrarToast('No se tomó ninguna foto.', 'warning');
     }
     
   }
@@ -230,8 +230,8 @@ export class AltaClientePage implements OnInit {
       });
       
       //Envio de notificaciones
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "dueno@verabri.com");
-      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo usuario.", "supervisor@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo cliente.", "dueno@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("Nuevo cliente", "Se ha registrado un nuevo cliente.", "supervisor@verabri.com");
 
       await this.mostrarToast('Fuiste registrado con éxito. Espera a que validen tu cuenta.', 'success');
       this.router.navigateByUrl('/login', {replaceUrl:true});

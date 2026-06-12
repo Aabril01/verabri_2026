@@ -252,3 +252,11 @@ ion-note[color="danger"] {
     color: #FFB3B3 !important;
   }
 }
+
+ion-alert.alert-controller {
+  --background: #6B4E7A;
+  --backdrop-opacity: 0.7;
+
+  .alert-title { color: #F0E6D3; font-weight: 700; }
+  .alert-message { color: rgba(240,230,211,0.8); }
+}

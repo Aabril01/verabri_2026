@@ -115,7 +115,7 @@ export class PedidosBarPage implements OnInit {
 
         await this.mostrarToast('¡Pedido completo! El mozo fue notificado.', 'success');
       } else {
-        await this.mostrarToast('¡Bebidas listas! Esperando que cocina termine.', 'success');
+        await this.mostrarToast('¡Bebidas listas!', 'success');
       }
 
       await this.cargarPedidos();

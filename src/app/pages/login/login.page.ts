@@ -115,7 +115,7 @@ export class LoginPage implements OnInit {
 
         await this.supabaseService.cerrarSesion();
         const mensaje = usuario.estado === 'rechazado'
-          ? 'Tu solicitud de registro fue rechazada. Por favor contactate con el restaurante.'
+          ? 'Tu solicitud de registro fue rechazada. Por favor, contactate con el restaurante.'
           : 'Tu cuenta está pendiente de aprobación. Te notificaremos por correo electrónico.';
         this.errorGeneral = mensaje;
         return await this.vibrarError();;
@@ -160,7 +160,7 @@ export class LoginPage implements OnInit {
       this.navegarSegunPerfil(usuario?.perfil || perfil.id);
     } catch (error: any) {
       await this.vibrarError();
-      this.errorGeneral = `No se pudo ingresar como ${perfil.nombre}. Verificá que el usuario exista en Supabase.`;
+      this.errorGeneral = `No se pudo ingresar como ${perfil.nombre}. Verificá que el usuario exista.`;
     } finally {
       this.perfilCargando = null;
     }

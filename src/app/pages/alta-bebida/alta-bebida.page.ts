@@ -48,6 +48,7 @@ export class AltaBebidaPage implements OnInit {
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
         header: 'Seleccionar foto',
+        cssClass: 'alert-controller',
         buttons: [
           { text: 'Cámara', handler: () => resolve(CameraSource.Camera) },
           { text: 'Galería', handler: () => resolve(CameraSource.Photos) },
@@ -107,7 +108,7 @@ export class AltaBebidaPage implements OnInit {
 
     const fotosCompletas = this.fotos.every(f => f !== null);
     if (!fotosCompletas) {
-      this.errorFotos = 'Las 3 fotos de la bebida son obligatorias.';
+      this.errorFotos = 'Se requieren 3 fotos de la bebida.';
       await this.supabaseService.vibrarError();
       return;
     }

@@ -48,6 +48,7 @@ export class AltaPlatoPage implements OnInit {
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
         header: 'Seleccionar foto',
+        cssClass: 'alert-controller',
         buttons: [
           { text: 'Cámara', handler: () => resolve(CameraSource.Camera) },
           { text: 'Galería', handler: () => resolve(CameraSource.Photos) },
@@ -107,7 +108,7 @@ export class AltaPlatoPage implements OnInit {
 
     const fotasCompletas = this.fotos.every(f => f !== null);
     if (!fotasCompletas) {
-      this.errorFotos = 'Las 3 fotos del plato son obligatorias.';
+      this.errorFotos = 'Se requieren 3 fotos del plato.';
       await this.supabaseService.vibrarError();
       return;
     }

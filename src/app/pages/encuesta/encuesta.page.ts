@@ -50,7 +50,7 @@ export class EncuestaPage implements OnInit {
 
     if (this.encuestaForm.invalid) {
       await this.supabase.vibrarError();
-      this.mostrarToast('Por favor, completa todos los campos requeridos.', 'danger');
+      this.mostrarToast('Por favor, completá todos los campos requeridos.', 'danger');
       return;
     }
 
@@ -89,7 +89,7 @@ export class EncuestaPage implements OnInit {
 
       if (errorPedido) throw errorPedido;
 
-      this.mostrarToast('¡Gracias por tu opinión! Encuesta enviada con éxito.', 'success');
+      this.mostrarToast('¡Gracias por tu opinión! La encuesta se envió con éxito.', 'success');
       await loading.dismiss();
       this.encuestaForm.reset({ calificacion: 5, volveria: true });
       this.volver();
