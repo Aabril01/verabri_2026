@@ -398,10 +398,11 @@ export class PedidosMozoPage implements OnInit {
               const urlPDF = await this.subirPDFStorage(pdfBase64, nombreArchivo);
 
               // Liberar mesa
-              await this.supabaseService.client
-                .from('mesas')
-                .update({ estado: 'vacia', cliente_id: null })
-                .eq('id', pedido.mesa_id);
+              const { data: mesaActualizada, error: errorMesa } = await this.supabaseService.client
+              .from('mesas')
+              .update({ estado: 'vacia', cliente_id: null })
+              .eq('id', pedido.mesa_id);
+            console.log('Mesa liberada:', mesaActualizada, 'Error:', errorMesa);
 
               // Marcar pedido como pagado
               await this.supabaseService.client
