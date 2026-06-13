@@ -108,7 +108,7 @@ export class AltaBebidaPage implements OnInit {
 
     const fotosCompletas = this.fotos.every(f => f !== null);
     if (!fotosCompletas) {
-      this.errorFotos = 'Las 3 fotos de la bebida son obligatorias.';
+      this.errorFotos = 'Se requieren 3 fotos de la bebida.';
       await this.supabaseService.vibrarError();
       return;
     }

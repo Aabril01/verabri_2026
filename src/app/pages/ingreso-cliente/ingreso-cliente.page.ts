@@ -104,7 +104,7 @@ export class IngresoClientePage implements OnInit {
 
       this.paso = 'espera';
       await this.mostrarToast('¡Estás en la lista de espera!', 'success');
-      this.pushNotifications.enviarPushNotificationAUsuario("¡Nueva petición!", "Un cliente ha solicitado una mesa.", "metre@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario("¡Nueva petición!", "Un cliente solicitó una mesa.", "metre@verabri.com");
 
     } catch (error: any) {
       console.error('Error:', error);

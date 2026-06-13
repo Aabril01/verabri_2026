@@ -169,9 +169,9 @@ export class CuentaPage implements OnInit {
       if (error) throw error;
 
       // Push al mozo, dueño y supervisor
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago. ¡Confirmalo!`, 'mozo@verabri.com');
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago.`, 'dueno@verabri.com');
-      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `Mesa ${this.numeroMesa} realizó el pago.`, 'supervisor@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago. ¡Confirmalo!`, 'mozo@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago.`, 'dueno@verabri.com');
+      await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago.`, 'supervisor@verabri.com');
 
       this.pagoRealizado = true;
       await this.mostrarToast('¡Pago enviado! Esperá la confirmación del mozo.', 'success');

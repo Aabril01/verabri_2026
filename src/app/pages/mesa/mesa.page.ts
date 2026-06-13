@@ -177,8 +177,8 @@ export class MesaPage implements OnInit {
   getEstadoPreparacion(): string {
     const p = this.pedidoActual;
     if (p.cocina_listo && p.bar_listo) return '✅ Todo listo — esperando al mozo';
-    if (p.cocina_listo) return '🍽️ Cocina lista — bar en preparación';
-    if (p.bar_listo) return '🥤 Bar listo — cocina en preparación';
+    if (p.cocina_listo) return '🍽️ Platos listos — bar en preparación';
+    if (p.bar_listo) return '🥤 Bebidas listas — cocina en preparación';
     return '🔄 En preparación (cocina y bar)';
   }
 
