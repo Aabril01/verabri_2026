@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { PushNotification } from './services/push-notifications';
 import { NativeAudio } from '@capacitor-community/native-audio';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ export class AppComponent {
   constructor(private pushService: PushNotification) {
     this.iniciarAudio();
     this.pushService.inicirPushNotifications();
+    this.escucharCierreApp();
   }
 
   async iniciarAudio() {
@@ -28,5 +30,16 @@ export class AppComponent {
       isUrl: false
     });
     await NativeAudio.play({ assetId: 'inicio' });
+  }
+
+  escucharCierreApp() {
+    App.addListener('backButton', async ({ canGoBack }) => {
+      if (!canGoBack) {
+        try {
+          await NativeAudio.play({ assetId: 'cierre' });
+        } catch (e) {}
+        setTimeout(() => App.exitApp(), 500);
+      }
+    });
   }
 }

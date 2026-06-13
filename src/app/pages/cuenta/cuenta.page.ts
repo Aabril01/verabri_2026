@@ -134,7 +134,7 @@ export class CuentaPage implements OnInit {
   }
 
   get descuentoMonto(): number {
-    return this.subtotal * ((this.pedido?.descuento_pct || 0) / 100);
+    return this.subtotal * (Number(this.pedido?.descuento_pct || 0) / 100);
   }
 
   get propinaMonto(): number {

@@ -23,6 +23,8 @@ export class IngresoAnonimoPage implements OnInit {
   errorGeneral = '';
   cargando = false;
   paso: 'datos' | 'escanear' | 'espera' = 'datos';
+  clienteId: string = '';
+  mesaAsignada: any = null;
 
   constructor(
     private router: Router,
@@ -89,17 +91,13 @@ export class IngresoAnonimoPage implements OnInit {
       return;
     }
 
-    // Guardar datos temporalmente para usar en bienvenida-publica
-    sessionStorage.setItem('anonimo_nombre', this.nombre.trim());
-    sessionStorage.setItem('anonimo_foto_url', this.fotoUrl);
-
     this.paso = 'escanear';
   }
 
   async escanearQR() {
     try {
       if (Capacitor.getPlatform() === 'web') {
-        this.router.navigateByUrl('/bienvenida-publica');
+        await this.procesarIngreso();
         return;
       }
 
@@ -109,7 +107,7 @@ export class IngresoAnonimoPage implements OnInit {
         const datos = JSON.parse(contenido);
 
         if (datos.tipo === 'ingreso' && datos.accion === 'lista-espera') {
-          this.router.navigateByUrl('/bienvenida-publica');
+          await this.procesarIngreso();
         } else {
           await this.mostrarToast('El código QR no es válido para el ingreso.', 'danger');
         }
@@ -132,11 +130,12 @@ export class IngresoAnonimoPage implements OnInit {
     try {
       const urlFoto = await this.supabaseService.subirFoto(this.fotoArchivo!, 'anonimos');
       const fcmToken = this.pushNotifications.getFCMToken();
+      this.clienteId = crypto.randomUUID();
 
       const { error } = await this.supabaseService.client
         .from('lista_espera')
         .insert({
-          cliente_id: crypto.randomUUID(),
+          cliente_id: this.clienteId,
           nombre: this.nombre.trim(),
           foto_url: urlFoto,
           estado: 'esperando',
@@ -145,8 +144,20 @@ export class IngresoAnonimoPage implements OnInit {
 
       if (error) throw error;
 
+      // Guardar sesión anónima por 20 minutos
+      localStorage.setItem('sesion_anonima', JSON.stringify({
+        cliente_id: this.clienteId,
+        nombre: this.nombre.trim(),
+        foto_url: urlFoto,
+        expira: Date.now() + 20 * 60 * 1000
+      }));
+
       this.paso = 'espera';
-      this.pushNotifications.enviarPushNotificationAUsuario("¡Nueva petición!", "Un cliente ha solicitado una mesa.", "metre@verabri.com");
+      this.pushNotifications.enviarPushNotificationAUsuario(
+        "¡Nueva petición!",
+        "Un cliente ha solicitado una mesa.",
+        "metre@verabri.com"
+      );
       await this.mostrarToast('¡Estás en la lista de espera!', 'success');
 
     } catch (error: any) {
@@ -156,6 +167,64 @@ export class IngresoAnonimoPage implements OnInit {
     } finally {
       await loading.dismiss();
       this.cargando = false;
+    }
+  }
+
+  async verificarMesaAsignada() {
+    try {
+      const { data } = await this.supabaseService.client
+        .from('mesas')
+        .select('*')
+        .eq('cliente_id', this.clienteId)
+        .eq('estado', 'ocupada')
+        .maybeSingle();
+
+      if (data) {
+        this.mesaAsignada = data;
+        await this.mostrarToast(`¡Te asignaron la Mesa ${data.numero}!`, 'success');
+      } else {
+        await this.mostrarToast('Todavía no te asignaron una mesa. Esperá un momento.', 'warning');
+      }
+    } catch (e) {
+      console.error('Error verificando mesa:', e);
+    }
+  }
+
+  async escanearMesa() {
+    try {
+      if (Capacitor.getPlatform() === 'web') {
+        this.router.navigateByUrl(`/mesa/${this.mesaAsignada.id}`);
+        return;
+      }
+
+      if (Capacitor.getPlatform() === 'android') {
+        const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+        if (!available) await BarcodeScanner.installGoogleBarcodeScannerModule();
+      }
+
+      const { barcodes } = await BarcodeScanner.scan();
+      if (barcodes.length === 0) {
+        await this.mostrarToast('No se pudo obtener datos al escanear', 'danger');
+        return;
+      }
+
+      const qrRawData = barcodes[0].displayValue;
+      const datosMesa = JSON.parse(qrRawData);
+
+      if (datosMesa.tipo !== 'mesa') {
+        await this.mostrarToast('El QR no pertenece a una mesa', 'danger');
+        return;
+      }
+
+      if (datosMesa.numero !== this.mesaAsignada.numero) {
+        await this.mostrarToast('Esta no es tu mesa asignada.', 'warning');
+        return;
+      }
+
+      this.router.navigateByUrl(`/mesa/${this.mesaAsignada.id}`);
+
+    } catch (e: any) {
+      console.warn('Error al escanear mesa:', e.message);
     }
   }
 

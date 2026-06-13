@@ -120,7 +120,8 @@
   --border-radius: 10px;
   font-size: 12px;
   height: 36px;
-  flex-shrink: 0;
+  width: 100%;
+  margin-top: 8px;
 }
 .selector-mesa {
   background: var(--vb-card);

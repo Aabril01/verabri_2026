@@ -76,6 +76,7 @@
   border: 1px solid rgba(240,230,211,0.2);
   border-radius: 12px;
   margin-bottom: 4px;
+  align-self: center;
 
   &.campo-error { border-color: var(--ion-color-danger); }
   &:focus-within { border-color: var(--vb-acento); }
@@ -93,6 +94,7 @@
 
 .boton-qr {
   --color: var(--vb-texto);
+  
 }
 
 .error-general {
@@ -164,5 +166,12 @@ ion-select {
     ion-icon {
       color: var(--vb-dorado);
     }
+  }
+}
+.campo-item {
+  ion-button[slot="end"] {
+    height: 40PX;
+    margin: auto 0;
+    align-items: center;
   }
 }

@@ -65,6 +65,11 @@
           <span class="item-nombre">{{ item.productos?.nombre }}</span>
           <span class="item-precio">${{ item.subtotal }}</span>
         </div>
+        <div class="item-row" *ngIf="pedidoActual.descuento_pct && +pedidoActual.descuento_pct > 0">
+          <span class="item-cantidad">🎮</span>
+          <span class="item-nombre">Descuento juegos ({{ pedidoActual.descuento_pct }}%)</span>
+          <span class="item-precio" style="color: #00ff62;">-${{ (+pedidoActual.descuento_pct / 100) * pedidoActual.subtotal }}</span>
+        </div>
         <div class="pedido-total-row">
           <span>Total</span>
           <span class="total-monto">${{ pedidoActual.total }}</span>

@@ -60,9 +60,16 @@ export class HomePage implements OnInit {
       console.error('Error cargando perfil:', e);
     }
   }
+  async ionViewWillEnter() {
+    if (this.perfil === 'cliente_registrado' && this.userId) {
+      await this.cargarDatos();
+    }
+  }
 
   async cargarDatos(){
     // Verificar si ya tiene mesa asignada
+    this.tieneMesa = false;
+    this.numeroMesaAsignada = null;
     const { data: mesaAsignada } = await this.supabaseService.client
     .from('mesas')
     .select('*')

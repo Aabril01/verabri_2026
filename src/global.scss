@@ -252,3 +252,24 @@ ion-note[color="danger"] {
     color: #FFB3B3 !important;
   }
 }
+.action-sheet-verabri {
+  .action-sheet-container {
+    .action-sheet-group {
+      background: var(--vb-card) !important;
+      
+      .action-sheet-title {
+        color: var(--vb-texto) !important;
+        font-weight: 700 !important;
+      }
+      
+      .action-sheet-button {
+        color: var(--vb-acento) !important;
+        font-weight: 600 !important;
+        
+        &.action-sheet-cancel {
+          color: var(--vb-texto-suave) !important;
+        }
+      }
+    }
+  }
+}

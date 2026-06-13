@@ -119,11 +119,15 @@
       <p class="qr-titulo">Código QR — Mesa {{ numeroMesaGuardada }}</p>
       <img [src]="qrImagenUrl" class="qr-imagen" alt="Código QR de la mesa"/>
       <p class="qr-subtitulo">Imprimí este código y colocalo en la mesa</p>
+      <ion-button expand="block" class="boton-descargar-qr" (click)="descargarQR()">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        Descargar QR
+      </ion-button>
       <ion-button expand="block" class="boton-nueva-mesa" (click)="nuevaMesa()">
         <ion-icon name="add-circle-outline" slot="start"></ion-icon>
         Agregar otra mesa
       </ion-button>
     </div>
-</div>
+  </div>
 
 </ion-content>

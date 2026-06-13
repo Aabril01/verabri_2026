@@ -13,10 +13,11 @@
     <ion-icon name="game-controller-outline" class="header-icon"></ion-icon>
     <h2>¡Jugá y ganá descuentos!</h2>
     <p *ngIf="!tieneDescuento">Solo se aplica el primer descuento que obtengas ganando en el primer intento</p>
-    <div class="descuento-obtenido" *ngIf="tieneDescuento">
-      <ion-icon name="checkmark-circle-outline"></ion-icon>
-      <p>¡Ya tenés un descuento aplicado! Podés seguir jugando libremente.</p>
-    </div>
+  </div>
+
+  <div class="descuento-obtenido" *ngIf="tieneDescuento">
+    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    <p>¡Ya tenés un descuento aplicado! Podés seguir jugando libremente.</p>
   </div>
 
   <div class="juegos-lista">

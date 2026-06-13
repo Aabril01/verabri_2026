@@ -42,7 +42,7 @@
     </div>
 
     <!-- DESCUENTO JUEGOS -->
-    <div class="seccion-card" *ngIf="pedido?.descuento_pct > 0">
+    <div class="seccion-card" *ngIf="pedido?.descuento_pct && +pedido?.descuento_pct > 0">
       <h3 class="seccion-titulo">
         <ion-icon name="game-controller-outline"></ion-icon>
         Descuento por juegos
@@ -92,6 +92,7 @@
         <span>+${{ propinaMonto }}</span>
       </div>
     </div>
+
     <!-- TOTAL -->
     <div class="total-card">
       <span class="total-label">TOTAL A ABONAR</span>

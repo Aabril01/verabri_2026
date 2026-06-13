@@ -235,3 +235,15 @@
   }
   ion-spinner { color: var(--vb-dorado) !important; }
 }
+
+.footer-home {
+  text-align: center;
+  padding: 16px;
+  margin-top: 12px;
+
+  span {
+    font-size: clamp(10px, 2.5vw, 11px);
+    color: var(--vb-texto-suave);
+    letter-spacing: 1px;
+  }
+}

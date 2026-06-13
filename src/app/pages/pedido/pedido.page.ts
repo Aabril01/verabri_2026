@@ -184,7 +184,20 @@ export class PedidoPage implements OnInit {
   get cantidadItems(): number {
     return this.itemsPedido.reduce((total, item) => total + item.cantidad, 0);
   }
-
+  obtenerClienteId(): string {
+    // Si hay sesión anónima en localStorage, usarla
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (sesionAnonimaRaw) {
+      try {
+        const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+        if (Date.now() < sesionAnonima.expira) {
+          return sesionAnonima.cliente_id;
+        }
+      } catch (e) {}
+    }
+    // Si hay usuario registrado, usar su id
+    return this.usuarioActual?.id || '00000000-0000-0000-0000-000000000000';
+  }
   async confirmarPedido() {
     if (this.itemsPedido.length === 0) {
       await this.supabaseService.vibrarError();
@@ -227,7 +240,7 @@ export class PedidoPage implements OnInit {
           .from('pedidos')
           .insert({
             mesa_id: this.mesaId,
-            cliente_id: this.usuarioActual?.id || '00000000-0000-0000-0000-000000000000',
+            cliente_id: this.obtenerClienteId(),
             estado: 'pendiente',
             subtotal: this.totalPedido,
             total: this.totalPedido

@@ -48,6 +48,7 @@ export class AltaBebidaPage implements OnInit {
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
         header: 'Seleccionar foto',
+        cssClass: 'alerta-verabri',
         buttons: [
           { text: 'Cámara', handler: () => resolve(CameraSource.Camera) },
           { text: 'Galería', handler: () => resolve(CameraSource.Photos) },

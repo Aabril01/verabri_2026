@@ -137,6 +137,10 @@ const routes: Routes = [
     path: 'bienvenida-publica',
     loadChildren: () => import('./pages/bienvenida-publica/bienvenida-publica.module').then( m => m.BienvenidaPublicaPageModule)
   },
+  {
+    path: 'estado-mesas',
+    loadChildren: () => import('./pages/estado-mesas/estado-mesas.module').then( m => m.EstadoMesasPageModule)
+  },
 
 
 

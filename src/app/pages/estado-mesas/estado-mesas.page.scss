@@ -1,0 +1,86 @@
+.estado-mesas-content {
+  --background: var(--vb-fondo);
+}
+
+.toolbar-verabri {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  gap: 12px;
+  text-align: center;
+  ion-icon { font-size: 64px; color: rgba(240,230,211,0.2); }
+  p { color: var(--vb-texto-suave); margin: 0; }
+}
+
+.mesas-contenedor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resumen-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.resumen-card {
+  background: var(--vb-card);
+  border-radius: 12px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(240,230,211,0.15);
+
+  ion-icon { font-size: 24px; }
+  .resumen-num { font-size: 22px; font-weight: 700; color: var(--vb-texto); }
+  .resumen-label { font-size: 11px; color: var(--vb-texto-suave); text-transform: uppercase; letter-spacing: 1px; }
+}
+
+.mesa-card {
+  background: var(--vb-card);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(240,230,211,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .mesa-numero {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    font-family: serif;
+  }
+}
+
+.mesa-detalles {
+  display: flex;
+  gap: 16px;
+
+  .mesa-tipo, .mesa-capacidad {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+    ion-icon { font-size: 15px; }
+  }
+}

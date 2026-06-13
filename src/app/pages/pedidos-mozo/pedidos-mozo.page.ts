@@ -313,6 +313,37 @@ export class PedidosMozoPage implements OnInit {
     return doc.output('datauristring');
   }
 
+  // ── SUBIR PDF A SUPABASE STORAGE ──────────────────────────────
+
+  async subirPDFStorage(pdfBase64: string, nombreArchivo: string): Promise<string> {
+    try {
+      const base64Data = pdfBase64.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const archivo = new File([blob], nombreArchivo, { type: 'application/pdf' });
+
+      const { error } = await this.supabaseService.client.storage
+        .from('fotos')
+        .upload(`facturas/${nombreArchivo}`, archivo, { contentType: 'application/pdf', upsert: true });
+
+      if (error) throw error;
+
+      const { data } = this.supabaseService.client.storage
+        .from('fotos')
+        .getPublicUrl(`facturas/${nombreArchivo}`);
+
+      return data.publicUrl;
+    } catch (e) {
+      console.warn('Error subiendo PDF:', e);
+      return '';
+    }
+  }
+
   formatearHora(fecha: string): string {
     if (!fecha) return '';
     const d = new Date(fecha);
@@ -330,7 +361,7 @@ export class PedidosMozoPage implements OnInit {
     await toast.present();
   }
 
-  // ── PUNTO 22 — Mozo confirma pago → PDF + email/push + liberar mesa ──
+  // ── PUNTO 22 ──────────────────────────────────────────────────
   async confirmarPago(pedido: any) {
     const alert = await this.alertController.create({
       header: 'Confirmar pago',
@@ -357,18 +388,28 @@ export class PedidosMozoPage implements OnInit {
 
               const cliente = clienteData || { nombre: 'Cliente', apellido: '', email: '', dni: '', perfil: 'cliente_anonimo' };
 
+              const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
+              const nombreArchivo = `factura-${numeroFactura}.pdf`;
+
+              // Generar PDF
               const pdfBase64 = this.generarFacturaPDF(pedido, cliente);
 
+              // Subir PDF a Supabase Storage
+              const urlPDF = await this.subirPDFStorage(pdfBase64, nombreArchivo);
+
+              // Liberar mesa
               await this.supabaseService.client
                 .from('mesas')
                 .update({ estado: 'vacia', cliente_id: null })
                 .eq('id', pedido.mesa_id);
 
+              // Marcar pedido como pagado
               await this.supabaseService.client
                 .from('pedidos')
                 .update({ estado: 'cerrado' })
                 .eq('id', pedido.id);
 
+              // Push al dueño y supervisor
               await this.pushNotification.enviarPushNotificationAUsuario(
                 '✅ Pago confirmado',
                 `La Mesa ${pedido.mesas?.numero} pagó y fue liberada.`,
@@ -380,16 +421,14 @@ export class PedidosMozoPage implements OnInit {
                 'supervisor@verabri.com'
               );
 
-              // Cliente registrado → email con diseño de ticket
+              // Cliente registrado → email con enlace PDF
               if (cliente.perfil === 'cliente_registrado' && cliente.email) {
                 try {
-                  const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
                   const fecha = new Date().toLocaleDateString('es-AR');
                   const items = pedido.pedido_items || [];
                   const subtotal = items.reduce((acc: number, i: any) => acc + i.subtotal, 0);
                   const descuentoMonto = subtotal * (pedido.descuento_pct || 0) / 100;
                   const propinaMonto = (subtotal - descuentoMonto) * (pedido.propina_pct || 0) / 100;
-
                   const detalleItems = items.map((item: any) =>
                     `• ${item.productos?.nombre || ''} x${item.cantidad} — $${item.subtotal}`
                   ).join('\n');
@@ -409,7 +448,8 @@ export class PedidosMozoPage implements OnInit {
                       descuento_monto: descuentoMonto.toFixed(0),
                       propina_pct: pedido.propina_pct || 0,
                       propina_monto: propinaMonto.toFixed(0),
-                      total: pedido.total
+                      total: pedido.total,
+                      url_pdf: urlPDF
                     },
                     'BthBN2OaJ9HDcpClC'
                   );
@@ -418,23 +458,23 @@ export class PedidosMozoPage implements OnInit {
                 }
               }
 
-              // Cliente anónimo → push
-              if (cliente.perfil === 'cliente_anonimo' && pedido.cliente_id) {
+              // Cliente anónimo → push con enlace PDF
+              if (pedido.cliente_id) {
                 try {
                   await this.pushNotification.enviarPushNotificationPorID(
                     '🧾 Tu factura está lista',
-                    `Descargá tu factura tocando aquí.`,
+                    `¡Gracias por tu visita! Descargá tu factura: ${urlPDF}`,
                     pedido.cliente_id
                   );
                 } catch (e) {
-                  console.warn('Error enviando push factura anónimo:', e);
+                  console.warn('Error enviando push factura:', e);
                 }
               }
 
               // Descargar PDF en el dispositivo del mozo
               const link = document.createElement('a');
               link.href = pdfBase64;
-              link.download = `factura-mesa-${pedido.mesas?.numero}.pdf`;
+              link.download = nombreArchivo;
               link.click();
 
               await this.mostrarToast('¡Pago confirmado! Factura emitida.', 'success');

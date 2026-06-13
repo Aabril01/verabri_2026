@@ -208,6 +208,13 @@ export class AltaMesaPage implements OnInit {
       this.cargando = false;
     }
   }
+  descargarQR() {
+    const link = document.createElement('a');
+    link.href = this.qrImagenUrl;
+    link.download = `qr-mesa-${this.numeroMesaGuardada}.png`;
+    link.target = '_blank';
+    link.click();
+  }
 
   nuevaMesa() {
     this.formulario.reset();

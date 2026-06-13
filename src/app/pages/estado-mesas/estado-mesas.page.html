@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar class="toolbar-verabri">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Estado de Mesas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cargarMesas()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="estado-mesas-content">
+
+  <div *ngIf="cargando" class="estado-vacio">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando mesas...</p>
+  </div>
+
+  <div *ngIf="!cargando && mesas.length === 0" class="estado-vacio">
+    <ion-icon name="restaurant-outline"></ion-icon>
+    <p>No hay mesas registradas.</p>
+  </div>
+
+  <div *ngIf="!cargando && mesas.length > 0" class="mesas-contenedor">
+
+    <!-- RESUMEN -->
+    <div class="resumen-row">
+      <div class="resumen-card">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        <span class="resumen-num">{{ mesasLibres }}</span>
+        <span class="resumen-label">Libres</span>
+      </div>
+      <div class="resumen-card">
+        <ion-icon name="people-outline" color="danger"></ion-icon>
+        <span class="resumen-num">{{ mesasOcupadas }}</span>
+        <span class="resumen-label">Ocupadas</span>
+      </div>
+      <div class="resumen-card">
+        <ion-icon name="restaurant-outline" color="warning"></ion-icon>
+        <span class="resumen-num">{{ mesas.length }}</span>
+        <span class="resumen-label">Total</span>
+      </div>
+    </div>
+
+    <!-- LISTA DE MESAS -->
+    <div class="mesa-card" *ngFor="let mesa of mesas">
+      <div class="mesa-header">
+        <div class="mesa-numero">Mesa {{ mesa.numero }}</div>
+        <ion-badge [color]="mesa.estado === 'ocupada' ? 'danger' : 'success'">
+          {{ mesa.estado === 'ocupada' ? 'Ocupada' : 'Libre' }}
+        </ion-badge>
+      </div>
+      <div class="mesa-detalles">
+        <span class="mesa-tipo">
+          <ion-icon name="ribbon-outline"></ion-icon>
+          {{ formatearTipo(mesa.tipo) }}
+        </span>
+        <span class="mesa-capacidad">
+          <ion-icon name="people-outline"></ion-icon>
+          {{ mesa.capacidad }} comensales
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

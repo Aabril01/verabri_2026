@@ -60,15 +60,21 @@
         <span class="total-monto">${{ pedido.total }}</span>
       </div>
 
-      <!-- BOTONES PENDIENTE/RECHAZADO -->
-      <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente' || pedido.estado === 'rechazado'">
-        <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)"
-          *ngIf="pedido.estado === 'pendiente'">
+      <!-- BOTONES PENDIENTE -->
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente'">
+        <ion-button expand="block" color="danger" fill="outline" (click)="rechazarPedido(pedido)">
           Rechazar
         </ion-button>
         <ion-button expand="block" color="success" (click)="confirmarPedido(pedido)">
           Confirmar
         </ion-button>
+      </div>
+
+      <!-- PEDIDO RECHAZADO - esperando modificación -->
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'rechazado'">
+        <ion-badge color="warning" style="width:350px; text-align:center; padding: 10px; font-size:13px;">
+          ⏳ Esperando que el cliente modifique el pedido
+        </ion-badge>
       </div>
 
       <!-- BOTÓN ENTREGAR -->

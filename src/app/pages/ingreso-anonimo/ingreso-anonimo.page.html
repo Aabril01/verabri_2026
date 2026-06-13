@@ -111,6 +111,23 @@
       <ion-icon name="information-circle-outline"></ion-icon>
       El metre verá tu solicitud y te asignará una mesa a la brevedad.
     </p>
+     <!-- VERIFICAR ESTADO -->
+    <ion-button expand="block" class="boton-principal" (click)="verificarMesaAsignada()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Ver estado de mi mesa
+    </ion-button>
+
+    <!-- MESA ASIGNADA -->
+    <div class="mesa-asignada-card" *ngIf="mesaAsignada">
+      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+      <h3>¡Te asignaron la Mesa {{ mesaAsignada.numero }}!</h3>
+      <p>Escaneá el QR de esa mesa para ingresar</p>
+      <ion-button expand="block" class="boton-principal" (click)="escanearMesa()">
+        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+        Escanear QR de la mesa
+      </ion-button>
+    </div>
+  
 
   </div>
 

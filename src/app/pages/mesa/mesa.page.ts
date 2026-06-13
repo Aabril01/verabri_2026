@@ -106,9 +106,33 @@ export class MesaPage implements OnInit {
     }
   }
 
-
   async validarAccesoCliente() {
     const usuario = this.supabaseService.usuarioActual;
+
+    // Verificar sesión anónima del localStorage
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (sesionAnonimaRaw) {
+      try {
+        const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+        // Verificar que no expiró
+        if (Date.now() > sesionAnonima.expira) {
+          localStorage.removeItem('sesion_anonima');
+        } else {
+          // Verificar que la mesa está asignada a este anónimo
+          if (this.mesa?.cliente_id === sesionAnonima.cliente_id) {
+            return; // Acceso permitido
+          } else {
+            await this.mostrarToast('Esta mesa no está asignada a vos.', 'warning');
+            this.router.navigateByUrl('/home', { replaceUrl: true });
+            return;
+          }
+        }
+      } catch (e) {
+        localStorage.removeItem('sesion_anonima');
+      }
+    }
+
+    // Verificar usuario registrado
     if (!usuario) return;
 
     const perfil = usuario.perfil;
