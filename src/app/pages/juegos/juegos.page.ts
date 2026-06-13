@@ -16,8 +16,8 @@ export class JuegosPage implements OnInit {
 
   juegos = [
     {
-      nombre: 'Trivia Gastronómica',
-      descripcion: 'Respondé 5 preguntas sobre gastronomía sin errores',
+      nombre: 'Trivia',
+      descripcion: 'Respondé 5 preguntas sin errores',
       emoji: '🧠',
       descuento: 10,
       clave: 'trivia'

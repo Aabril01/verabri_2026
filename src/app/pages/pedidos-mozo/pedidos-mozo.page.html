@@ -73,7 +73,7 @@
       <!-- PEDIDO RECHAZADO - esperando modificación -->
       <div class="pedido-acciones" *ngIf="pedido.estado === 'rechazado'">
         <ion-badge color="warning" style="width:350px; text-align:center; padding: 10px; font-size:13px;">
-          ⏳ Esperando que el cliente modifique el pedido
+          ⏳ Esperando modificación del cliente
         </ion-badge>
       </div>
 
@@ -85,12 +85,19 @@
         </ion-button>
       </div>
       <!-- BOTÓN CONFIRMAR PAGO -->
-      <div class="pedido-acciones" *ngIf="pedido.estado === 'pagado'">
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'pagado'|| pedido.estado === 'recibido'">
         <ion-button expand="block" color="primary" (click)="confirmarPago(pedido)">
           <ion-icon name="card-outline" slot="start"></ion-icon>
           Confirmar pago y liberar mesa
         </ion-button>
       </div>
+
+      <!-- PEDIDO RECIBIDO - esperando pago -->
+        <div class="pedido-acciones" *ngIf="pedido.estado === 'recibido'">
+          <div style="width:100%; text-align:center; padding: 10px; font-size:13px; background: rgba(255,196,9,0.2); border: 1px solid #ffc409; border-radius: 8px; color: #ffc409; font-weight: 600;">
+            ⏳ Esperando que el cliente pida la cuenta
+          </div>
+        </div>
 
     </div>
 

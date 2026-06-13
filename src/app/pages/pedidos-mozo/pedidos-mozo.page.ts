@@ -55,7 +55,7 @@ export class PedidosMozoPage implements OnInit {
             productos (nombre, tipo)
           )
         `)
-        .in('estado', ['pendiente', 'rechazado', 'confirmado', 'listo', 'pagado'])
+        .in('estado', ['pendiente', 'rechazado', 'confirmado', 'listo', 'pagado', 'recibido'])
         .order('created_at', { ascending: true });
 
       if (error) throw error;
