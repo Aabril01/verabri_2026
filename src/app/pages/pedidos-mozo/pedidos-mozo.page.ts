@@ -221,11 +221,9 @@ export class PedidosMozoPage implements OnInit {
     const fecha = new Date().toLocaleDateString('es-AR');
     const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
 
-    // Fondo header
     doc.setFillColor(201, 148, 58);
     doc.rect(0, 0, 210, 40, 'F');
 
-    // Título
     doc.setTextColor(245, 238, 240);
     doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
@@ -235,7 +233,6 @@ export class PedidosMozoPage implements OnInit {
     doc.text('Parrilla & Restaurante', 105, 26, { align: 'center' });
     doc.text('Av. Mitre 123, Avellaneda, Buenos Aires', 105, 33, { align: 'center' });
 
-    // Info factura
     doc.setTextColor(50, 50, 50);
     doc.setFontSize(10);
     doc.text(`Fecha: ${fecha}`, 14, 52);
@@ -243,7 +240,6 @@ export class PedidosMozoPage implements OnInit {
     doc.text(`N° Pedido: ${pedido.id.substring(0, 8).toUpperCase()}`, 14, 66);
     doc.text(`Mesa: ${pedido.mesas?.numero}`, 14, 73);
 
-    // Datos cliente
     doc.setFillColor(107, 78, 122);
     doc.rect(0, 80, 210, 8, 'F');
     doc.setTextColor(240, 230, 211);
@@ -258,7 +254,6 @@ export class PedidosMozoPage implements OnInit {
     if (cliente.email) doc.text(`Email: ${cliente.email}`, 14, 103);
     if (cliente.dni) doc.text(`DNI: ${cliente.dni}`, 14, 110);
 
-    // Detalle pedido
     doc.setFillColor(107, 78, 122);
     doc.rect(0, 117, 210, 8, 'F');
     doc.setTextColor(240, 230, 211);
@@ -266,7 +261,6 @@ export class PedidosMozoPage implements OnInit {
     doc.setFontSize(11);
     doc.text('DETALLE DEL PEDIDO', 14, 123);
 
-    // Encabezados tabla
     doc.setTextColor(50, 50, 50);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
@@ -276,7 +270,6 @@ export class PedidosMozoPage implements OnInit {
     doc.text('Subtotal', 178, 135);
     doc.line(14, 137, 196, 137);
 
-    // Items
     doc.setFont('helvetica', 'normal');
     let y = 144;
     const items = pedido.pedido_items || [];
@@ -288,7 +281,6 @@ export class PedidosMozoPage implements OnInit {
       y += 8;
     });
 
-    // Totales
     doc.line(14, y + 2, 196, y + 2);
     y += 10;
 
@@ -310,7 +302,6 @@ export class PedidosMozoPage implements OnInit {
     doc.text('TOTAL:', 130, y + 2);
     doc.text(`$${pedido.total}`, 178, y + 2);
 
-    // Footer
     doc.setFillColor(201, 148, 58);
     doc.rect(0, 275, 210, 22, 'F');
     doc.setTextColor(245, 238, 240);
@@ -358,7 +349,6 @@ export class PedidosMozoPage implements OnInit {
             await loading.present();
 
             try {
-              // Obtener datos del cliente
               const { data: clienteData } = await this.supabaseService.client
                 .from('usuarios')
                 .select('nombre, apellido, email, dni, perfil')
@@ -367,22 +357,18 @@ export class PedidosMozoPage implements OnInit {
 
               const cliente = clienteData || { nombre: 'Cliente', apellido: '', email: '', dni: '', perfil: 'cliente_anonimo' };
 
-              // Generar PDF
               const pdfBase64 = this.generarFacturaPDF(pedido, cliente);
 
-              // Liberar la mesa
               await this.supabaseService.client
                 .from('mesas')
                 .update({ estado: 'vacia', cliente_id: null })
                 .eq('id', pedido.mesa_id);
 
-              // Marcar pedido como cerrado
               await this.supabaseService.client
                 .from('pedidos')
                 .update({ estado: 'cerrado' })
                 .eq('id', pedido.id);
 
-              // Push al dueño y supervisor
               await this.pushNotification.enviarPushNotificationAUsuario(
                 '✅ Pago confirmado',
                 `La Mesa ${pedido.mesas?.numero} pagó y fue liberada.`,
@@ -394,17 +380,36 @@ export class PedidosMozoPage implements OnInit {
                 'supervisor@verabri.com'
               );
 
-              // Cliente registrado → email con factura
+              // Cliente registrado → email con diseño de ticket
               if (cliente.perfil === 'cliente_registrado' && cliente.email) {
                 try {
                   const numeroFactura = `F-${pedido.id.substring(0, 8).toUpperCase()}`;
+                  const fecha = new Date().toLocaleDateString('es-AR');
+                  const items = pedido.pedido_items || [];
+                  const subtotal = items.reduce((acc: number, i: any) => acc + i.subtotal, 0);
+                  const descuentoMonto = subtotal * (pedido.descuento_pct || 0) / 100;
+                  const propinaMonto = (subtotal - descuentoMonto) * (pedido.propina_pct || 0) / 100;
+
+                  const detalleItems = items.map((item: any) =>
+                    `• ${item.productos?.nombre || ''} x${item.cantidad} — $${item.subtotal}`
+                  ).join('\n');
+
                   await emailjs.send(
                     'verabrioff@gmail.com',
-                    'template_gn0l3c7',
+                    'template_s0lcm57',
                     {
                       email: cliente.email,
                       nombre: `${cliente.nombre} ${cliente.apellido}`,
-                      mensaje: `Tu factura N° ${numeroFactura} por $${pedido.total} está adjunta. ¡Gracias por visitarnos!`
+                      numero_factura: numeroFactura,
+                      numero_mesa: pedido.mesas?.numero,
+                      fecha: fecha,
+                      detalle_items: detalleItems,
+                      subtotal: subtotal.toFixed(0),
+                      descuento_pct: pedido.descuento_pct || 0,
+                      descuento_monto: descuentoMonto.toFixed(0),
+                      propina_pct: pedido.propina_pct || 0,
+                      propina_monto: propinaMonto.toFixed(0),
+                      total: pedido.total
                     },
                     'BthBN2OaJ9HDcpClC'
                   );
@@ -413,7 +418,7 @@ export class PedidosMozoPage implements OnInit {
                 }
               }
 
-              // Cliente anónimo → push con enlace de descarga
+              // Cliente anónimo → push
               if (cliente.perfil === 'cliente_anonimo' && pedido.cliente_id) {
                 try {
                   await this.pushNotification.enviarPushNotificationPorID(

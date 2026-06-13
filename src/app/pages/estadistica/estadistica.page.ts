@@ -21,6 +21,7 @@ export class EstadisticaPage implements OnInit {
   valoracionGeneral = 0;
   porcentajeVolveria = 0;
   graficaActiva = 'barra';
+  origen = 'menu';
 
   comentarios: string[] = [];
   chartBar: any;
@@ -41,12 +42,12 @@ export class EstadisticaPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const origen = this.route.snapshot.paramMap.get('origen');
-    if (!origen) {
-      await this.router.navigateByUrl('/home', { replaceUrl: true });
-      return;
-    }
+    this.origen = this.route.snapshot.paramMap.get('origen') || 'menu';
     this.cargarEstadisticas();
+  }
+
+  irAGrafico(tipo: string) {
+    this.router.navigateByUrl(`/estadistica/${tipo}`);
   }
 
   cambiarGrafica(evento: any) {
@@ -101,7 +102,11 @@ export class EstadisticaPage implements OnInit {
         this.pAmbiente = Number((sumaAmbiente / this.totalEncuestas).toFixed(1));
 
         this.cargando = false;
-        setTimeout(() => this.generarGraficoBarra(), 100);
+        setTimeout(() => {
+          if (this.origen === 'barra') this.generarGraficoBarra();
+          else if (this.origen === 'torta') this.generarGraficoTorta();
+          else if (this.origen === 'lineal') this.generarGraficoLineal();
+        }, 100);
 
       } else {
         this.cargando = false;

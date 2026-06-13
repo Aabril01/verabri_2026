@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { Chart, registerables } from 'chart.js';
+import { PushNotification } from '../../services/push-notifications';
 
 Chart.register(...registerables);
 
@@ -29,13 +31,19 @@ export class BienvenidaPublicaPage implements OnInit {
   chartBar: any;
   chartPie: any;
   chartLine: any;
+  tienedatos = false;
 
   constructor(
     private router: Router,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private loadingController: LoadingController,
+    private toastController: ToastController,
+    private pushNotifications: PushNotification
   ) {}
 
   async ngOnInit() {
+    const nombre = sessionStorage.getItem('anonimo_nombre');
+    this.tienedatos = !!nombre;
     await this.cargarEstadisticas();
   }
 
@@ -157,8 +165,73 @@ export class BienvenidaPublicaPage implements OnInit {
     });
   }
 
-  irAListaEspera() {
-    this.router.navigateByUrl('/ingreso-anonimo');
+  async irAListaEspera() {
+    const nombre = sessionStorage.getItem('anonimo_nombre');
+    const fotoUrl = sessionStorage.getItem('anonimo_foto_url');
+
+    // Si no tiene datos, ir a registrarse
+    if (!nombre || !fotoUrl) {
+      this.router.navigateByUrl('/ingreso-anonimo');
+      return;
+    }
+
+    // Si tiene datos, registrar directamente
+    const loading = await this.loadingController.create({
+      spinner: 'crescent',
+      message: 'Registrando en lista de espera...',
+      cssClass: 'spinner-verabri',
+    });
+    await loading.present();
+
+    try {
+      // Convertir dataUrl a File
+      const response = await fetch(fotoUrl);
+      const blob = await response.blob();
+      const archivo = new File([blob], `anonimo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+      const urlFoto = await this.supabase.subirFoto(archivo, 'anonimos');
+      const fcmToken = this.pushNotifications.getFCMToken();
+
+      const { error } = await this.supabase.client
+        .from('lista_espera')
+        .insert({
+          cliente_id: crypto.randomUUID(),
+          nombre: nombre,
+          foto_url: urlFoto,
+          estado: 'esperando',
+          fcm_token: fcmToken || null
+        });
+
+      if (error) throw error;
+
+      // Limpiar sessionStorage
+      sessionStorage.removeItem('anonimo_nombre');
+      sessionStorage.removeItem('anonimo_foto_url');
+
+      this.pushNotifications.enviarPushNotificationAUsuario('¡Nueva petición!', 'Un cliente ha solicitado una mesa.', 'metre@verabri.com');
+
+      const toast = await this.toastController.create({
+        message: '¡Estás en la lista de espera!',
+        duration: 2500,
+        position: 'top',
+        color: 'success',
+        icon: 'checkmark-circle-outline'
+      });
+      await toast.present();
+
+    } catch (error: any) {
+      console.error('Error:', error);
+      const toast = await this.toastController.create({
+        message: 'No se pudo registrar. Intentá de nuevo.',
+        duration: 2500,
+        position: 'top',
+        color: 'danger',
+        icon: 'alert-circle-outline'
+      });
+      await toast.present();
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   irAMenu() {

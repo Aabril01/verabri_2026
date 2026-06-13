@@ -5,37 +5,100 @@
     </ion-buttons>
     <ion-title>Estadísticas</ion-title>
   </ion-toolbar>
-  <ion-toolbar class="toolbar-segmento">
-    <ion-segment [value]="graficaActiva" (ionChange)="cambiarGrafica($event)">
-      <ion-segment-button value="barra">
-        <ion-icon name="bar-chart-outline"></ion-icon>
-        <ion-label>Barras</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="torta">
-        <ion-icon name="pie-chart-outline"></ion-icon>
-        <ion-label>Torta</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="lineal">
-        <ion-icon name="trending-up-outline"></ion-icon>
-        <ion-label>Lineal</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding background-custom">
 
-  <div *ngIf="cargando" class="ion-text-center ion-padding-top">
-    <ion-spinner name="crescent" color="light"></ion-spinner>
-    <p>Calculando métricas del restaurante...</p>
+  <!-- MENÚ DE SELECCIÓN -->
+  <div *ngIf="origen === 'menu'">
+    <div class="stats-header">
+      <ion-icon name="analytics-outline" class="stats-icon"></ion-icon>
+      <h2>Seleccioná un gráfico</h2>
+      <p>Explorá los resultados de las encuestas</p>
+    </div>
+
+    <div class="metricas-mini">
+      <ion-card class="metric-card">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="star" color="warning" class="metric-icon"></ion-icon>
+          <h1 class="metric-value">{{ valoracionGeneral }}</h1>
+          <p class="metric-title">Promedio general</p>
+        </ion-card-content>
+      </ion-card>
+      <ion-card class="metric-card">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="heart" class="metric-icon" style="color:#e63946;"></ion-icon>
+          <h1 class="metric-value">{{ porcentajeVolveria }}%</h1>
+          <p class="metric-title">Volvería</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-card class="grafico-card" (click)="irAGrafico('barra')">
+      <ion-card-content>
+        <div class="grafico-opcion">
+          <ion-icon name="bar-chart-outline" class="grafico-icono"></ion-icon>
+          <div>
+            <h3>Gráfico de barras</h3>
+            <p>Rendimiento por aspecto</p>
+          </div>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="grafico-card" (click)="irAGrafico('torta')">
+      <ion-card-content>
+        <div class="grafico-opcion">
+          <ion-icon name="pie-chart-outline" class="grafico-icono"></ion-icon>
+          <div>
+            <h3>Gráfico de torta</h3>
+            <p>Distribución de calificaciones</p>
+          </div>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="grafico-card" (click)="irAGrafico('lineal')">
+      <ion-card-content>
+        <div class="grafico-opcion">
+          <ion-icon name="trending-up-outline" class="grafico-icono"></ion-icon>
+          <div>
+            <h3>Gráfico lineal</h3>
+            <p>Evolución de encuestas</p>
+          </div>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="section-card" *ngIf="comentarios.length > 0">
+      <ion-card-header>
+        <ion-card-title>Sugerencias y comentarios</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="comentario-bubble" *ngFor="let com of comentarios">
+          <ion-icon name="chatbubble-ellipses-outline" color="warning"></ion-icon>
+          <p>« {{ com }} »</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 
-  <div *ngIf="!cargando && totalEncuestas === 0" class="ion-text-center ion-padding">
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="ion-text-center ion-padding-top">
+    <ion-spinner name="crescent" color="light"></ion-spinner>
+    <p>Calculando métricas...</p>
+  </div>
+
+  <!-- SIN ENCUESTAS -->
+  <div *ngIf="!cargando && totalEncuestas === 0 && origen !== 'menu'" class="ion-text-center ion-padding">
     <ion-icon name="analytics-outline" style="font-size: 64px;" color="medium"></ion-icon>
     <p>Todavía no hay encuestas registradas.</p>
   </div>
 
-  <div [hidden]="cargando || totalEncuestas === 0">
+  <div [hidden]="cargando || totalEncuestas === 0 || origen === 'menu'">
 
     <!-- MÉTRICAS -->
     <ion-grid class="ion-no-padding">
@@ -72,7 +135,7 @@
     </ion-card>
 
     <!-- GRÁFICO BARRAS -->
-    <ion-card class="section-card" *ngIf="graficaActiva === 'barra'">
+    <ion-card class="section-card" *ngIf="origen === 'barra'">
       <ion-card-header>
         <ion-card-title>Rendimiento por aspecto</ion-card-title>
         <ion-card-subtitle>Desglose promedio de satisfacción</ion-card-subtitle>
@@ -85,7 +148,7 @@
     </ion-card>
 
     <!-- GRÁFICO TORTA -->
-    <ion-card class="section-card" *ngIf="graficaActiva === 'torta'">
+    <ion-card class="section-card" *ngIf="origen === 'torta'">
       <ion-card-header>
         <ion-card-title>Distribución de calificaciones</ion-card-title>
         <ion-card-subtitle>Porcentaje por nivel de satisfacción</ion-card-subtitle>
@@ -98,7 +161,7 @@
     </ion-card>
 
     <!-- GRÁFICO LINEAL -->
-    <ion-card class="section-card" *ngIf="graficaActiva === 'lineal'">
+    <ion-card class="section-card" *ngIf="origen === 'lineal'">
       <ion-card-header>
         <ion-card-title>Evolución de encuestas</ion-card-title>
         <ion-card-subtitle>Calificación promedio por encuesta</ion-card-subtitle>
@@ -111,7 +174,7 @@
     </ion-card>
 
     <!-- COMENTARIOS -->
-    <ion-card class="section-card" *ngIf="comentarios.length > 0">
+    <ion-card class="section-card" *ngIf="comentarios.length > 0 && origen !== 'menu'">
       <ion-card-header>
         <ion-card-title>Sugerencias y comentarios</ion-card-title>
       </ion-card-header>

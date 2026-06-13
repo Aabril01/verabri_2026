@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
     </ion-buttons>
-    <ion-title>Lista de Espera</ion-title>
+    <ion-title>Espera</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cargarDatos()">
         <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
@@ -77,7 +77,7 @@
       <ion-button fill="outline" color="medium" (click)="cancelarSeleccion()">
         Cancelar
       </ion-button>
-      <ion-button color="success" [disabled]="!mesaSeleccionadaId" (click)="confirmarSeleccionMesa()">
+      <ion-button class="boton-confirmar" [disabled]="!mesaSeleccionadaId" (click)="confirmarSeleccionMesa()">
         Confirmar
       </ion-button>
     </div>

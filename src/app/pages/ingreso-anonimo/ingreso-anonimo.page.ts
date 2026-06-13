@@ -34,8 +34,6 @@ export class IngresoAnonimoPage implements OnInit {
 
   ngOnInit() {}
 
-  // ── FOTO ──────────────────────────────────────────────────────
-
   async seleccionarFoto() {
     try {
       if (Capacitor.getPlatform() === 'web') {
@@ -72,12 +70,8 @@ export class IngresoAnonimoPage implements OnInit {
         const blob = await response.blob();
         this.fotoArchivo = new File([blob], `anonimo-${Date.now()}.jpg`, { type: 'image/jpeg' });
       }
-    } catch (e) {
-      // Usuario canceló
-    }
+    } catch (e) {}
   }
-
-  // ── VALIDACIÓN Y PASO 1 ───────────────────────────────────────
 
   async continuar() {
     this.errorNombre = '';
@@ -95,16 +89,17 @@ export class IngresoAnonimoPage implements OnInit {
       return;
     }
 
+    // Guardar datos temporalmente para usar en bienvenida-publica
+    sessionStorage.setItem('anonimo_nombre', this.nombre.trim());
+    sessionStorage.setItem('anonimo_foto_url', this.fotoUrl);
+
     this.paso = 'escanear';
   }
-
-  // ── ESCANEAR QR ───────────────────────────────────────────────
 
   async escanearQR() {
     try {
       if (Capacitor.getPlatform() === 'web') {
-        // En web simulamos el escaneo directamente
-        await this.procesarIngreso();
+        this.router.navigateByUrl('/bienvenida-publica');
         return;
       }
 
@@ -125,8 +120,6 @@ export class IngresoAnonimoPage implements OnInit {
     }
   }
 
-  // ── REGISTRAR EN LISTA DE ESPERA ──────────────────────────────
-
   async procesarIngreso() {
     this.cargando = true;
     const loading = await this.loadingController.create({
@@ -137,13 +130,9 @@ export class IngresoAnonimoPage implements OnInit {
     await loading.present();
 
     try {
-      // Subir foto
       const urlFoto = await this.supabaseService.subirFoto(this.fotoArchivo!, 'anonimos');
-
-      // Obtener token FCM si está disponible
       const fcmToken = this.pushNotifications.getFCMToken();
 
-      // Insertar en lista_espera
       const { error } = await this.supabaseService.client
         .from('lista_espera')
         .insert({
@@ -169,8 +158,6 @@ export class IngresoAnonimoPage implements OnInit {
       this.cargando = false;
     }
   }
-
-  // ── TOAST ─────────────────────────────────────────────────────
 
   private async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {
     const toast = await this.toastController.create({

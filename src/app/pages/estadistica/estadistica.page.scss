@@ -64,3 +64,35 @@
     --indicator-color: var(--vb-acento);
   }
 }
+.stats-header {
+  text-align: center;
+  padding: 24px 16px 16px;
+  ion-icon { font-size: 48px; color: var(--vb-acento); }
+  h2 { color: var(--vb-acento); font-family: serif; margin: 8px 0 4px; }
+  p { color: var(--vb-texto-suave); font-size: 13px; margin: 0; }
+}
+
+.metricas-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 4px;
+  margin-bottom: 8px;
+}
+
+.grafico-card {
+  --background: #4f3b63;
+  margin: 8px 0;
+  cursor: pointer;
+  
+  .grafico-opcion {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .grafico-icono { font-size: 32px; color: var(--vb-acento); }
+    h3 { color: #fff; margin: 0 0 4px; font-size: 16px; }
+    p { color: #d1c4e9; margin: 0; font-size: 13px; }
+    ion-icon:last-child { margin-left: auto; color: var(--vb-acento); font-size: 20px; }
+  }
+}

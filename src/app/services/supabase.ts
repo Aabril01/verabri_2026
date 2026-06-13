@@ -97,7 +97,11 @@ export class SupabaseService {
   }
 
   async getUsers() {
-    const { data, error } = await this.supabase.from('usuarios').select('*');
+    const { data, error } = await this.supabase
+      .from('usuarios')
+      .select('*')
+      .eq('estado', 'pendiente')
+      .eq('perfil', 'cliente_registrado');
     if (error) throw error;
     return data;
   }

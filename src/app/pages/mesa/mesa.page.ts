@@ -201,7 +201,7 @@ export class MesaPage implements OnInit {
   }
 
   irAEstadistica() {
-    this.router.navigateByUrl(`/estadistica/mesa`);
+    this.router.navigateByUrl(`/estadistica/menu`);
   }
 
   async mostrarToast(mensaje: string, color: 'success' | 'danger' | 'warning') {

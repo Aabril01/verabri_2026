@@ -176,7 +176,7 @@ export class HomePage implements OnInit {
   }
 
   irAEstadistica() {
-    this.router.navigateByUrl(`/estadistica/home`);
+    this.router.navigateByUrl(`/estadistica/menu`);
   }
 
   //instalamos el escaner en caso de que no esté habilitado
