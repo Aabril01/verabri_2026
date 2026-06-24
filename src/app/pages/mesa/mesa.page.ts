@@ -39,6 +39,26 @@ export class MesaPage implements OnInit {
     }
   }
 
+  /**
+   * true si el cliente actual está navegando con una sesión anónima activa
+   * (localStorage 'sesion_anonima', no vencida). Lo usa el .html para
+   * ocultar el botón de Juegos, y cargarDatos() para forzar
+   * encuestaHabilitada = false sin importar el estado del pedido.
+   *
+   * Consigna (punto 9 y punto 14): el cliente anónimo NO puede jugar ni
+   * completar encuestas nuevas, solo ver resultados de encuestas previas.
+   */
+  get esAnonimo(): boolean {
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (!sesionAnonimaRaw) return false;
+    try {
+      const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+      return Date.now() < sesionAnonima.expira;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async cargarDatos() {
     const loading = await this.loadingController.create({
       spinner: 'crescent',
@@ -57,7 +77,11 @@ export class MesaPage implements OnInit {
       if (errorMesa) throw errorMesa;
       this.mesa = mesaData;
 
-      await this.validarAccesoCliente();
+      const accesoOk = await this.validarAccesoCliente();
+      if (!accesoOk) {
+        await loading.dismiss();
+        return;
+      }
 
       const { data: pedidoData } = await this.supabaseService.client
         .from('pedidos')
@@ -72,7 +96,7 @@ export class MesaPage implements OnInit {
       // Si el pedido fue pagado, redirigir al cliente al home
       if (this.mesa?.estado === 'vacia') {
         const usuario = this.supabaseService.usuarioActual;
-        if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo') {
+        if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo' || this.esAnonimo) {
           await loading.dismiss();
           await this.mostrarToast('¡Gracias por tu visita! Hasta pronto.', 'success');
           this.router.navigateByUrl('/home', { replaceUrl: true });
@@ -80,7 +104,11 @@ export class MesaPage implements OnInit {
         }
       }
 
-      if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
+      // El cliente anónimo nunca puede completar una encuesta nueva,
+      // solo ver resultados de encuestas previas (botón "Ver estadísticas").
+      if (this.esAnonimo) {
+        this.encuestaHabilitada = false;
+      } else if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
         this.encuestaHabilitada = true;
       } else {
         this.encuestaHabilitada = false;
@@ -106,7 +134,12 @@ export class MesaPage implements OnInit {
     }
   }
 
-  async validarAccesoCliente() {
+  /**
+   * Valida si el cliente actual (anónimo o registrado) puede ver esta mesa.
+   * Devuelve false (y ya redirige) cuando el acceso NO está permitido, para
+   * que cargarDatos() pueda cortar la ejecución ahí mismo.
+   */
+  async validarAccesoCliente(): Promise<boolean> {
     const usuario = this.supabaseService.usuarioActual;
 
     // Verificar sesión anónima del localStorage
@@ -117,14 +150,17 @@ export class MesaPage implements OnInit {
         // Verificar que no expiró
         if (Date.now() > sesionAnonima.expira) {
           localStorage.removeItem('sesion_anonima');
+          await this.mostrarToast('Tu sesión expiró. Volvé a ingresar.', 'warning');
+          this.router.navigateByUrl('/home', { replaceUrl: true });
+          return false;
         } else {
           // Verificar que la mesa está asignada a este anónimo
           if (this.mesa?.cliente_id === sesionAnonima.cliente_id) {
-            return; // Acceso permitido
+            return true; // Acceso permitido
           } else {
             await this.mostrarToast('Esta mesa no está asignada a vos.', 'warning');
             this.router.navigateByUrl('/home', { replaceUrl: true });
-            return;
+            return false;
           }
         }
       } catch (e) {
@@ -133,16 +169,19 @@ export class MesaPage implements OnInit {
     }
 
     // Verificar usuario registrado
-    if (!usuario) return;
+    if (!usuario) return true;
 
     const perfil = usuario.perfil;
     const esCliente = perfil === 'cliente_registrado' || perfil === 'cliente_anonimo';
-    if (!esCliente) return;
+    if (!esCliente) return true;
 
     if (this.mesa?.cliente_id !== usuario.id) {
       await this.mostrarToast('Esta mesa no está asignada a vos. Esperá a que el metre te asigne una.', 'warning');
       this.router.navigateByUrl('/home', { replaceUrl: true });
+      return false;
     }
+
+    return true;
   }
 
   async confirmarRecepcion() {

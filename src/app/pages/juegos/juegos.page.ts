@@ -44,13 +44,33 @@ export class JuegosPage implements OnInit {
     private supabaseService: SupabaseService
   ) {}
 
+  /**
+   * El cliente anónimo NUNCA tiene usuarioActual seteado (no pasa por
+   * Supabase Auth) — su identidad vive únicamente en localStorage
+   * ('sesion_anonima'). El chequeo anterior comparaba
+   * usuarioActual?.perfil === 'cliente_anonimo', que para un anónimo real
+   * siempre es undefined === 'cliente_anonimo' (false), así que el guard
+   * nunca se disparaba y cualquier anónimo podía entrar a jugar.
+   */
+  get esAnonimo(): boolean {
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (!sesionAnonimaRaw) return false;
+    try {
+      const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+      return Date.now() < sesionAnonima.expira;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
-    const usuario = this.supabaseService.usuarioActual;
-    if (usuario?.perfil === 'cliente_anonimo') {
-      this.router.navigateByUrl('/home');
+
+    if (this.esAnonimo) {
+      this.router.navigateByUrl('/home', { replaceUrl: true });
       return;
     }
+
     await this.cargarPedido();
   }
 

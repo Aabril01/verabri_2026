@@ -464,8 +464,9 @@ export class PedidosMozoPage implements OnInit {
                 try {
                   await this.pushNotification.enviarPushNotificationPorID(
                     '🧾 Tu factura está lista',
-                    `¡Gracias por tu visita! Descargá tu factura: ${urlPDF}`,
-                    pedido.cliente_id
+                    '¡Gracias por tu visita! Tocá esta notificación para ver tu factura.',
+                    pedido.cliente_id,
+                    { url_pdf: urlPDF }
                   );
                 } catch (e) {
                   console.warn('Error enviando push factura:', e);

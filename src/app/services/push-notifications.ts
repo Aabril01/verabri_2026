@@ -58,6 +58,14 @@ export class PushNotification {
         this.ngZone.run(() => {
           console.log("Services/Push: Push action performed: ", notificacion.actionId, notificacion.inputValue, notificacion.notification);
           //ESTA ES LA ACCIÓN CUANDO EL USUARIO TOCA LA NOTIFICACIÓN DESDE LA BANDEJA DEL SISTEMA.
+
+          // Si la notificación trae un link a una factura en su data (ej: la
+          // push de "Tu factura está lista" tras confirmarPago en
+          // pedidos-mozo.page.ts), la abrimos en el navegador del sistema.
+          const data: any = notificacion.notification?.data;
+          if (data?.url_pdf) {
+            window.open(data.url_pdf, '_system');
+          }
         });
       });
 
@@ -114,6 +122,37 @@ export class PushNotification {
       await this.guardarTokenEnSupabase(this.ultimoFCMToken, user);
     } else {
       console.warn("Services/Push: No hay tokens FCM para actualizar.")
+    }
+  }
+
+  /**
+   * Registra (o actualiza) el token FCM del dispositivo actual asociado a un
+   * cliente anónimo (identificado por su UUID generado en el front, NO por
+   * Supabase Auth). Esto permite que después se le pueda mandar una push
+   * usando enviarPushNotificationPorID(title, body, clienteId).
+   *
+   * Sin esto, el token del anónimo queda guardado únicamente en
+   * lista_espera.fcm_token, columna que ninguna función de push lee, y la
+   * notificación de Mozo → Anónimo nunca llega a destino.
+   *
+   * @param clienteId UUID generado para el cliente anónimo (crypto.randomUUID())
+   */
+  async registrarTokenClienteAnonimo(clienteId: string): Promise<void> {
+    if (this.ultimoFCMToken) {
+      // Se simula un "User" parcial solo para reutilizar guardarTokenEnSupabase,
+      // que únicamente lee .id y .email
+      await this.guardarTokenEnSupabase(this.ultimoFCMToken, { id: clienteId } as unknown as User);
+    } else {
+      console.warn("Services/Push: No hay token FCM disponible todavía para registrar al cliente anónimo. Reintentando en 1.5s...");
+      // En algunos dispositivos el token de registro tarda en llegar.
+      // Reintentamos una vez antes de rendirnos.
+      setTimeout(async () => {
+        if (this.ultimoFCMToken) {
+          await this.guardarTokenEnSupabase(this.ultimoFCMToken, { id: clienteId } as unknown as User);
+        } else {
+          console.warn("Services/Push: Sigue sin haber token FCM. El anónimo no podrá recibir push en esta sesión.");
+        }
+      }, 1500);
     }
   }
 

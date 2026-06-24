@@ -34,7 +34,46 @@ export class IngresoAnonimoPage implements OnInit {
     private pushNotifications: PushNotification
   ) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.restaurarSesionAnonima();
+  }
+
+  /**
+   * Si ya hay una sesión anónima activa en localStorage (el cliente ya se
+   * registró antes y volvió a entrar a esta página, por recarga, por cerrar
+   * y abrir la app, etc.), restauramos el estado en memoria en vez de
+   * arrancar de cero. Sin esto, this.clienteId queda en '' y
+   * verificarMesaAsignada() nunca va a encontrar la mesa aunque el metre
+   * ya la haya asignado.
+   */
+  async restaurarSesionAnonima() {
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (!sesionAnonimaRaw) return;
+
+    try {
+      const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+
+      if (Date.now() > sesionAnonima.expira) {
+        localStorage.removeItem('sesion_anonima');
+        return;
+      }
+
+      this.clienteId = sesionAnonima.cliente_id;
+      this.nombre = sesionAnonima.nombre;
+      this.fotoUrl = sesionAnonima.foto_url;
+      this.paso = 'espera';
+
+      // Re-registramos el token FCM actual contra este clienteId, por si
+      // cambió el token (reinstalación, otro dispositivo, etc.)
+      await this.pushNotifications.registrarTokenClienteAnonimo(this.clienteId);
+
+      // Y de una vez chequeamos si ya le asignaron mesa mientras no estaba.
+      await this.verificarMesaAsignada();
+
+    } catch (e) {
+      localStorage.removeItem('sesion_anonima');
+    }
+  }
 
   async seleccionarFoto() {
     try {
@@ -152,6 +191,17 @@ export class IngresoAnonimoPage implements OnInit {
         expira: Date.now() + 20 * 60 * 1000
       }));
 
+      // Registramos el token FCM contra este clienteId en la tabla fcm_tokens,
+      // así después el mozo/metre le pueden mandar push con
+      // enviarPushNotificationPorID(title, body, clienteId). Sin esto, el
+      // token queda únicamente en lista_espera.fcm_token, columna que
+      // ninguna función de push lee, y la notificación nunca llega.
+      try {
+        await this.pushNotifications.registrarTokenClienteAnonimo(this.clienteId);
+      } catch (e) {
+        console.warn('No se pudo registrar el token FCM del anónimo:', e);
+      }
+
       this.paso = 'espera';
       this.pushNotifications.enviarPushNotificationAUsuario(
         "¡Nueva petición!",
@@ -208,7 +258,14 @@ export class IngresoAnonimoPage implements OnInit {
         return;
       }
 
-      const qrRawData = barcodes[0].displayValue;
+      // Usamos rawValue (igual que en escanearQR) en vez de displayValue:
+      // displayValue puede venir undefined según el tipo de código, y eso
+      // rompía el JSON.parse silenciosamente.
+      const qrRawData = barcodes[0].rawValue ?? '';
+      if (!qrRawData) {
+        await this.mostrarToast('El QR no tiene contenido legible.', 'danger');
+        return;
+      }
       const datosMesa = JSON.parse(qrRawData);
 
       if (datosMesa.tipo !== 'mesa') {
@@ -225,6 +282,7 @@ export class IngresoAnonimoPage implements OnInit {
 
     } catch (e: any) {
       console.warn('Error al escanear mesa:', e.message);
+      await this.mostrarToast('No se pudo leer el código QR de la mesa.', 'danger');
     }
   }
 

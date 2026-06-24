@@ -90,9 +90,9 @@
         {{ (pedidoActual?.estado === 'pendiente' || pedidoActual?.estado === 'rechazado') ? 'Modificar pedido' : 'Hacer pedido' }}
       </ion-button>
 
-      <!-- JUEGOS -->
+      <!-- JUEGOS (no disponible para clientes anónimos) -->
       <ion-button expand="block" class="boton-accion" [routerLink]="['/juegos', mesaId]"
-        *ngIf="pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'">
+        *ngIf="!esAnonimo && pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'">
         <ion-icon name="game-controller-outline" slot="start"></ion-icon>
         Juegos y descuentos
       </ion-button>
@@ -104,14 +104,14 @@
         Confirmar recepción
       </ion-button>
 
-      <!-- ENCUESTA (si no la hizo todavía) -->
+      <!-- ENCUESTA (si no la hizo todavía; no disponible para anónimos) -->
       <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()"
         *ngIf="pedidoActual?.estado === 'recibido' && encuestaHabilitada">
         <ion-icon name="star-outline" slot="start"></ion-icon>
         Completar encuesta
       </ion-button>
 
-      <!-- ESTADÍSTICAS (si ya hizo la encuesta) -->
+      <!-- ESTADÍSTICAS (si ya hizo la encuesta, o si es anónimo) -->
       <ion-button expand="block" class="boton-accion" (click)="irAEstadistica()"
         *ngIf="pedidoActual?.estado === 'recibido' && !encuestaHabilitada">
         <ion-icon name="podium-outline" slot="start"></ion-icon>
