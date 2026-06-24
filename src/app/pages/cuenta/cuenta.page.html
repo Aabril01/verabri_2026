@@ -7,7 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="cuenta-content">
+<!-- scrollY="false": la pantalla en sí NO scrollea -->
+<ion-content class="cuenta-content" [scrollY]="false">
 
   <!-- CARGANDO -->
   <div *ngIf="cargando" class="estado-vacio">
@@ -21,90 +22,95 @@
     <p>No hay ningún pedido para mostrar.</p>
   </div>
 
-  <!-- CUENTA DETALLE -->
-  <div *ngIf="!cargando && pedido">
+  <!-- CUENTA: wrapper en columna, 100% de alto -->
+  <div *ngIf="!cargando && pedido" class="cuenta-wrapper">
 
-    <!-- ITEMS DEL PEDIDO -->
-    <div class="seccion-card">
-      <h3 class="seccion-titulo">
-        <ion-icon name="receipt-outline"></ion-icon>
-        Detalle del pedido
-      </h3>
-      <div class="item-row" *ngFor="let item of items">
-        <span class="item-nombre">{{ item.productos?.nombre }}</span>
-        <span class="item-cantidad">x{{ item.cantidad }}</span>
-        <span class="item-precio">${{ item.precio_unit * item.cantidad }}</span>
-      </div>
-      <div class="subtotal-row">
-        <span>Subtotal</span>
-        <span>${{ subtotal }}</span>
-      </div>
-    </div>
+    <!-- ZONA SCROLLEABLE: items + descuento + propina -->
+    <div class="cuenta-scroll">
 
-    <!-- DESCUENTO JUEGOS -->
-    <div class="seccion-card" *ngIf="pedido?.descuento_pct && +pedido?.descuento_pct > 0">
-      <h3 class="seccion-titulo">
-        <ion-icon name="game-controller-outline"></ion-icon>
-        Descuento por juegos
-      </h3>
-      <div class="descuento-row">
-        <span>{{ pedido?.descuento_pct }}% de descuento</span>
-        <span class="descuento-monto">-${{ descuentoMonto }}</span>
-      </div>
-    </div>
-
-    <!-- PROPINA -->
-    <div class="seccion-card">
-      <h3 class="seccion-titulo">
-        <ion-icon name="qr-code-outline"></ion-icon>
-        Propina
-      </h3>
-
-      <!-- QR DE PROPINAS EN PANTALLA -->
-      <div *ngIf="!propinaEscaneada" class="qr-propinas-contenedor">
-        <p class="qr-instruccion">Escaneá el QR según tu nivel de satisfacción:</p>
-        
-        <ion-button expand="block" fill="outline" class="boton-qr" (click)="escanearQRPropina()">
-          <ion-icon name="scan-outline" slot="start"></ion-icon>
-          Escanear con cámara
-        </ion-button>
-      </div>
-
-      <!-- PROPINA SELECCIONADA -->
-      <div *ngIf="propinaEscaneada" class="opciones-propina">
-        <div class="opcion-propina"
-          *ngFor="let op of opcionesPropina"
-          [class.seleccionada]="propinaPct === op.pct"
-          (click)="seleccionarPropina(op.pct)">
-          <span class="opcion-label">{{ op.label }}</span>
-          <span class="opcion-pct">{{ op.pct }}%</span>
+      <!-- ITEMS DEL PEDIDO -->
+      <div class="seccion-card">
+        <h3 class="seccion-titulo">
+          <ion-icon name="receipt-outline"></ion-icon>
+          Detalle del pedido
+        </h3>
+        <div class="item-row" *ngFor="let item of items">
+          <span class="item-nombre">{{ item.productos?.nombre }}</span>
+          <span class="item-cantidad">x{{ item.cantidad }}</span>
+          <span class="item-precio">${{ item.precio_unit * item.cantidad }}</span>
+        </div>
+        <div class="subtotal-row">
+          <span>Subtotal</span>
+          <span>${{ subtotal }}</span>
         </div>
       </div>
 
-      <div class="propina-row" *ngIf="propinaMonto > 0">
-        <span>Propina ({{ propinaPct }}%)</span>
-        <span>+${{ propinaMonto }}</span>
+      <!-- DESCUENTO JUEGOS -->
+      <div class="seccion-card" *ngIf="pedido?.descuento_pct && +pedido?.descuento_pct > 0">
+        <h3 class="seccion-titulo">
+          <ion-icon name="game-controller-outline"></ion-icon>
+          Descuento por juegos
+        </h3>
+        <div class="descuento-row">
+          <span>{{ pedido?.descuento_pct }}% de descuento</span>
+          <span class="descuento-monto">-${{ descuentoMonto }}</span>
+        </div>
       </div>
+
+      <!-- PROPINA -->
+      <div class="seccion-card">
+        <h3 class="seccion-titulo">
+          <ion-icon name="qr-code-outline"></ion-icon>
+          Propina
+        </h3>
+
+        <!-- ANTES DE ESCANEAR -->
+        <div *ngIf="!propinaEscaneada && !propinaConfirmada" class="qr-propinas-contenedor">
+          <p class="qr-instruccion">Escaneá el QR según tu nivel de satisfacción:</p>
+          <ion-button expand="block" fill="outline" class="boton-qr" (click)="escanearQRPropina()">
+            <ion-icon name="scan-outline" slot="start"></ion-icon>
+            Escanear con cámara
+          </ion-button>
+        </div>
+
+        <!-- ELEGIR (fallback web) - se puede tocar UNA sola vez -->
+        <div *ngIf="propinaEscaneada && !propinaConfirmada" class="opciones-propina">
+          <div class="opcion-propina"
+            *ngFor="let op of opcionesPropina"
+            (click)="seleccionarPropina(op.pct, op.label)">
+            <span class="opcion-label">{{ op.label }}</span>
+            <span class="opcion-pct">{{ op.pct }}%</span>
+          </div>
+        </div>
+
+        <!-- PROPINA YA CONFIRMADA: bloqueada, no se puede modificar -->
+        <div class="propina-row propina-bloqueada" *ngIf="propinaConfirmada">
+          <span>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            Propina registrada ({{ propinaPct }}%)
+          </span>
+          <span>+${{ propinaMonto }}</span>
+        </div>
+      </div>
+
     </div>
 
-    <!-- TOTAL -->
-    <div class="total-card">
-      <span class="total-label">TOTAL A ABONAR</span>
-      <span class="total-monto">${{ total }}</span>
-    </div>
+    <!-- ZONA FIJA: total + acción de pago -->
+    <div class="cuenta-footer-fijo">
+      <div class="total-card">
+        <span class="total-label">TOTAL A ABONAR</span>
+        <span class="total-monto">${{ total }}</span>
+      </div>
 
-    <!-- PAGO -->
-    <div class="seccion-card" *ngIf="!pagoRealizado">
-      <ion-button expand="block" class="boton-pagar" (click)="realizarPago()" [disabled]="pagando">
+      <ion-button *ngIf="!pagoRealizado" expand="block" class="boton-pagar" (click)="realizarPago()" [disabled]="pagando">
         <ion-icon name="card-outline" slot="start"></ion-icon>
         Realizar pago
       </ion-button>
-    </div>
 
-    <!-- PAGO REALIZADO -->
-    <div class="pago-confirmado-card" *ngIf="pagoRealizado">
-      <ion-icon name="checkmark-circle-outline"></ion-icon>
-      <p>¡Pago enviado! Esperá la confirmación del mozo.</p>
+      <div class="pago-confirmado-card" *ngIf="pagoRealizado">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <p>¡Pago enviado! Esperá la confirmación del mozo.</p>
+      </div>
     </div>
 
   </div>

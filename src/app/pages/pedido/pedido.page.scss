@@ -169,8 +169,8 @@ ion-segment-button {
   font-weight: 600;
 
   .total-monto {
-    font-size: 22px;
-    font-weight: 700;
+    font-size: clamp(28px, 7vw, 36px);
+    font-weight: 800;
     color: var(--vb-acento);
   }
 }

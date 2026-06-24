@@ -176,9 +176,8 @@ export class PedidoPage implements OnInit {
   }
 
   get tiempoEstimado(): number {
-    return this.itemsPedido.reduce((total, item) => {
-      return total + (item.producto.tiempo_min * item.cantidad);
-    }, 0);
+    if (this.itemsPedido.length === 0) return 0;
+    return Math.max(...this.itemsPedido.map(item => item.producto.tiempo_min || 0));
   }
 
   get cantidadItems(): number {

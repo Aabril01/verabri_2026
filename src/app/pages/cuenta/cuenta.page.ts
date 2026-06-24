@@ -20,6 +20,7 @@ export class CuentaPage implements OnInit {
   items: any[] = [];
   propinaPct = 0;
   propinaEscaneada = false;
+  propinaConfirmada = false;
   pagando = false;
   pagoRealizado = false;
   cargando = true;
@@ -98,6 +99,9 @@ export class CuentaPage implements OnInit {
   // ── QR PROPINA ────────────────────────────────────────────────
 
   async escanearQRPropina() {
+
+    if (this.propinaConfirmada) return;
+
     if (Capacitor.getPlatform() === 'web') {
       // En web mostramos las opciones directamente
       this.propinaEscaneada = true;
@@ -111,6 +115,7 @@ export class CuentaPage implements OnInit {
         if (datos.tipo === 'propina' && datos.pct !== undefined) {
           this.propinaPct = datos.pct;
           this.propinaEscaneada = true;
+          this.propinaConfirmada = true;
           await this.mostrarToast(`Propina: ${datos.label} (${datos.pct}%)`, 'success');
         } else {
           await this.mostrarToast('QR de propina no válido.', 'danger');
@@ -123,10 +128,12 @@ export class CuentaPage implements OnInit {
     }
   }
 
-  seleccionarPropina(pct: number) {
-    this.propinaPct = pct;
-  }
-
+  seleccionarPropina(pct: number, label: string) {
+      if (this.propinaConfirmada) return;
+      this.propinaPct = pct;
+      this.propinaConfirmada = true;
+      this.mostrarToast(`Propina registrada: ${label} (${pct}%)`, 'success');
+    }
   // ── CÁLCULOS ──────────────────────────────────────────────────
 
   get subtotal(): number {
@@ -138,7 +145,7 @@ export class CuentaPage implements OnInit {
   }
 
   get propinaMonto(): number {
-    return (this.subtotal - this.descuentoMonto) * (this.propinaPct / 100);
+    return this.subtotal * (this.propinaPct / 100);
   }
 
   get total(): number {
@@ -172,7 +179,7 @@ export class CuentaPage implements OnInit {
       await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago. ¡Confirmalo!`, 'mozo@verabri.com');
       await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago.`, 'dueno@verabri.com');
       await this.push.enviarPushNotificationAUsuario('💳 Pago listo', `La mesa ${this.numeroMesa} realizó el pago.`, 'supervisor@verabri.com');
-
+      
       this.pagoRealizado = true;
       await this.mostrarToast('¡Pago enviado! Esperá la confirmación del mozo.', 'success');
 
@@ -203,9 +210,4 @@ export class CuentaPage implements OnInit {
     }));
   }
 
-  seleccionarPropinaDirecta(pct: number, label: string) {
-    this.propinaPct = pct;
-    this.propinaEscaneada = true;
-    this.mostrarToast(`Propina seleccionada: ${label} (${pct}%)`, 'success');
-  }
 }

@@ -108,11 +108,6 @@
   cursor: pointer;
   transition: all 0.2s;
 
-  &.seleccionada {
-    border-color: var(--vb-dorado);
-    background: rgba(201,148,58,0.15);
-  }
-
   .opcion-label {
     font-size: 15px;
     font-weight: 500;
@@ -249,4 +244,37 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--vb-dorado);
+}
+
+.cuenta-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cuenta-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0; 
+}
+
+.cuenta-footer-fijo {
+  flex-shrink: 0;
+  padding: 0 16px 16px;
+  background: var(--vb-fondo);
+}
+
+.total-card .total-monto {
+  font-size: clamp(36px, 9vw, 56px);
+}
+
+.propina-bloqueada {
+  align-items: center;
+  opacity: 0.9;
+
+  ion-icon {
+    font-size: 14px;
+    margin-right: 4px;
+    color: var(--vb-texto-suave);
+  }
 }
