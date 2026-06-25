@@ -273,3 +273,25 @@ ion-note[color="danger"] {
     }
   }
 }
+
+.alert-controller {
+  --background: var(--vb-card);
+  --color: var(--vb-texto);
+  --max-width: 340px;
+
+  .alert-head {
+    h2 {
+      color: var(--vb-error);
+      font-weight: 700;
+    }
+  }
+
+  .alert-message {
+    color: var(--vb-texto-suave);
+  }
+
+  &::part(button) {
+    border-radius: 10px;
+    font-weight: 600;
+  }
+}

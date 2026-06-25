@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 import { addIcons } from 'ionicons';
-import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
+import { checkmarkCircleOutline, closeCircleOutline, refreshOutline } from 'ionicons/icons';
 
 @Component({
   standalone: false,
@@ -22,7 +22,9 @@ export class PendienteRegistrosPage implements OnInit {
   ) {
     addIcons({
       'checkmark-circle-outline': checkmarkCircleOutline,
-      'close-circle-outline': closeCircleOutline
+      'close-circle-outline': closeCircleOutline,
+      'refresh-outline': refreshOutline
+
     });
   }
 
