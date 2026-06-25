@@ -1,23 +1,116 @@
 .toolbar-verabri {
-    --background: var(--vb-acento);
-    --color: var(--vb-blanco);
-  }
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+}
 
-  ion-select {
-    // Remueve el fondo blanco del contenedor del select
-    --background: transparent;
-    background: transparent;
+.encuesta-content {
+  --background: var(--vb-fondo);
+}
+
+h3 {
+  color: var(--vb-acento);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 18px 0 10px;
+}
+
+.seccion-card {
+  background: var(--vb-card);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 0 16px;
+  border: 1px solid rgba(240,230,211,0.2);
+}
+
+.calificacion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.estrellas-contenedor {
+  display: flex;
+  gap: 8px;
+}
+
+.estrella {
+  font-size: 38px;
+  color: var(--vb-dorado);
+  cursor: pointer;
+  transition: transform 0.1s;
+
+  &:active {
+    transform: scale(1.15);
   }
-  
-  ion-item {
-    // Por si el ion-item también está forzando algún fondo interno
-    --background: transparent; 
+}
+
+.calificacion-texto {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vb-texto-suave);
+}
+
+.aspectos-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aspecto-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.aspecto-nombre {
+  font-size: 14px;
+  color: var(--vb-texto);
+  font-weight: 600;
+  flex: 1;
+}
+
+.mini-estrellas {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 20px;
+    color: var(--vb-dorado);
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    &:active {
+      transform: scale(1.2);
+    }
   }
-  .seccion-label {
+}
+
+.volveria-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: var(--ion-color-dark);
-  margin-bottom: 12px;
+  color: var(--vb-texto);
+}
+
+.seccion-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vb-texto);
+  margin: 0 0 10px;
+}
+
+.textarea-comentario {
+  --background: var(--vb-fondo);
+  --color: var(--vb-texto);
+  --placeholder-color: var(--vb-texto-suave);
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .opciones-conocio {
@@ -61,4 +154,13 @@
       color: var(--vb-acento);
     }
   }
+}
+
+// ── BOTÓN ENVIAR ───────────────────────────────────────────────────
+.boton-enviar-encuesta {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 700;
 }

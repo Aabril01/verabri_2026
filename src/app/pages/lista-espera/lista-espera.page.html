@@ -16,14 +16,25 @@
 
   <!-- SIN CLIENTES -->
   <div class="estado-vacio" *ngIf="!cargando && clientes.length === 0">
-    <ion-icon name="people-outline"></ion-icon>
+    <svg class="empty-ilustracion" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="110" fill="var(--vb-card)" />
+      <circle cx="60" cy="50" r="8" fill="var(--vb-acento)" opacity="0.5" />
+      <circle cx="190" cy="70" r="5" fill="var(--vb-acento)" opacity="0.4" />
+      <circle cx="195" cy="180" r="7" fill="var(--vb-acento)" opacity="0.4" />
+      <circle cx="95" cy="105" r="22" fill="var(--vb-fondo)" stroke="var(--vb-acento)" stroke-width="3" />
+      <path d="M65 165 q30 -35 60 0" fill="none" stroke="var(--vb-acento)" stroke-width="3" stroke-linecap="round" />
+      <circle cx="150" cy="105" r="22" fill="var(--vb-fondo)" stroke="var(--vb-texto-suave)" stroke-width="3" opacity="0.6" />
+      <path d="M120 165 q30 -35 60 0" fill="none" stroke="var(--vb-texto-suave)" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+      <rect x="100" y="185" width="40" height="6" rx="3" fill="var(--vb-texto-suave)" opacity="0.4" />
+    </svg>
     <h3>No hay clientes esperando</h3>
     <p>Cuando un cliente escanee el QR de ingreso aparecerá acá</p>
-    <ion-button fill="outline" class="boton-refrescar" (click)="cargarDatos()">
-      
+    <ion-button fill="solid" class="boton-refrescar" (click)="cargarDatos()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
       Actualizar
     </ion-button>
   </div>
+ 
 
   <!-- LISTA DE CLIENTES -->
   <div class="lista-contenedor" *ngIf="clientes.length > 0">

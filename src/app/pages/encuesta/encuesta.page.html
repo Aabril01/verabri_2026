@@ -7,47 +7,78 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding encuesta-content">
   <form [formGroup]="encuestaForm">
 
-    <h3 class="ion-padding-horizontal">Puntúa tu experencia general</h3>
+    <h3 class="ion-padding-horizontal">Puntúa tu experiencia general</h3>
 
-    <!-- PUNTUACIÓN PRINCIPAL -->
-    <ion-item lines="none">
-      <ion-label position="stacked">Calificación general (1 al 5)</ion-label>
-      <ion-range min="1" max="5" step="1" snaps="true" ticks="true" formControlName="calificacion" color="warning">
-        <ion-icon slot="start" name="star-outline"></ion-icon>
-        <ion-icon slot="end" name="star"></ion-icon>
-      </ion-range>
-    </ion-item>
+    <!-- PUNTUACIÓN PRINCIPAL: estrellas tapeables en vez de slider, más -->
+    <!-- visual y más rápido de usar con el dedo en el celular. -->
+    <div class="seccion-card calificacion-card">
+      <div class="estrellas-contenedor">
+        <ion-icon
+          *ngFor="let n of [1,2,3,4,5]"
+          [name]="(encuestaForm.get('calificacion')?.value || 0) >= n ? 'star' : 'star-outline'"
+          class="estrella"
+          (click)="encuestaForm.get('calificacion')?.setValue(n)">
+        </ion-icon>
+      </div>
+      <p class="calificacion-texto">{{ textoCalificacion }}</p>
+    </div>
 
     <!-- ASPECTOS -->
     <h3 class="ion-padding-horizontal">Aspectos en detalle</h3>
-    <div formGroupName="aspectos">
-      <ion-item>
-        <ion-label>Calidad de la Comida</ion-label>
-        <ion-badge slot="end" color="secondary">{{ encuestaForm.get('aspectos.comida')?.value }}</ion-badge>
-        <ion-range min="1" max="5" formControlName="comida"></ion-range>
-      </ion-item>
+    <div formGroupName="aspectos" class="seccion-card aspectos-card">
+      <div class="aspecto-fila">
+        <span class="aspecto-nombre">Calidad de la comida</span>
+        <div class="mini-estrellas">
+          <ion-icon
+            *ngFor="let n of [1,2,3,4,5]"
+            [name]="(encuestaForm.get('aspectos.comida')?.value || 0) >= n ? 'star' : 'star-outline'"
+            (click)="encuestaForm.get('aspectos.comida')?.setValue(n)">
+          </ion-icon>
+        </div>
+      </div>
 
-      <ion-item>
-        <ion-label>Servicio / Atención</ion-label>
-        <ion-badge slot="end" color="secondary">{{ encuestaForm.get('aspectos.servicio')?.value }}</ion-badge>
-        <ion-range min="1" max="5" formControlName="servicio"></ion-range>
-      </ion-item>
+      <div class="aspecto-fila">
+        <span class="aspecto-nombre">Servicio / atención</span>
+        <div class="mini-estrellas">
+          <ion-icon
+            *ngFor="let n of [1,2,3,4,5]"
+            [name]="(encuestaForm.get('aspectos.servicio')?.value || 0) >= n ? 'star' : 'star-outline'"
+            (click)="encuestaForm.get('aspectos.servicio')?.setValue(n)">
+          </ion-icon>
+        </div>
+      </div>
 
-      <ion-item>
-        <ion-label>Limpieza</ion-label>
-        <ion-badge slot="end" color="secondary">{{ encuestaForm.get('aspectos.limpieza')?.value }}</ion-badge>
-        <ion-range min="1" max="5" formControlName="limpieza"></ion-range>
-      </ion-item>
+      <div class="aspecto-fila">
+        <span class="aspecto-nombre">Limpieza</span>
+        <div class="mini-estrellas">
+          <ion-icon
+            *ngFor="let n of [1,2,3,4,5]"
+            [name]="(encuestaForm.get('aspectos.limpieza')?.value || 0) >= n ? 'star' : 'star-outline'"
+            (click)="encuestaForm.get('aspectos.limpieza')?.setValue(n)">
+          </ion-icon>
+        </div>
+      </div>
+
+      <div class="aspecto-fila">
+        <span class="aspecto-nombre">Ambiente</span>
+        <div class="mini-estrellas">
+          <ion-icon
+            *ngFor="let n of [1,2,3,4,5]"
+            [name]="(encuestaForm.get('aspectos.ambiente')?.value || 0) >= n ? 'star' : 'star-outline'"
+            (click)="encuestaForm.get('aspectos.ambiente')?.setValue(n)">
+          </ion-icon>
+        </div>
+      </div>
     </div>
 
     <!-- VOLVERIA O NO -->
-    <ion-item class="ion-margin-top">
-      <ion-label>¿Volverías a elegirnos?</ion-label>
+    <div class="seccion-card volveria-card ion-margin-top">
+      <span>¿Volverías a elegirnos?</span>
       <ion-toggle formControlName="volveria" color="success"></ion-toggle>
-    </ion-item>
+    </div>
 
     <!-- COMO CONOCIO -->
     <div class="ion-padding-horizontal ion-margin-top">
@@ -81,19 +112,21 @@
     </div>
 
     <!-- COMENTARIO/SUGERENCIAS -->
-    <ion-item lines="none">
-      <ion-label position="stacked">Comentarios o sugerencias</ion-label>
-      <ion-textarea 
-        formControlName="comentario" 
-        placeholder="Contanos más sobre tu experiencia..." 
+    <div class="seccion-card ion-margin-top">
+      <p class="seccion-label">Comentarios o sugerencias</p>
+      <ion-textarea
+        formControlName="comentario"
+        placeholder="Contanos más sobre tu experiencia..."
         rows="4"
+        class="textarea-comentario"
         auto-grow="true">
       </ion-textarea>
-    </ion-item>
+    </div>
 
     <!-- BOTON GUARDADO -->
     <div class="ion-padding">
-      <ion-button (click)="guardarEncuesta()" expand="block" [disabled]="encuestaForm.invalid">
+      <ion-button (click)="guardarEncuesta()" expand="block" class="boton-enviar-encuesta" [disabled]="encuestaForm.invalid">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
         Enviar encuesta
       </ion-button>
     </div>

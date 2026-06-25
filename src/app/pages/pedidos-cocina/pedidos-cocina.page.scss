@@ -12,13 +12,29 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 32px;
+  padding: 24px;
   text-align: center;
-  gap: 12px;
+  min-height: calc(100vh - 56px);
+  gap: 32px;
 
-  ion-icon { font-size: 80px; color: rgba(240,230,211,0.2); }
+  .empty-ilustracion {
+    width: min(280px, 75vw);
+    height: auto;
+  }
+
   h3 { font-size: 20px; font-weight: 600; color: var(--vb-texto); margin: 0; }
-  p { font-size: 14px; color: var(--vb-texto-suave); margin: 0; }
+  p { font-size: 14px; color: var(--vb-texto-suave); margin: 0; max-width: 280px; }
+}
+
+.boton-refrescar {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  height: 48px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .lista-contenedor {
