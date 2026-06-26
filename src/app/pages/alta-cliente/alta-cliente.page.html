@@ -111,6 +111,29 @@
       </div>
     </div>
 
+    <!-- NUEVO: REPETIR CONTRASEÑA -->
+    <div class="campo-contenedor">
+      <ion-item class="campo-item" [class.campo-error]="campoInvalido('confirmarContrasena')">
+        <ion-icon name="lock-closed-outline" slot="start" class="icono-campo"></ion-icon>
+        <ion-label position="stacked">Repetir contraseña</ion-label>
+        <ion-input
+          formControlName="confirmarContrasena"
+          [type]="mostrarContrasena ? 'text' : 'password'"
+          placeholder="Repetí la contraseña">
+        </ion-input>
+        <ion-button fill="clear" slot="end" (click)="toggleContrasena()">
+          <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="mensajes-error" *ngIf="campoInvalido('confirmarContrasena')">
+        <ion-note color="danger">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span *ngIf="formulario.get('confirmarContrasena')?.hasError('required')">Repetí la contraseña.</span>
+          <span *ngIf="formulario.get('confirmarContrasena')?.hasError('noCoincide')">Las contraseñas no coinciden.</span>
+        </ion-note>
+      </div>
+    </div>
+
     <!-- ERROR GENERAL -->
     <div class="error-general" *ngIf="errorGeneral">
       <ion-chip color="danger" class="chip-error">
