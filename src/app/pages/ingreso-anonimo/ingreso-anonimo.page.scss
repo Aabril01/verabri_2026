@@ -183,8 +183,7 @@
 .estado-esperando {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  justify-content: center;
+  justify-content: space-evenly;
   flex: 1;
 }
 
@@ -221,31 +220,31 @@
 .card-espera {
   background: var(--vb-card);
   border: 1px solid rgba(240,230,211,0.15);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 
   .foto-espera {
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--vb-acento);
   }
 
   .nombre-espera {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--vb-texto);
     margin: 0;
   }
 
   .badge-estado {
-    font-size: 13px;
-    padding: 6px 14px;
+    font-size: 15px;
+    padding: 8px 18px;
     border-radius: 20px;
   }
 }
@@ -255,13 +254,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--vb-texto-suave);
   text-align: center;
   justify-content: center;
   padding: 0 16px;
 
-  ion-icon { font-size: 18px; flex-shrink: 0; }
+  ion-icon { font-size: 20px; flex-shrink: 0; }
 }
 .mesa-asignada-card {
   background: rgba(45, 211, 111, 0.15);
