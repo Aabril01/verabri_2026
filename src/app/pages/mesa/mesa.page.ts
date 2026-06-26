@@ -283,14 +283,7 @@ export class MesaPage implements OnInit {
     }, 0);
   }
 
-  // Nota: se mantiene la suma de tiempos tal como estaba en pedido.page.
-  // El cambio a "usar solo el producto de mayor tiempo" es un punto de la
-  // sección Pedidos, no de Menú, y se resuelve en ese momento.
-  get tiempoEstimado(): number {
-    return this.itemsPedido.reduce((total, item) => {
-      return total + (item.producto.tiempo_min * item.cantidad);
-    }, 0);
-  }
+  get tiempoEstimado(): number { if (this.itemsPedido.length === 0) return 0; return Math.max(...this.itemsPedido.map(item => item.producto.tiempo_min || 0)); }
 
   get cantidadItems(): number {
     return this.itemsPedido.reduce((total, item) => total + item.cantidad, 0);
