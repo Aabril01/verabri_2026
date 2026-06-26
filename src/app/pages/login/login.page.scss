@@ -2,10 +2,10 @@
   --background: var(--vb-fondo);
 }
 
-.ion-content::part(scroll) {
+.login-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
 }
 
 .fondo-login {
@@ -31,29 +31,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(20px, 5vw, 40px) 24px clamp(6px, 2vw, 10px);
+  padding: clamp(28px, 7vw, 48px) 24px clamp(10px, 3vw, 16px);
 }
 
 .logo-pequeno {
-  width: clamp(44px, 12vw, 56px);
-  height: clamp(44px, 12vw, 56px);
+  width: clamp(64px, 18vw, 84px);
+  height: clamp(64px, 18vw, 84px);
   border-radius: 50%;
   background: var(--vb-acento);
   border: 2px solid rgba(240,230,211,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 
-  img {
-    width: clamp(28px, 8vw, 36px);
-    height: clamp(28px, 8vw, 36px);
+  .img-logo {
+    width: clamp(40px, 12vw, 54px);
+    height: clamp(40px, 12vw, 54px);
     object-fit: contain;
   }
 }
 
 .titulo-login {
-  font-size: var(--vb-font-xl);
+  font-size: clamp(26px, 8vw, 34px);
   font-weight: 700;
   color: var(--vb-texto);
   letter-spacing: 5px;
@@ -62,7 +62,7 @@
 }
 
 .subtitulo-login {
-  font-size: var(--vb-font-sm);
+  font-size: clamp(14px, 4vw, 16px);
   color: var(--vb-texto-suave);
   margin: 0;
   letter-spacing: 1px;
@@ -70,7 +70,7 @@
 
 .formulario-login { padding: 0 var(--vb-padding); margin-bottom: 4px; }
 .boton-registro { padding: 0 var(--vb-padding); margin-bottom: var(--vb-gap); margin-top: 8px; }
-.campo-contenedor { margin-bottom: 4px; }
+.campo-contenedor { margin-bottom: clamp(10px, 3vw, 16px); }
 
 .campo-item {
   --background: var(--vb-card);
@@ -135,11 +135,12 @@
 
 .accesos-rapidos {
   flex: 1;
+  min-height: 0;
   padding: 0 var(--vb-padding);
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  //justify-content: center;
+  justify-content: center;
 }
 
 .accesos-titulo {
@@ -166,14 +167,14 @@
 .grilla-perfiles {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--vb-gap);
+  gap: clamp(10px, 3vw, 18px);
 }
 
 .tarjeta-perfil {
   background: var(--vb-card);
   border: 1px solid rgba(240,230,211,0.2);
   border-radius: var(--vb-radius);
-  padding: clamp(8px, 2vw, 12px) clamp(4px, 1.5vw, 8px) clamp(6px, 2vw, 10px);
+  padding: clamp(14px, 4vw, 22px) clamp(8px, 3vw, 14px) clamp(10px, 3vw, 16px);
   display: flex; flex-direction: column;
   align-items: center; gap: var(--vb-gap);
   cursor: pointer;
@@ -194,8 +195,8 @@
 }
 
 .perfil-icono-contenedor {
-  width: clamp(36px, 10vw, 48px);
-  height: clamp(36px, 10vw, 48px);
+  width: clamp(52px, 16vw, 72px);
+  height: clamp(52px, 16vw, 72px);
   border-radius: 50%;
   background: var(--vb-acento);
   border: 2px solid rgba(240,230,211,0.2);
@@ -211,10 +212,10 @@
   border-radius: 50%;
 }
 
-.perfil-icono { font-size: clamp(16px, 5vw, 22px); color: var(--vb-blanco); }
+.perfil-icono { font-size: clamp(22px, 7vw, 30px); color: var(--vb-blanco); }
 
 .perfil-nombre {
-  font-size: clamp(9px, 2.5vw, 12px);
+  font-size: clamp(11px, 3vw, 14px);
   color: var(--vb-texto);
   text-align: center;
   font-weight: 500;

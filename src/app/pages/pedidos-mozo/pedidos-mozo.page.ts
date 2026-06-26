@@ -293,7 +293,9 @@ export class PedidosMozoPage implements OnInit {
 
     if (pedido.propina_pct > 0) {
       doc.text(`Propina (${pedido.propina_pct}%):`, 130, y);
-      doc.text(`$${(pedido.total * pedido.propina_pct / 100).toFixed(0)}`, 178, y);
+      const subtotalItems = items.reduce((acc: number, i: any) => acc + i.subtotal, 0);
+      const propinaMontoPDF = pedido.propina_monto ?? (subtotalItems * pedido.propina_pct / 100);
+      doc.text(`$${propinaMontoPDF.toFixed(0)}`, 178, y);
       y += 8;
     }
 
@@ -429,7 +431,7 @@ export class PedidosMozoPage implements OnInit {
                   const items = pedido.pedido_items || [];
                   const subtotal = items.reduce((acc: number, i: any) => acc + i.subtotal, 0);
                   const descuentoMonto = subtotal * (pedido.descuento_pct || 0) / 100;
-                  const propinaMonto = (subtotal - descuentoMonto) * (pedido.propina_pct || 0) / 100;
+                  const propinaMonto = pedido.propina_monto ?? (subtotal * (pedido.propina_pct || 0) / 100);
                   const detalleItems = items.map((item: any) =>
                     `• ${item.productos?.nombre || ''} x${item.cantidad} — $${item.subtotal}`
                   ).join('\n');
