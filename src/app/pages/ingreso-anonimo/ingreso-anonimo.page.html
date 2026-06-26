@@ -83,39 +83,44 @@
   <!-- PASO 3: EN ESPERA -->
   <div class="paso-contenedor" *ngIf="paso === 'espera'">
 
-    <div class="encabezado">
-      <ion-icon name="time-outline" class="icono-principal icono-exito"></ion-icon>
-      <h2>¡Ya estás en la lista!</h2>
-      <p>Aguardá a que el metre te asigne una mesa</p>
-    </div>
+    <!-- ESTADO A: todavía esperando que el metre asigne mesa -->
+    <div class="estado-esperando" *ngIf="!mesaAsignada">
+      <div class="encabezado">
+        <ion-icon name="time-outline" class="icono-principal icono-exito"></ion-icon>
+        <h2>¡Ya estás en la lista!</h2>
+        <p>Aguardá a que el metre te asigne una mesa</p>
+      </div>
 
-    <div class="card-espera">
-      <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-espera"/>
-      <p class="nombre-espera">{{ nombre }}</p>
-      <ion-badge color="warning" class="badge-estado">En espera</ion-badge>
-    </div>
+      <div class="card-espera">
+        <img *ngIf="fotoUrl" [src]="fotoUrl" class="foto-espera"/>
+        <p class="nombre-espera">{{ nombre }}</p>
+        <ion-badge color="warning" class="badge-estado">En espera</ion-badge>
+      </div>
 
-    <p class="texto-info">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      El metre verá tu solicitud y te asignará una mesa a la brevedad.
-    </p>
-     <!-- VERIFICAR ESTADO -->
-    <ion-button expand="block" class="boton-principal" (click)="verificarMesaAsignada()">
-      <ion-icon name="refresh-outline" slot="start"></ion-icon>
-      Ver estado de mi mesa
-    </ion-button>
+      <p class="texto-info">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        El metre verá tu solicitud y te asignará una mesa a la brevedad.
+      </p>
 
-    <!-- MESA ASIGNADA -->
-    <div class="mesa-asignada-card" *ngIf="mesaAsignada">
-      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-      <h3>¡Te asignaron la Mesa {{ mesaAsignada.numero }}!</h3>
-      <p>Escaneá el QR de esa mesa para ingresar</p>
-      <ion-button expand="block" class="boton-principal" (click)="escanearMesa()">
-        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-        Escanear QR de la mesa
+      <ion-button expand="block" class="boton-principal" (click)="verificarMesaAsignada()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Ver estado de mi mesa
       </ion-button>
     </div>
-  
+
+    <!-- ESTADO B: ya tiene mesa asignada (excluye al estado A por completo) -->
+    <div class="estado-asignada" *ngIf="mesaAsignada">
+      <ion-icon name="checkmark-circle-outline" class="icono-exito-grande"></ion-icon>
+      <h2>¡Te asignaron la Mesa {{ mesaAsignada.numero }}!</h2>
+      <p>Escaneá el QR de esa mesa para ingresar</p>
+
+      <ion-button expand="block" class="boton-qr-grande" (click)="escanearMesa()">
+        <div class="contenido-boton-qr">
+          <ion-icon name="qr-code-outline" class="icono-qr-grande"></ion-icon>
+          <span>Escanear QR de la mesa</span>
+        </div>
+      </ion-button>
+    </div>
 
   </div>
 

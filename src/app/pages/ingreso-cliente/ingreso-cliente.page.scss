@@ -51,7 +51,7 @@
   border: 3px solid var(--vb-acento);
 }
 
-// ── QR ILUSTRACIÓN ────────────────────────────────────────────
+// ── QR ILUSTRACIÓN (sin uso desde la simplificación del paso 1) ─
 .qr-ilustracion {
   display: flex;
   justify-content: center;
@@ -61,6 +61,57 @@
   ion-icon {
     font-size: 120px;
     color: rgba(240,230,211,0.2);
+  }
+}
+
+// ── PASO ESCANEAR (simplificado: encabezado chico + botón gigante) ─
+.paso-escanear-simple {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.encabezado-chico {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+}
+
+.foto-cliente-chica {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--vb-acento);
+}
+
+.boton-qr-grande {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 24px;
+  width: 100%;
+  height: 48vh;
+  font-size: 20px;
+  font-weight: 700;
+
+  .contenido-boton-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .icono-qr-grande {
+    font-size: 110px;
   }
 }
 
