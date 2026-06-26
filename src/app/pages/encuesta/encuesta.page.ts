@@ -45,6 +45,17 @@ export class EncuestaPage implements OnInit {
     this.mesaId = this.route.snapshot.paramMap.get('mesaId') || '';
   }
 
+  get textoCalificacion(): string {
+    const textos: { [key: number]: string } = {
+      1: 'Muy malo',
+      2: 'Malo',
+      3: 'Regular',
+      4: 'Bueno',
+      5: 'Excelente'
+    };
+    return textos[this.encuestaForm?.get('calificacion')?.value] || '';
+  }
+
   async guardarEncuesta() {
     this.encuestaForm.markAllAsTouched();
 

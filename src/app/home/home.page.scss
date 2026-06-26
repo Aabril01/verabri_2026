@@ -1,30 +1,44 @@
 .home-content {
   --background: var(--vb-fondo);
-  --overflow: auto;
+}
+
+.home-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .home-header {
+  position: relative;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(24px, 5vw, 40px) 24px 20px;
+  padding: clamp(16px, 4vw, 28px) 24px 16px;
   background: var(--vb-acento);
   border-radius: 0 0 28px 28px;
-  margin-bottom: 24px;
+}
+
+.boton-logout-header {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  --color: var(--vb-blanco);
+  margin: 3px;
 }
 
 .home-logo {
-  width: clamp(60px, 15vw, 80px);
-  height: clamp(60px, 15vw, 80px);
+  width: clamp(48px, 12vw, 64px);
+  height: clamp(48px, 12vw, 64px);
   object-fit: contain;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border-radius: 50%;
   background: var(--vb-card);
   padding: 8px;
 }
 
 .home-titulo {
-  font-size: clamp(22px, 6vw, 28px);
+  font-size: clamp(20px, 5vw, 26px);
   font-weight: 700;
   color: var(--vb-blanco);
   letter-spacing: clamp(4px, 2vw, 8px);
@@ -39,11 +53,39 @@
   margin: 0;
 }
 
+.seccion-titulo {
+  flex-shrink: 0;
+  font-size: clamp(10px, 2.5vw, 11px);
+  color: var(--vb-texto-suave);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px clamp(12px, 4vw, 20px) 8px;
+  margin: 0;
+  font-family: serif;
+}
+
+// NUEVO: ocupa TODO el alto restante entre el título y el footer.
 .menu-opciones {
-  padding: 0 clamp(12px, 4vw, 20px);
+  flex: 1;
+  min-height: 0;
+  padding: 0 clamp(12px, 4vw, 20px) 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  // Cada botón crece para repartirse el alto disponible en partes
+  // iguales, sea la cantidad de botones que sea (2, 3, 4 o 5 según
+  // el rol) -- así nunca queda aire abajo y nunca hace falta scroll.
+  > ion-button {
+    flex: 1;
+    min-height: 0;
+  }
+
+  // El cartel de "te asignaron la mesa" (cliente registrado) no debe
+  // estirarse como un botón, mantiene su tamaño natural.
+  > .mensaje-mesa {
+    flex: 0 0 auto;
+  }
 }
 
 .boton-menu {
@@ -51,8 +93,7 @@
   --color: var(--vb-texto);
   --border-radius: 14px;
   --box-shadow: none;
-  min-height: 56px;
-  height: auto;
+  height: 100%;
   font-size: clamp(13px, 3.5vw, 15px);
   font-weight: 600;
   font-family: serif;
@@ -66,39 +107,10 @@
   }
 }
 
-.separador {
-  height: 1px;
-  background: rgba(201, 148, 58, 0.2);
-  margin: 8px clamp(12px, 4vw, 20px);
-}
-
-.seccion-titulo {
-  font-size: clamp(10px, 2.5vw, 11px);
-  color: var(--vb-texto-suave);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 0 clamp(12px, 4vw, 20px);
-  margin-bottom: 8px;
-  font-family: serif;
-}
-
-.boton-cerrar-sesion {
-  --background: transparent;
-  --color: var(--vb-dorado);
-  --border-radius: 14px;
-  --box-shadow: none;
-  min-height: 48px;
-  height: auto;
-  font-size: clamp(13px, 3.5vw, 14px);
-  font-weight: 600;
-  border: 1.5px solid var(--vb-dorado);
-  margin: 20px clamp(12px, 4vw, 20px) 0;
-}
-
 .footer-home {
+  flex-shrink: 0;
   text-align: center;
-  padding: 16px;
-  margin-top: 12px;
+  padding: 10px;
 
   span {
     font-size: clamp(10px, 2.5vw, 11px);

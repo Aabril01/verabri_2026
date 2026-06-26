@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
@@ -39,8 +39,25 @@ export class AltaEmpleadoPage implements OnInit {
       cuil:       ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       email:      ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarContrasena: ['', [Validators.required]],
       perfil:     ['cocinero', Validators.required]
-    });
+    }, { validators: this.contrasenasIgualesValidator });
+  }
+
+  // NUEVO: valida que "Repetir contraseña" coincida con "Contraseña"
+  private contrasenasIgualesValidator(group: AbstractControl): ValidationErrors | null {
+    const contrasena = group.get('contrasena')?.value;
+    const confirmacion = group.get('confirmarContrasena')?.value;
+    const controlConfirmacion = group.get('confirmarContrasena');
+
+    if (contrasena && confirmacion && contrasena !== confirmacion) {
+      controlConfirmacion?.setErrors({ ...controlConfirmacion.errors, noCoincide: true });
+    } else if (controlConfirmacion?.hasError('noCoincide')) {
+      const errores = { ...controlConfirmacion.errors };
+      delete errores['noCoincide'];
+      controlConfirmacion.setErrors(Object.keys(errores).length ? errores : null);
+    }
+    return null;
   }
 
   campoInvalido(campo: string): boolean {

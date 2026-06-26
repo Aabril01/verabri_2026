@@ -4,15 +4,20 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content">
+<ion-content class="home-content" [scrollY]="false">
 
-  <div class="home-header">
-    <img src="assets/logo.png" class="home-logo"/>
-    <h1 class="home-titulo">VERABRI</h1>
-    <p class="home-subtitulo">Bienvenido, {{ nombre }}</p>
-  </div>
+  <div class="home-wrapper">
 
-  <p class="seccion-titulo">Menú principal</p>
+    <div class="home-header">
+      <ion-button fill="clear" class="boton-logout-header" (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <img src="assets/logo.png" class="home-logo"/>
+      <h1 class="home-titulo">VERABRI</h1>
+      <p class="home-subtitulo">Bienvenido, {{ nombre }}</p>
+    </div>
+
+    <p class="seccion-titulo">Menú principal</p>
 
   <!-- DUEÑO / SUPERVISOR -->
   <div class="menu-opciones" *ngIf="perfil === 'dueno' || perfil === 'supervisor'">
@@ -133,15 +138,10 @@
     </ion-button>
   </div>
 
-  <div class="separador"></div>
-
-  <ion-button expand="block" (click)="cerrarSesion()" class="boton-cerrar-sesion">
-    <ion-icon name="log-out-outline" slot="start"></ion-icon>
-    Cerrar sesión
-  </ion-button>
-
   <div class="footer-home">
     <span>VERABRI GRILL · UTN Avellaneda · 2026</span>
+  </div>
+
   </div>
 
 </ion-content>
