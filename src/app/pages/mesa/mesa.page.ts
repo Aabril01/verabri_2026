@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../../services/supabase';
+import { PushNotification } from '../../services/push-notifications';
+
+interface ItemPedido {
+  producto: any;
+  cantidad: number;
+}
 
 @Component({
   standalone: false,
@@ -17,15 +23,25 @@ export class MesaPage implements OnInit {
   bebidas: any[] = [];
   pedidoActual: any = null;
   cargando = true;
-  segmentoActivo: 'info' | 'platos' | 'bebidas' = 'info';
+  segmentoActivo: 'platos' | 'bebidas' = 'platos';
   encuestaHabilitada: boolean = false;
+
+  // ── CARRITO (fusionado desde pedido.page) ──────────────────────
+  itemsPedido: ItemPedido[] = [];
+  pedidoExistenteId: string | null = null;
+  esModificacion = false;
+
+  // ── DETALLE DE PRODUCTO ─────────────────────────────────────────
+  productoDetalle: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private supabaseService: SupabaseService,
+    private pushNotification: PushNotification,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertController: AlertController
   ) {}
 
   async ngOnInit() {
@@ -41,12 +57,7 @@ export class MesaPage implements OnInit {
 
   /**
    * true si el cliente actual está navegando con una sesión anónima activa
-   * (localStorage 'sesion_anonima', no vencida). Lo usa el .html para
-   * ocultar el botón de Juegos, y cargarDatos() para forzar
-   * encuestaHabilitada = false sin importar el estado del pedido.
-   *
-   * Consigna (punto 9 y punto 14): el cliente anónimo NO puede jugar ni
-   * completar encuestas nuevas, solo ver resultados de encuestas previas.
+   * (localStorage 'sesion_anonima', no vencida).
    */
   get esAnonimo(): boolean {
     const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
@@ -57,6 +68,30 @@ export class MesaPage implements OnInit {
     } catch (e) {
       return false;
     }
+  }
+
+  /**
+   * Se puede editar el carrito (agregar/quitar productos y confirmar) solo
+   * si todavía no hay pedido, o si el pedido existente fue rechazado por el
+   * mozo (en ese caso se modifica en vez de crear uno nuevo).
+   * Mientras está 'pendiente' o más adelante (confirmado, en_cocina, listo,
+   * entregado, recibido) el carrito queda de solo lectura.
+   */
+  get puedeEditarPedido(): boolean {
+    return !this.pedidoActual || this.pedidoActual.estado === 'rechazado';
+  }
+
+  /**
+   * Productos del segmento activo (platos o bebidas), agrupados de a 2 para
+   * el carrusel paginado horizontal.
+   */
+  get paginasProductos(): any[][] {
+    const lista = this.segmentoActivo === 'platos' ? this.platos : this.bebidas;
+    const paginas: any[][] = [];
+    for (let i = 0; i < lista.length; i += 2) {
+      paginas.push(lista.slice(i, i + 2));
+    }
+    return paginas;
   }
 
   async cargarDatos() {
@@ -85,7 +120,7 @@ export class MesaPage implements OnInit {
 
       const { data: pedidoData } = await this.supabaseService.client
         .from('pedidos')
-        .select(`*, pedido_items(*, productos(nombre, precio, tiempo_min))`)
+        .select(`*, pedido_items(*, productos(*))`)
         .eq('mesa_id', this.mesaId)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -114,6 +149,25 @@ export class MesaPage implements OnInit {
         this.encuestaHabilitada = false;
       }
 
+      // Si el pedido fue rechazado, precargamos sus items en el carrito
+      // para que el cliente los pueda modificar directamente acá.
+      if (this.pedidoActual?.estado === 'rechazado') {
+        this.pedidoExistenteId = this.pedidoActual.id;
+        this.esModificacion = true;
+        this.itemsPedido = (this.pedidoActual.pedido_items || []).map((item: any) => ({
+          producto: item.productos,
+          cantidad: item.cantidad
+        }));
+      } else {
+        this.pedidoExistenteId = null;
+        this.esModificacion = false;
+        if (this.pedidoActual?.estado !== undefined && this.pedidoActual !== null) {
+          // Hay un pedido en curso (pendiente o más adelante): el carrito
+          // de edición no aplica, se vacía para no confundir.
+          this.itemsPedido = [];
+        }
+      }
+
       const { data: productosData, error: errorProductos } = await this.supabaseService.client
         .from('productos')
         .select('*')
@@ -136,29 +190,25 @@ export class MesaPage implements OnInit {
 
   /**
    * Valida si el cliente actual (anónimo o registrado) puede ver esta mesa.
-   * Devuelve false (y ya redirige) cuando el acceso NO está permitido, para
-   * que cargarDatos() pueda cortar la ejecución ahí mismo.
+   * Devuelve false (y ya redirige) cuando el acceso NO está permitido.
    */
   async validarAccesoCliente(): Promise<boolean> {
     const usuario = this.supabaseService.usuarioActual;
 
-    // Verificar sesión anónima del localStorage
     const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
     if (sesionAnonimaRaw) {
       try {
         const sesionAnonima = JSON.parse(sesionAnonimaRaw);
-        // Verificar que no expiró
         if (Date.now() > sesionAnonima.expira) {
           localStorage.removeItem('sesion_anonima');
-          await this.mostrarToast('Tu sesión expiró. Volvé a ingresar.', 'warning');
+          await this.mostrarPopupAcceso('Sesión vencida', 'Tu sesión expiró. Volvé a ingresar.');
           this.router.navigateByUrl('/home', { replaceUrl: true });
           return false;
         } else {
-          // Verificar que la mesa está asignada a este anónimo
           if (this.mesa?.cliente_id === sesionAnonima.cliente_id) {
-            return true; // Acceso permitido
+            return true;
           } else {
-            await this.mostrarToast('Esta mesa no está asignada a vos.', 'warning');
+            await this.mostrarPopupAcceso('Mesa no disponible', 'Esta mesa no está asignada a vos.');
             this.router.navigateByUrl('/home', { replaceUrl: true });
             return false;
           }
@@ -168,7 +218,6 @@ export class MesaPage implements OnInit {
       }
     }
 
-    // Verificar usuario registrado
     if (!usuario) return true;
 
     const perfil = usuario.perfil;
@@ -176,13 +225,185 @@ export class MesaPage implements OnInit {
     if (!esCliente) return true;
 
     if (this.mesa?.cliente_id !== usuario.id) {
-      await this.mostrarToast('Esta mesa no está asignada a vos. Esperá a que el metre te asigne una.', 'warning');
+      await this.mostrarPopupAcceso('Mesa no disponible', 'Esta mesa no está asignada a vos. Esperá a que el metre te asigne una.');
       this.router.navigateByUrl('/home', { replaceUrl: true });
       return false;
     }
 
     return true;
   }
+
+  /**
+   * Popup grande (modal) para los casos en que la mesa no corresponde al
+   * cliente — reemplaza al toast.
+   */
+  async mostrarPopupAcceso(titulo: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: titulo,
+      message: mensaje,
+      cssClass: 'alerta-verabri',
+      buttons: ['Entendido']
+    });
+    await alert.present();
+    await alert.onDidDismiss();
+  }
+
+  // ── CARRITO (fusionado desde pedido.page) ──────────────────────
+
+  getCantidad(productoId: string): number {
+    const item = this.itemsPedido.find(i => i.producto.id === productoId);
+    return item ? item.cantidad : 0;
+  }
+
+  agregarProducto(producto: any) {
+    if (!this.puedeEditarPedido) return;
+    const item = this.itemsPedido.find(i => i.producto.id === producto.id);
+    if (item) {
+      item.cantidad++;
+    } else {
+      this.itemsPedido.push({ producto, cantidad: 1 });
+    }
+  }
+
+  quitarProducto(producto: any) {
+    if (!this.puedeEditarPedido) return;
+    const index = this.itemsPedido.findIndex(i => i.producto.id === producto.id);
+    if (index !== -1) {
+      if (this.itemsPedido[index].cantidad > 1) {
+        this.itemsPedido[index].cantidad--;
+      } else {
+        this.itemsPedido.splice(index, 1);
+      }
+    }
+  }
+
+  get totalPedido(): number {
+    return this.itemsPedido.reduce((total, item) => {
+      return total + (item.producto.precio * item.cantidad);
+    }, 0);
+  }
+
+  // Nota: se mantiene la suma de tiempos tal como estaba en pedido.page.
+  // El cambio a "usar solo el producto de mayor tiempo" es un punto de la
+  // sección Pedidos, no de Menú, y se resuelve en ese momento.
+  get tiempoEstimado(): number {
+    return this.itemsPedido.reduce((total, item) => {
+      return total + (item.producto.tiempo_min * item.cantidad);
+    }, 0);
+  }
+
+  get cantidadItems(): number {
+    return this.itemsPedido.reduce((total, item) => total + item.cantidad, 0);
+  }
+
+  obtenerClienteId(): string {
+    const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
+    if (sesionAnonimaRaw) {
+      try {
+        const sesionAnonima = JSON.parse(sesionAnonimaRaw);
+        if (Date.now() < sesionAnonima.expira) {
+          return sesionAnonima.cliente_id;
+        }
+      } catch (e) {}
+    }
+    return this.supabaseService.usuarioActual?.id || '00000000-0000-0000-0000-000000000000';
+  }
+
+  async confirmarPedido() {
+    if (this.itemsPedido.length === 0) {
+      await this.supabaseService.vibrarError();
+      await this.mostrarToast('Seleccioná al menos un producto.', 'warning');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      spinner: 'crescent',
+      message: this.esModificacion ? 'Actualizando pedido...' : 'Enviando pedido...',
+      cssClass: 'spinner-verabri',
+    });
+    await loading.present();
+
+    try {
+      let pedidoId = this.pedidoExistenteId;
+
+      if (this.esModificacion && pedidoId) {
+        await this.supabaseService.client
+          .from('pedidos')
+          .update({ estado: 'pendiente', subtotal: this.totalPedido, total: this.totalPedido })
+          .eq('id', pedidoId);
+
+        await this.supabaseService.client
+          .from('pedido_items')
+          .delete()
+          .eq('pedido_id', pedidoId);
+
+      } else {
+        const { data: pedidoData, error: errorPedido } = await this.supabaseService.client
+          .from('pedidos')
+          .insert({
+            mesa_id: this.mesaId,
+            cliente_id: this.obtenerClienteId(),
+            estado: 'pendiente',
+            subtotal: this.totalPedido,
+            total: this.totalPedido
+          })
+          .select()
+          .single();
+
+        if (errorPedido) throw errorPedido;
+        pedidoId = pedidoData.id;
+      }
+
+      const items = this.itemsPedido.map(item => ({
+        pedido_id: pedidoId,
+        producto_id: item.producto.id,
+        cantidad: item.cantidad,
+        precio_unit: item.producto.precio
+      }));
+
+      const { error: errorItems } = await this.supabaseService.client
+        .from('pedido_items')
+        .insert(items);
+
+      if (errorItems) throw errorItems;
+
+      try {
+        await this.pushNotification.enviarPushNotificationAUsuario(
+          '🍽️ Nuevo pedido',
+          `La mesa ${this.mesa?.numero} realizó un pedido. ¡Revisalo!`,
+          'mozo@verabri.com'
+        );
+      } catch (pushError) {
+        console.warn('No se pudo enviar la push notification:', pushError);
+      }
+
+      await this.mostrarToast(
+        this.esModificacion ? '¡Pedido actualizado!' : '¡Pedido enviado! El mozo lo confirmará pronto.',
+        'success'
+      );
+
+      this.itemsPedido = [];
+      await this.cargarDatos();
+
+    } catch (error: any) {
+      console.error('Error:', error);
+      await this.mostrarToast('No se pudo enviar el pedido.', 'danger');
+    } finally {
+      await loading.dismiss();
+    }
+  }
+
+  // ── DETALLE DE PRODUCTO ─────────────────────────────────────────
+
+  abrirDetalle(producto: any) {
+    this.productoDetalle = producto;
+  }
+
+  cerrarDetalle() {
+    this.productoDetalle = null;
+  }
+
+  // ── RESTO (sin cambios respecto a la versión anterior) ──────────
 
   async confirmarRecepcion() {
     try {
@@ -197,8 +418,6 @@ export class MesaPage implements OnInit {
       console.error('Error:', error);
     }
   }
-
-  pedirCuenta() {}
 
   cambiarSegmento(evento: any) {
     this.segmentoActivo = evento.detail.value;
@@ -230,7 +449,7 @@ export class MesaPage implements OnInit {
       'en_bar': 'En bar',
       'listo': '✅ ¡Pedido listo! El mozo lo llevará pronto',
       'entregado': '🚀 ¡En camino!',
-      'rechazado': '⚠️ Pedido rechazado — podés modificarlo',
+      'rechazado': '⚠️ Pedido rechazado — modificalo abajo',
       'recibido': '✅ ¡Recibido! Que lo disfrutes.',
     };
     return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
@@ -253,10 +472,6 @@ export class MesaPage implements OnInit {
 
   irAlChat() {
     this.router.navigateByUrl(`/chat/${this.mesaId}`);
-  }
-
-  irAlPedido() {
-    this.router.navigateByUrl(`/pedido/${this.mesaId}`);
   }
 
   irAEncuesta() {

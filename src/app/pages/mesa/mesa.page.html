@@ -4,18 +4,44 @@
       <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Mesa {{ mesa?.numero }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="irAlChat()">
-        <ion-icon name="chatbubble-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
+
+  <!-- BARRA DE ESTADO (solo si hay un pedido en curso) -->
+  <ion-toolbar class="toolbar-estado" *ngIf="pedidoActual">
+    <div class="estado-bar-contenido">
+      <ion-badge [color]="getColorEstado()" class="badge-estado-pedido">
+        {{ getEstadoPedido() }}
+      </ion-badge>
+
+      <ion-button size="small" class="boton-chip" *ngIf="pedidoActual?.estado === 'entregado'" (click)="confirmarRecepcion()">
+        <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+        Confirmar recepción
+      </ion-button>
+
+      <ion-button size="small" class="boton-chip" *ngIf="!esAnonimo && pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'" [routerLink]="['/juegos', mesaId]">
+        <ion-icon name="game-controller-outline" slot="start"></ion-icon>
+        Juegos
+      </ion-button>
+
+      <ion-button size="small" class="boton-chip" *ngIf="pedidoActual?.estado === 'recibido' && encuestaHabilitada" (click)="irAEncuesta()">
+        <ion-icon name="star-outline" slot="start"></ion-icon>
+        Encuesta
+      </ion-button>
+
+      <ion-button size="small" class="boton-chip" *ngIf="pedidoActual?.estado === 'recibido' && !encuestaHabilitada" (click)="irAEstadistica()">
+        <ion-icon name="podium-outline" slot="start"></ion-icon>
+        Estadísticas
+      </ion-button>
+
+      <ion-button size="small" class="boton-chip" *ngIf="pedidoActual?.estado === 'recibido'" [routerLink]="['/cuenta', mesaId]">
+        <ion-icon name="receipt-outline" slot="start"></ion-icon>
+        Pedir cuenta
+      </ion-button>
+    </div>
+  </ion-toolbar>
+
   <ion-toolbar class="toolbar-segmento">
     <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event)">
-      <ion-segment-button value="info">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <ion-label>Mi mesa</ion-label>
-      </ion-segment-button>
       <ion-segment-button value="platos">
         <ion-icon name="flame-outline"></ion-icon>
         <ion-label>Platos</ion-label>
@@ -28,170 +54,114 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="mesa-content">
+<ion-content class="mesa-content" [scrollY]="false">
 
-  <!-- INFO DE LA MESA -->
-  <div *ngIf="segmentoActivo === 'info' && mesa">
-    <!-- <div class="mesa-card">
-      <img *ngIf="mesa.foto_url" [src]="mesa.foto_url" class="mesa-foto"/>
-      <div class="mesa-detalle">
-        <h2 class="mesa-numero">Mesa {{ mesa.numero }}</h2>
-        <div class="mesa-info-row">
-          <ion-icon name="people-outline"></ion-icon>
-          <span>{{ mesa.capacidad }} comensales</span>
-        </div>
-        <div class="mesa-info-row">
-          <ion-icon name="ribbon-outline"></ion-icon>
-          <span>{{ formatearTipo(mesa.tipo) }}</span>
-        </div>
-        
-      </div>
-    </div> -->
+  <!-- CARRUSEL PAGINADO: 2 PRODUCTOS POR VISTA -->
+  <div class="carrusel-productos">
 
-    <!-- ESTADO Y DETALLE DEL PEDIDO -->
-    <div class="estado-pedido-card" *ngIf="pedidoActual">
-      <div class="estado-pedido-header">
-        <ion-icon name="receipt-outline"></ion-icon>
-        <span>Estado del pedido</span>
-      </div>
-      <ion-badge [color]="getColorEstado()" class="badge-estado-pedido">
-        {{ getEstadoPedido() }}
-      </ion-badge>
+    <div class="pagina-productos" *ngFor="let pagina of paginasProductos">
+      <div class="producto-card-compacta" *ngFor="let producto of pagina" (click)="abrirDetalle(producto)">
 
-      <!-- DETALLE DE ITEMS -->
-      <div class="pedido-items" *ngIf="pedidoActual.pedido_items?.length > 0">
-        <div class="item-row" *ngFor="let item of pedidoActual.pedido_items">
-          <span class="item-cantidad">{{ item.cantidad }}x</span>
-          <span class="item-nombre">{{ item.productos?.nombre }}</span>
-          <span class="item-precio">${{ item.subtotal }}</span>
+        <img [src]="producto.foto1_url || 'assets/avatar-default.png'" class="foto-cuadrada"/>
+
+        <div class="producto-info-compacta">
+          <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+          <div class="producto-detalles">
+            <span class="producto-precio">${{ producto.precio }}</span>
+            <span class="producto-tiempo">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ producto.tiempo_min }} min
+            </span>
+          </div>
         </div>
-        <div class="item-row" *ngIf="pedidoActual.descuento_pct && +pedidoActual.descuento_pct > 0">
-          <span class="item-cantidad">🎮</span>
-          <span class="item-nombre">Descuento juegos ({{ pedidoActual.descuento_pct }}%)</span>
-          <span class="item-precio" style="color: #00ff62;">-${{ (+pedidoActual.descuento_pct / 100) * pedidoActual.subtotal }}</span>
-        </div>
-        <div class="pedido-total-row">
-          <span>Total</span>
-          <span class="total-monto">${{ pedidoActual.total }}</span>
+
+        <div class="cantidad-control" *ngIf="puedeEditarPedido" (click)="$event.stopPropagation()">
+          <ion-button fill="solid" color="medium" (click)="quitarProducto(producto)">−</ion-button>
+          <span class="cantidad-numero">{{ getCantidad(producto.id) }}</span>
+          <ion-button fill="solid" color="warning" (click)="agregarProducto(producto)">+</ion-button>
         </div>
       </div>
     </div>
 
-    <div class="acciones-contenedor">
-      <ion-button expand="block" class="boton-accion" (click)="irAlChat()">
-        <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
-        Consultar al mozo
-      </ion-button>
-
-      <!-- HACER/MODIFICAR PEDIDO -->
-      <ion-button expand="block" class="boton-accion" (click)="irAlPedido()"
-        *ngIf="!pedidoActual || pedidoActual.estado === 'pendiente' || pedidoActual.estado === 'rechazado'">
-        <ion-icon name="cart-outline" slot="start"></ion-icon>
-        {{ (pedidoActual?.estado === 'pendiente' || pedidoActual?.estado === 'rechazado') ? 'Modificar pedido' : 'Hacer pedido' }}
-      </ion-button>
-
-      <!-- JUEGOS (no disponible para clientes anónimos) -->
-      <ion-button expand="block" class="boton-accion" [routerLink]="['/juegos', mesaId]"
-        *ngIf="!esAnonimo && pedidoActual && pedidoActual.estado !== 'pendiente' && pedidoActual.estado !== 'rechazado'">
-        <ion-icon name="game-controller-outline" slot="start"></ion-icon>
-        Juegos y descuentos
-      </ion-button>
-
-      <!-- CONFIRMAR RECEPCION -->
-      <ion-button expand="block" class="boton-accion boton-recepcion" (click)="confirmarRecepcion()"
-        *ngIf="pedidoActual?.estado === 'entregado'">
-        <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
-        Confirmar recepción
-      </ion-button>
-
-      <!-- ENCUESTA (si no la hizo todavía; no disponible para anónimos) -->
-      <ion-button expand="block" class="boton-accion" (click)="irAEncuesta()"
-        *ngIf="pedidoActual?.estado === 'recibido' && encuestaHabilitada">
-        <ion-icon name="star-outline" slot="start"></ion-icon>
-        Completar encuesta
-      </ion-button>
-
-      <!-- ESTADÍSTICAS (si ya hizo la encuesta, o si es anónimo) -->
-      <ion-button expand="block" class="boton-accion" (click)="irAEstadistica()"
-        *ngIf="pedidoActual?.estado === 'recibido' && !encuestaHabilitada">
-        <ion-icon name="podium-outline" slot="start"></ion-icon>
-        Ver las estadísticas
-      </ion-button>
-
-      <!-- PEDIR LA CUENTA -->
-      <ion-button expand="block" class="boton-accion" [routerLink]="['/cuenta', mesaId]"
-        *ngIf="pedidoActual?.estado === 'recibido'">
-        <ion-icon name="receipt-outline" slot="start"></ion-icon>
-        Pedir la cuenta
-      </ion-button>
-
+    <div class="estado-vacio" *ngIf="(segmentoActivo === 'platos' && platos.length === 0) || (segmentoActivo === 'bebidas' && bebidas.length === 0)">
+      <ion-icon [name]="segmentoActivo === 'platos' ? 'flame-outline' : 'wine-outline'"></ion-icon>
+      <p>No hay {{ segmentoActivo === 'platos' ? 'platos' : 'bebidas' }} disponibles</p>
     </div>
+
   </div>
 
-  <!-- PLATOS -->
-  <div *ngIf="segmentoActivo === 'platos'">
-    <div *ngIf="platos.length === 0" class="estado-vacio">
-      <ion-icon name="flame-outline"></ion-icon>
-      <p>No hay platos disponibles</p>
-    </div>
+  <!-- DETALLE DE PRODUCTO -->
+  <div class="overlay-detalle" *ngIf="productoDetalle" (click)="cerrarDetalle()">
+    <div class="card-detalle" (click)="$event.stopPropagation()">
+      <ion-button fill="clear" class="boton-cerrar-detalle" (click)="cerrarDetalle()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
 
-    <div class="producto-card" *ngFor="let plato of platos">
-      <div class="fotos-contenedor">
-        <div class="foto-item">
-          <img [src]="plato.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
-        </div>
-        <div class="foto-item" *ngIf="plato.foto2_url">
-          <img [src]="plato.foto2_url" class="foto-producto"/>
-        </div>
-        <div class="foto-item" *ngIf="plato.foto3_url">
-          <img [src]="plato.foto3_url" class="foto-producto"/>
-        </div>
+      <div class="fotos-detalle">
+        <img [src]="productoDetalle.foto1_url || 'assets/avatar-default.png'"/>
+        <img *ngIf="productoDetalle.foto2_url" [src]="productoDetalle.foto2_url"/>
+        <img *ngIf="productoDetalle.foto3_url" [src]="productoDetalle.foto3_url"/>
       </div>
-      <div class="producto-info">
-        <h3 class="producto-nombre">{{ plato.nombre }}</h3>
-        <p class="producto-descripcion">{{ plato.descripcion }}</p>
-        <div class="producto-detalles">
-          <span class="producto-precio">${{ plato.precio }}</span>
-          <span class="producto-tiempo">
-            <ion-icon name="time-outline"></ion-icon>
-            {{ plato.tiempo_min }} min
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- BEBIDAS -->
-  <div *ngIf="segmentoActivo === 'bebidas'">
-    <div *ngIf="bebidas.length === 0" class="estado-vacio">
-      <ion-icon name="wine-outline"></ion-icon>
-      <p>No hay bebidas disponibles</p>
-    </div>
+      <h2>{{ productoDetalle.nombre }}</h2>
+      <p class="descripcion-completa">{{ productoDetalle.descripcion }}</p>
 
-    <div class="producto-card" *ngFor="let bebida of bebidas">
-      <div class="fotos-contenedor">
-        <div class="foto-item">
-          <img [src]="bebida.foto1_url || 'assets/avatar-default.png'" class="foto-producto"/>
-        </div>
-        <div class="foto-item" *ngIf="bebida.foto2_url">
-          <img [src]="bebida.foto2_url" class="foto-producto"/>
-        </div>
-        <div class="foto-item" *ngIf="bebida.foto3_url">
-          <img [src]="bebida.foto3_url" class="foto-producto"/>
-        </div>
+      <div class="producto-detalles">
+        <span class="producto-precio">${{ productoDetalle.precio }}</span>
+        <span class="producto-tiempo">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ productoDetalle.tiempo_min }} min
+        </span>
       </div>
-      <div class="producto-info">
-        <h3 class="producto-nombre">{{ bebida.nombre }}</h3>
-        <p class="producto-descripcion">{{ bebida.descripcion }}</p>
-        <div class="producto-detalles">
-          <span class="producto-precio">${{ bebida.precio }}</span>
-          <span class="producto-tiempo">
-            <ion-icon name="time-outline"></ion-icon>
-            {{ bebida.tiempo_min }} min
-          </span>
-        </div>
+
+      <div class="cantidad-control" *ngIf="puedeEditarPedido">
+        <ion-button size="small" fill="solid" color="medium" (click)="quitarProducto(productoDetalle)">−</ion-button>
+        <span class="cantidad-numero">{{ getCantidad(productoDetalle.id) }}</span>
+        <ion-button size="small" fill="solid" color="warning" (click)="agregarProducto(productoDetalle)">+</ion-button>
       </div>
     </div>
   </div>
 
 </ion-content>
+
+<!-- BARRA INFERIOR: chat ancho (sin pedido) o total+confirmar+chat chico (con pedido) -->
+<ion-footer class="barra-inferior">
+  <ion-toolbar class="barra-inferior-toolbar">
+
+    <!-- SIN PRODUCTOS EN EL CARRITO: el chat ocupa todo el ancho -->
+    <ion-button expand="block" class="boton-chat-ancho" *ngIf="itemsPedido.length === 0" (click)="irAlChat()">
+      <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+      Chatear con el mozo
+    </ion-button>
+
+    <!-- CON PRODUCTOS EN EL CARRITO: total + confirmar, chat se achica a un círculo -->
+    <div class="footer-con-pedido" *ngIf="itemsPedido.length > 0">
+      <div class="footer-row">
+        <span class="footer-label">
+          <ion-icon name="cart-outline"></ion-icon>
+          {{ cantidadItems }} {{ cantidadItems === 1 ? 'producto' : 'productos' }}
+        </span>
+        <span class="footer-tiempo">
+          <ion-icon name="time-outline"></ion-icon>
+          ~{{ tiempoEstimado }} min
+        </span>
+      </div>
+
+      <div class="footer-total-row">
+        <div class="footer-total">
+          <span>Total</span>
+          <span class="total-monto">${{ totalPedido }}</span>
+        </div>
+        <ion-button fill="solid" class="boton-chat-chico" (click)="irAlChat()">
+          <ion-icon name="chatbubble-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <ion-button expand="block" class="boton-confirmar" (click)="confirmarPedido()">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        {{ esModificacion ? 'Actualizar pedido' : 'Confirmar pedido' }}
+      </ion-button>
+    </div>
+
+  </ion-toolbar>
+</ion-footer>

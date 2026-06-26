@@ -7,29 +7,24 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ingreso-cliente-content">
+<ion-content class="ingreso-cliente-content" [scrollY]="false">
 
-  <!-- PASO 1: ESCANEAR QR -->
-  <div class="paso-contenedor" *ngIf="paso === 'escanear'">
+  <!-- PASO 1: ESCANEAR QR (simplificado: encabezado chico + botón gigante) -->
+  <div class="paso-contenedor paso-escanear-simple" *ngIf="paso === 'escanear'">
 
-    <div class="encabezado">
+    <div class="encabezado-chico">
       <img
         [src]="fotoUrl || 'assets/avatar-default.png'"
-        class="foto-cliente"/>
+        class="foto-cliente-chica"/>
       <h2>¡Hola, {{ nombre }}!</h2>
-      <p>Escaneá el código QR de la entrada para anotarte en la lista de espera</p>
     </div>
 
-    <div class="qr-ilustracion">
-      <ion-icon name="scan-outline"></ion-icon>
-    </div>
-
-    <ion-button expand="block" class="boton-principal" (click)="escanearQR()">
-      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-      Escanear código QR
+    <ion-button expand="block" class="boton-qr-grande" (click)="escanearQR()">
+      <div class="contenido-boton-qr">
+        <ion-icon name="qr-code-outline" class="icono-qr-grande"></ion-icon>
+        <span>Escanear código QR</span>
+      </div>
     </ion-button>
-
-    
 
   </div>
 

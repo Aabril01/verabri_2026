@@ -179,6 +179,44 @@
   }
 }
 
+// ── PASO ESPERA: ESTADO A (esperando asignación) ────────────────
+.estado-esperando {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  flex: 1;
+}
+
+// ── PASO ESPERA: ESTADO B (mesa ya asignada) ────────────────────
+.estado-asignada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  gap: 8px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 4px 0 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--vb-texto-suave);
+    margin: 0 0 20px;
+  }
+}
+
+.icono-exito-grande {
+  font-size: 90px;
+  color: var(--ion-color-success);
+}
+
 // ── CARD ESPERA ───────────────────────────────────────────────
 .card-espera {
   background: var(--vb-card);

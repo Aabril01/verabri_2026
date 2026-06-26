@@ -21,7 +21,322 @@
   }
 }
 
-// ── CARD DE MESA ──────────────────────────────────────────────
+// ── BARRA DE ESTADO (header, arriba de las tabs) ────────────────
+.toolbar-estado {
+  --background: var(--vb-fondo);
+  --min-height: 56px;
+}
+
+.estado-bar-contenido {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 6px 12px;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.boton-chip {
+  --background: var(--vb-card);
+  --color: var(--vb-blanco);
+  --border-radius: 20px;
+  height: 32px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+// ── ESTADO VACÍO ──────────────────────────────────────────────
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 32px;
+  gap: 12px;
+
+  ion-icon { font-size: 60px; color: rgba(240,230,211,0.2); }
+  p { font-size: 16px; color: var(--vb-texto-suave); margin: 0; }
+}
+
+// ── CARRUSEL PAGINADO (2 productos por vista, deslizable) ──────
+.carrusel-productos {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.pagina-productos {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+// ── CARD COMPACTA DE PRODUCTO (para el carrusel) ────────────────
+.producto-card-compacta {
+  background: var(--vb-card);
+  border: 1px solid rgba(240,230,211,0.15);
+  border-radius: 16px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.foto-cuadrada {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.producto-info-compacta {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+
+  .producto-nombre {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .producto-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .producto-precio {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--vb-acento);
+  }
+
+  .producto-tiempo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+    color: var(--vb-texto-suave);
+    ion-icon { font-size: 17px; }
+  }
+}
+
+// ── CONTROL DE CANTIDAD (grande, proporcional a la card) ─────────
+.cantidad-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 100%;
+
+  ion-button {
+    --border-radius: 10px;
+    margin: 0;
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+.cantidad-numero {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--vb-texto);
+  min-width: 24px;
+  text-align: center;
+}
+
+// (fab-chat eliminado: el botón de chat ahora vive en la barra inferior,
+// ancho cuando no hay pedido, achicado a círculo cuando ya lo hay)
+
+// ── DETALLE DE PRODUCTO (overlay) ───────────────────────────────
+.overlay-detalle {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.card-detalle {
+  background: var(--vb-card);
+  border-radius: 18px;
+  padding: 16px;
+  max-width: 100%;
+  width: 100%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 0;
+  }
+
+  .descripcion-completa {
+    font-size: 14px;
+    color: var(--vb-texto-suave);
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.boton-cerrar-detalle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  --color: var(--vb-texto);
+  z-index: 1;
+}
+
+.fotos-detalle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  height: 140px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+}
+
+// ── BARRA DE ESTADO DE PEDIDO (badge) ───────────────────────────
+.badge-estado-pedido {
+  white-space: normal !important;
+  height: auto !important;
+  line-height: 1.3 !important;
+  text-align: center;
+  font-size: 11px;
+  padding: 6px 10px;
+  flex-shrink: 0;
+}
+
+// ── BARRA INFERIOR (chat ancho o total+confirmar+chat chico) ────
+.barra-inferior-toolbar {
+  --background: var(--vb-card);
+  --border-color: rgba(240,230,211,0.15);
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+}
+
+.boton-chat-ancho {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.footer-con-pedido {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .footer-label, .footer-tiempo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--vb-texto-suave);
+
+    ion-icon { font-size: 16px; }
+  }
+}
+
+.footer-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-total {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--vb-texto);
+  font-weight: 600;
+
+  .total-monto {
+    font-size: clamp(24px, 6vw, 30px);
+    font-weight: 800;
+    color: var(--vb-acento);
+  }
+}
+
+.boton-chat-chico {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  --padding-start: 0;
+  --padding-end: 0;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.boton-confirmar {
+  --background: var(--vb-acento);
+  --color: var(--vb-blanco);
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 600;
+}
+
+
 .mesa-card {
   background: var(--vb-card);
   border: 1px solid rgba(240,230,211,0.15);
@@ -60,7 +375,6 @@
   ion-icon { font-size: 18px; color: var(--vb-acento); }
 }
 
-// ── ACCIONES ──────────────────────────────────────────────────
 .acciones-contenedor {
   padding: 0 16px 16px;
 }
@@ -71,160 +385,6 @@
   --border-radius: 12px;
   height: 52px;
   font-weight: 600;
-}
-
-// ── ESTADO VACÍO ──────────────────────────────────────────────
-.estado-vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 32px;
-  gap: 12px;
-
-  ion-icon { font-size: 60px; color: rgba(240,230,211,0.2); }
-  p { font-size: 16px; color: var(--vb-texto-suave); margin: 0; }
-}
-
-// ── PRODUCTOS ─────────────────────────────────────────────────
-.producto-card {
-  background: var(--vb-card);
-  border: 1px solid rgba(240,230,211,0.15);
-  border-radius: 14px;
-  margin: 12px 16px;
-  overflow: hidden;
-}
-
-.fotos-contenedor {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  height: 160px;
-}
-
-.foto-item {
-  overflow: hidden;
-
-  .foto-producto {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    display: block;
-  }
-}
-
-.producto-info {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.producto-nombre {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--vb-texto);
-  margin: 0;
-}
-
-.producto-descripcion {
-  font-size: 13px;
-  color: var(--vb-texto-suave);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.producto-detalles {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-}
-
-.producto-precio {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--vb-acento);
-}
-
-.producto-tiempo {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--vb-texto-suave);
-
-  ion-icon { font-size: 16px; }
-}
-
-.estado-pedido-card {
-  background: var(--vb-card);
-  border: 1px solid rgba(240,230,211,0.15);
-  border-radius: 14px;
-  margin: 0 16px 12px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  .estado-pedido-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--vb-texto);
-
-    ion-icon { font-size: 18px; color: var(--vb-acento); }
-  }
-
-  .badge-estado-pedido {
-    font-size: 13px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    width: fit-content;
-  }
-}
-
-.pedido-items {
-  border-top: 1px solid rgba(240,230,211,0.15);
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-ion-segment-button {
-  --color: rgba(240,230,211,0.5);
-  --color-checked: var(--vb-blanco);
-  --indicator-color: var(--vb-acento);
-}
-
-.item-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  .item-cantidad { font-size: 13px; font-weight: 700; color: var(--vb-acento); min-width: 28px; }
-  .item-nombre { flex: 1; font-size: 13px; color: var(--vb-texto); }
-  .item-precio { font-size: 13px; font-weight: 600; color: var(--vb-texto); }
-}
-
-.pedido-total-row {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid rgba(240,230,211,0.15);
-  padding-top: 8px;
-  margin-top: 4px;
-  font-size: 14px;
-  color: var(--vb-texto-suave);
-
-  .total-monto { font-size: 18px; font-weight: 700; color: var(--vb-acento); }
-}
-.badge-estado-pedido {
-  white-space: normal !important;
-  height: auto !important;
-  line-height: 1.4 !important;
-  text-align: center;
 }
 
 .boton-recepcion {
