@@ -34,6 +34,13 @@ export class MesaPage implements OnInit {
   // ── DETALLE DE PRODUCTO ─────────────────────────────────────────
   productoDetalle: any = null;
 
+  // Evita que cargarDatos() se ejecute dos veces en simultáneo (pasaba
+  // que ngOnInit y ionViewWillEnter se disparaban casi juntos al entrar
+  // por primera vez, creando 2 spinners; si uno terminaba antes que el
+  // otro, el segundo podía quedar colgado en pantalla con "Cargando
+  // mesa..." aunque los datos ya estuvieran listos).
+  private cargandoDatos = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -46,7 +53,6 @@ export class MesaPage implements OnInit {
 
   async ngOnInit() {
     this.mesaId = this.route.snapshot.paramMap.get('id') || '';
-    await this.cargarDatos();
   }
 
   async ionViewWillEnter() {
@@ -95,6 +101,9 @@ export class MesaPage implements OnInit {
   }
 
   async cargarDatos() {
+    if (this.cargandoDatos) return;
+    this.cargandoDatos = true;
+
     const loading = await this.loadingController.create({
       spinner: 'crescent',
       message: 'Cargando mesa...',
@@ -115,6 +124,7 @@ export class MesaPage implements OnInit {
       const accesoOk = await this.validarAccesoCliente();
       if (!accesoOk) {
         await loading.dismiss();
+        this.cargandoDatos = false;
         return;
       }
 
@@ -133,6 +143,7 @@ export class MesaPage implements OnInit {
         const usuario = this.supabaseService.usuarioActual;
         if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo' || this.esAnonimo) {
           await loading.dismiss();
+          this.cargandoDatos = false;
           await this.mostrarToast('¡Gracias por tu visita! Hasta pronto.', 'success');
           this.router.navigateByUrl('/home', { replaceUrl: true });
           return;
@@ -185,6 +196,7 @@ export class MesaPage implements OnInit {
     } finally {
       await loading.dismiss();
       this.cargando = false;
+      this.cargandoDatos = false;
     }
   }
 
