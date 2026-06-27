@@ -86,7 +86,7 @@
   color: var(--vb-texto);
 
   .descuento-monto {
-    color: var(--vb-exito);
+    color: var(--vb-blanco);
     font-weight: 600;
   }
 }
@@ -254,8 +254,13 @@
 
 .cuenta-scroll {
   flex: 1 1 auto;
+  overflow-y: hidden;
+  min-height: 0;
+}
+
+.items-lista-scroll {
+  max-height: 38vh;
   overflow-y: auto;
-  min-height: 0; 
 }
 
 .cuenta-footer-fijo {

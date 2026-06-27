@@ -34,10 +34,12 @@
           <ion-icon name="receipt-outline"></ion-icon>
           Detalle del pedido
         </h3>
-        <div class="item-row" *ngFor="let item of items">
-          <span class="item-nombre">{{ item.productos?.nombre }}</span>
-          <span class="item-cantidad">x{{ item.cantidad }}</span>
-          <span class="item-precio">${{ item.precio_unit * item.cantidad }}</span>
+        <div class="items-lista-scroll">
+          <div class="item-row" *ngFor="let item of items">
+            <span class="item-nombre">{{ item.productos?.nombre }}</span>
+            <span class="item-cantidad">x{{ item.cantidad }}</span>
+            <span class="item-precio">${{ item.precio_unit * item.cantidad }}</span>
+          </div>
         </div>
         <div class="subtotal-row">
           <span>Subtotal</span>

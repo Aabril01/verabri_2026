@@ -12,10 +12,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: calc(100vh - 56px);
+  height: 100%;
 }
 
-// ── ENCABEZADO ────────────────────────────────────────────────
 .encabezado {
   text-align: center;
   padding: 16px 0;
@@ -51,7 +50,6 @@
   border: 3px solid var(--vb-acento);
 }
 
-// ── QR ILUSTRACIÓN (sin uso desde la simplificación del paso 1) ─
 .qr-ilustracion {
   display: flex;
   justify-content: center;
@@ -64,7 +62,6 @@
   }
 }
 
-// ── PASO ESCANEAR (simplificado: encabezado chico + botón gigante) ─
 .paso-escanear-simple {
   justify-content: center;
   align-items: center;
@@ -115,7 +112,6 @@
   }
 }
 
-// ── BOTONES ───────────────────────────────────────────────────
 .boton-principal {
   --background: var(--vb-acento);
   --color: var(--vb-blanco);
@@ -131,7 +127,10 @@
   height: 48px;
 }
 
-// ── CARD ESPERA ───────────────────────────────────────────────
+.paso-espera-cliente {
+  justify-content: space-evenly;
+}
+
 .card-espera {
   background: var(--vb-card);
   border: 1px solid rgba(240,230,211,0.15);
@@ -164,7 +163,6 @@
   }
 }
 
-// ── TEXTO INFO ────────────────────────────────────────────────
 .texto-info {
   display: flex;
   align-items: center;

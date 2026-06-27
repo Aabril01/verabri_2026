@@ -12,7 +12,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: calc(100vh - 56px);
+  //min-height: calc(100vh - 56px);
+  height: 100%;
 }
 
 // ── ENCABEZADO ────────────────────────────────────────────────

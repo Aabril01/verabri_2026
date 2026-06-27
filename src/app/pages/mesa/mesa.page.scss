@@ -139,6 +139,11 @@
   border-radius: 14px;
   flex-shrink: 0;
 }
+.card-detalle .cantidad-control {
+  flex-direction: row;
+  height: auto;
+  margin-top: 4px;
+}
 
 .producto-info-compacta {
   flex: 1;
