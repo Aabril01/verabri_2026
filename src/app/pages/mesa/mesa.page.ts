@@ -477,6 +477,8 @@ export class MesaPage implements OnInit {
       'entregado': '🚀 ¡En camino!',
       'rechazado': '⚠️ Pedido rechazado — modificalo abajo',
       'recibido': '✅ ¡Recibido! Que lo disfrutes.',
+      'pagado': '✅ Pagado',
+      'cerrado': '✅ Pagado',
     };
     return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
   }
