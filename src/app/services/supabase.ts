@@ -192,23 +192,37 @@ export class SupabaseService {
   // ── EMAIL AUTOMÁTICO ───────────────────────────────────────────
 
   async enviarEmailEstado(email: string, nombre: string, estado: string): Promise<void> {
-    const estadoTexto = estado === 'aceptado' ? 'aprobada' : 'rechazada';
-    const colorEstado = estado === 'aceptado' ? '#2A8C50' : '#C0392B';
-    const detalle = estado === 'aceptado'
-      ? 'Ya podés ingresar a la aplicación.'
-      : 'Si creés que es un error, comunicate con el restaurante.';
+  const esAprobado = estado === 'aceptado';
 
-    try {
-      await emailjs.send(
-        'verabrioff@gmail.com',
-        'template_gn0l3c7',
-        { email, nombre, estado: estadoTexto, color: colorEstado, detalle },
-        'BthBN2OaJ9HDcpClC'
-      );
-    } catch (e) {
-      console.warn('EmailJS:', e);
-    }
+  const variables = esAprobado
+    ? {
+        header_bg: '#C9943A',
+        icono_bg: '#2A8C50',
+        icono: '✓',
+        titulo: `¡Bienvenido a Verabri, ${nombre}!`,
+        titulo_color: '#2A8C50',
+        mensaje: 'Tu solicitud de registro fue aprobada. Ya podés ingresar a la aplicación con tu correo y contraseña y empezar a disfrutar de la experiencia Verabri.'
+      }
+    : {
+        header_bg: '#46324F',
+        icono_bg: '#C0392B',
+        icono: 'x',
+        titulo: 'Tu solicitud no fue aprobada',
+        titulo_color: '#F5EEF0',
+        mensaje: `Hola ${nombre}, tu solicitud de registro en Verabri no pudo ser aprobada en esta ocasión. Si creés que se trata de un error, podés comunicarte directamente con el restaurante.`
+      };
+
+  try {
+    await emailjs.send(
+      'verabrioff@gmail.com',
+      'template_gn0l3c7',
+      { email, nombre, ...variables },
+      'BthBN2OaJ9HDcpClC'
+    );
+  } catch (e) {
+    console.warn('EmailJS:', e);
   }
+}
   async vibrarError() {
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });
