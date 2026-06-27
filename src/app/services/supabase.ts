@@ -19,7 +19,23 @@ export class SupabaseService {
   constructor() {
     this.supabase = createClient(
       environment.supabase.url,
-      environment.supabase.key
+      environment.supabase.key,
+      {
+        auth: {
+          // Por defecto, supabase-js usa navigator.locks para evitar que
+          // varias pestañas/instancias se peleen renovando la sesión al
+          // mismo tiempo. En el WebView de Android esto puede colgarse
+          // para siempre esperando un candado que nunca se libera
+          // (NavigatorLockAcquireTimeoutError) — lo vimos pasar
+          // específicamente en el flujo del cliente anónimo, que es quien
+          // más rápido y seguido dispara chequeos de sesión sin tener una
+          // sesión real de Auth. Reemplazamos el candado por un "no-op"
+          // que ejecuta la función directamente, sin esperar nada.
+          lock: async (_name: string, _acquireTimeout: number, fn: () => Promise<any>) => {
+            return await fn();
+          }
+        }
+      }
     );
 
     this.supabase.auth.onAuthStateChange((_event, session) => {
