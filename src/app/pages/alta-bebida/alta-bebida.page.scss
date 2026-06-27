@@ -7,8 +7,22 @@
   --color: var(--vb-blanco);
 }
 
-.formulario {
+.formulario-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.formulario-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
   padding: 16px;
+}
+
+.formulario-footer {
+  flex-shrink: 0;
+  padding: 0 16px 16px;
 }
 
 .label-fotos {
@@ -103,7 +117,8 @@
   --background: var(--vb-acento);
   --color: var(--vb-blanco);
   --border-radius: 12px;
-  height: 52px;
-  font-weight: 600;
+  height: 58px;
+  font-weight: 700;
+  font-size: 16px;
   margin-top: 16px;
 }

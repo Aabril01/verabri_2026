@@ -7,8 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding encuesta-content">
-  <form [formGroup]="encuestaForm">
+<ion-content class="ion-padding encuesta-content" [scrollY]="false">
+  <form [formGroup]="encuestaForm" class="encuesta-wrapper">
+  <div class="encuesta-scroll">
 
     <h3 class="ion-padding-horizontal">Puntúa tu experiencia general</h3>
 
@@ -117,19 +118,20 @@
       <ion-textarea
         formControlName="comentario"
         placeholder="Contanos más sobre tu experiencia..."
-        rows="4"
+        rows="3"
         class="textarea-comentario"
         auto-grow="true">
       </ion-textarea>
     </div>
 
-    <!-- BOTON GUARDADO -->
-    <div class="ion-padding">
-      <ion-button (click)="guardarEncuesta()" expand="block" class="boton-enviar-encuesta" [disabled]="encuestaForm.invalid">
-        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-        Enviar encuesta
-      </ion-button>
-    </div>
+  </div>
+
+  <div class="encuesta-footer">
+    <ion-button (click)="guardarEncuesta()" expand="block" class="boton-enviar-encuesta" [disabled]="encuestaForm.invalid">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Enviar encuesta
+    </ion-button>
+  </div>
 
   </form>
 </ion-content>

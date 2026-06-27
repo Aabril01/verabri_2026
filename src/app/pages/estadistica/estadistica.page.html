@@ -11,12 +11,6 @@
 
   <!-- MENÚ DE SELECCIÓN -->
   <div *ngIf="origen === 'menu'">
-    <div class="stats-header">
-      <ion-icon name="analytics-outline" class="stats-icon"></ion-icon>
-      <h2>Seleccioná un gráfico</h2>
-      <p>Explorá los resultados de las encuestas</p>
-    </div>
-
     <div class="metricas-mini">
       <ion-card class="metric-card">
         <ion-card-content class="ion-text-center">
@@ -93,9 +87,21 @@
   </div>
 
   <!-- SIN ENCUESTAS -->
-  <div *ngIf="!cargando && totalEncuestas === 0 && origen !== 'menu'" class="ion-text-center ion-padding">
-    <ion-icon name="analytics-outline" style="font-size: 64px;" color="medium"></ion-icon>
-    <p>Todavía no hay encuestas registradas.</p>
+  <div *ngIf="!cargando && totalEncuestas === 0 && origen !== 'menu'" class="estado-vacio">
+    <svg class="empty-ilustracion" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="110" fill="var(--vb-card)" />
+      <circle cx="60" cy="50" r="8" fill="var(--vb-acento)" opacity="0.5" />
+      <circle cx="190" cy="70" r="5" fill="var(--vb-acento)" opacity="0.4" />
+      <circle cx="195" cy="180" r="7" fill="var(--vb-acento)" opacity="0.4" />
+      <rect x="70" y="80" width="100" height="90" rx="10" fill="var(--vb-fondo)" stroke="var(--vb-acento)" stroke-width="3" />
+      <line x1="90" y1="150" x2="90" y2="110" stroke="var(--vb-texto-suave)" stroke-width="8" stroke-linecap="round" opacity="0.5" />
+      <line x1="115" y1="150" x2="115" y2="95" stroke="var(--vb-texto-suave)" stroke-width="8" stroke-linecap="round" opacity="0.5" />
+      <line x1="140" y1="150" x2="140" y2="120" stroke="var(--vb-texto-suave)" stroke-width="8" stroke-linecap="round" opacity="0.5" />
+      <circle cx="150" cy="100" r="22" fill="var(--vb-acento)" opacity="0.85" />
+      <path d="M150 90 L150 100 L157 107" fill="none" stroke="var(--vb-blanco)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <h3>Todavía no hay encuestas</h3>
+    <p>Cuando los clientes completen encuestas, las estadísticas van a aparecer acá</p>
   </div>
 
   <div [hidden]="cargando || totalEncuestas === 0 || origen === 'menu'">
