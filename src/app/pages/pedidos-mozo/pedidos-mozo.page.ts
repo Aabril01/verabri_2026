@@ -273,13 +273,45 @@ export class PedidosMozoPage implements OnInit {
     doc.setFont('helvetica', 'normal');
     let y = 144;
     const items = pedido.pedido_items || [];
+
+    // CORREGIDO: antes no había ningún límite — con muchos productos
+    // (a partir de ~17) el texto se empezaba a dibujar arriba del footer
+    // dorado e incluso fuera de la hoja, porque jsPDF no agrega páginas
+    // solo, hay que pedírselo a mano. Esta función repite el encabezado
+    // de la tabla cada vez que arranca una hoja nueva.
+    const MAX_Y = 265;
+    const dibujarEncabezadoTabla = () => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text('Producto', 14, y);
+      doc.text('Cant.', 120, y);
+      doc.text('Precio unit.', 145, y);
+      doc.text('Subtotal', 178, y);
+      doc.line(14, y + 2, 196, y + 2);
+      y += 11;
+      doc.setFont('helvetica', 'normal');
+    };
+
     items.forEach((item: any) => {
+      if (y > MAX_Y) {
+        doc.addPage();
+        y = 20;
+        dibujarEncabezadoTabla();
+      }
       doc.text(item.productos?.nombre || '', 14, y);
       doc.text(`${item.cantidad}`, 123, y);
       doc.text(`$${item.precio_unit}`, 145, y);
       doc.text(`$${item.subtotal}`, 178, y);
       y += 8;
     });
+
+    // El bloque de Descuento/Propina/Total necesita ~35mm. Si no entra
+    // en lo que queda de la hoja actual, pasa a una nueva en vez de
+    // quedar cortado o pisando el footer.
+    if (y + 35 > MAX_Y) {
+      doc.addPage();
+      y = 20;
+    }
 
     doc.line(14, y + 2, 196, y + 2);
     y += 10;
