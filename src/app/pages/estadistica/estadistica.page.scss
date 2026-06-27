@@ -3,6 +3,10 @@
     --color: var(--vb-blanco);
   }
   
+  ion-col {
+  padding: 5px;
+}
+
   .metric-card {
     --background: #bfa054; /* Color dorado/marrón de tus botones */
     margin: 0;
@@ -65,6 +69,26 @@
     --indicator-color: var(--vb-acento);
   }
 }
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  min-height: 60vh;
+  gap: 24px;
+
+  .empty-ilustracion {
+    width: min(240px, 70vw);
+    height: auto;
+  }
+
+  h3 { font-size: 18px; font-weight: 600; color: var(--vb-texto); margin: 0; }
+  p { font-size: 14px; color: var(--vb-texto-suave); margin: 0; max-width: 260px; }
+}
+
 .stats-header {
   text-align: center;
   padding: 24px 16px 16px;
@@ -84,7 +108,7 @@
 
 .grafico-card {
   --background: #4f3b63;
-  margin: 8px 0;
+  margin: 10px 16px;
   cursor: pointer;
   
   .grafico-opcion {

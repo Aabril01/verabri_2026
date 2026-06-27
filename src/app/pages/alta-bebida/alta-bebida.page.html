@@ -7,8 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="alta-bebida-content">
-  <form [formGroup]="formulario" class="formulario">
+<ion-content class="alta-bebida-content" [scrollY]="false">
+  <form [formGroup]="formulario" class="formulario-wrapper">
+  <div class="formulario-scroll">
 
     <!-- FOTOS -->
     <p class="label-fotos">Fotos de la bebida (3 requeridas)</p>
@@ -48,7 +49,7 @@
       <ion-item class="campo-item" [class.campo-error]="campoInvalido('descripcion')">
         <ion-icon name="document-text-outline" slot="start" class="icono-campo"></ion-icon>
         <ion-label position="stacked">Descripción</ion-label>
-        <ion-textarea formControlName="descripcion" placeholder="Describí los ingredientes..." rows="3"></ion-textarea>
+        <ion-textarea formControlName="descripcion" placeholder="Describí los ingredientes..." rows="3" maxlength="200" counter="true"></ion-textarea>
       </ion-item>
       <div class="mensajes-error" *ngIf="campoInvalido('descripcion')">
         <ion-note color="danger">
@@ -88,6 +89,9 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="formulario-footer">
     <!-- ERROR GENERAL -->
     <div class="error-general" *ngIf="errorGeneral">
       <ion-chip color="danger" class="chip-error">
@@ -104,6 +108,7 @@
         Guardar bebida
       </span>
     </ion-button>
+  </div>
 
   </form>
 </ion-content>
