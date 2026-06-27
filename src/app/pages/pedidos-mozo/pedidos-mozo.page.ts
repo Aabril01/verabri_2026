@@ -238,7 +238,7 @@ export class PedidosMozoPage implements OnInit {
     doc.text(`Fecha: ${fecha}`, 14, 52);
     doc.text(`N° Factura: ${numeroFactura}`, 14, 59);
     doc.text(`N° Pedido: ${pedido.id.substring(0, 8).toUpperCase()}`, 14, 66);
-    doc.text(`Mesa: ${pedido.mesas?.numero}`, 14, 73);
+    //doc.text(`Mesa: ${pedido.mesas?.numero}`, 14, 73);
 
     doc.setFillColor(107, 78, 122);
     doc.rect(0, 80, 210, 8, 'F');
@@ -475,7 +475,7 @@ export class PedidosMozoPage implements OnInit {
                       email: cliente.email,
                       nombre: `${cliente.nombre} ${cliente.apellido}`,
                       numero_factura: numeroFactura,
-                      numero_mesa: pedido.mesas?.numero,
+                      //numero_mesa: pedido.mesas?.numero,
                       fecha: fecha,
                       detalle_items: detalleItems,
                       subtotal: subtotal.toFixed(0),
