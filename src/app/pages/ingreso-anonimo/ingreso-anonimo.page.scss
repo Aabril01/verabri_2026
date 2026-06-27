@@ -8,44 +8,45 @@
 }
 
 .paso-contenedor {
-  padding: 24px 16px;
+  padding: 16px 16px max(16px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  //min-height: calc(100vh - 56px);
+  gap: clamp(10px, 2.5vh, 20px);
   height: 100%;
 }
 
-// ── ENCABEZADO ────────────────────────────────────────────────
+// ── ENCABEZADO: achicado a propósito, para dejarle lugar a todo lo demás ──
 .encabezado {
+  flex-shrink: 0;
   text-align: center;
-  padding: 16px 0;
+  padding: 4px 0;
 
   .icono-principal {
-    font-size: 64px;
+    font-size: clamp(28px, 5vh, 38px);
     color: var(--vb-acento);
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
 
     &.icono-exito { color: var(--vb-exito); }
   }
 
   h2 {
-    font-size: 24px;
+    font-size: clamp(16px, 3vh, 20px);
     font-weight: 700;
     color: var(--vb-texto);
-    margin: 0 0 8px;
+    margin: 0 0 4px;
   }
 
   p {
-    font-size: 14px;
+    font-size: clamp(11px, 2vh, 13px);
     color: var(--vb-texto-suave);
     margin: 0;
   }
 }
 
-// ── FOTO ──────────────────────────────────────────────────────
+// ── FOTO: bien grande, escala con el alto de la pantalla ──────
 .seccion-foto {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,8 +54,8 @@
 }
 
 .contenedor-foto {
-  width: 140px;
-  height: 140px;
+  width: clamp(140px, 26vh, 220px);
+  height: clamp(140px, 26vh, 220px);
   border-radius: 50%;
   background: var(--vb-card);
   border: 2px dashed rgba(240,230,211,0.3);
@@ -78,23 +79,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    ion-icon { font-size: 36px; color: rgba(240,230,211,0.4); }
-    span { font-size: 12px; color: rgba(240,230,211,0.5); text-align: center; }
+    gap: 10px;
+    ion-icon { font-size: clamp(32px, 7vh, 48px); color: rgba(240,230,211,0.4); }
+    span { font-size: clamp(12px, 2.2vh, 14px); color: rgba(240,230,211,0.5); text-align: center; }
   }
 }
 
 // ── CAMPO ─────────────────────────────────────────────────────
-.campo-contenedor { display: flex; flex-direction: column; gap: 4px; }
+.campo-contenedor { flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
 
 .campo-item {
   --background: var(--vb-card);
   --border-radius: 12px;
   --padding-start: 14px;
+  --min-height: clamp(56px, 9vh, 72px);
   --color: var(--vb-texto);
   --placeholder-color: rgba(240,230,211,0.4);
   border: 1px solid rgba(240,230,211,0.18);
   border-radius: 12px;
+  font-size: clamp(15px, 2.4vh, 17px);
 
   &.campo-error { border-color: var(--ion-color-danger); }
 }
@@ -119,10 +122,15 @@
 .boton-principal {
   --background: var(--vb-acento);
   --color: var(--vb-blanco);
-  --border-radius: 12px;
-  height: 52px;
-  font-weight: 600;
-  margin-top: 8px;
+  --border-radius: 16px;
+  flex: 1;
+  min-height: 64px;
+  max-height: 150px;
+  font-weight: 700;
+  font-size: clamp(17px, 3vh, 22px);
+  margin-top: 4px;
+
+  ion-icon { font-size: clamp(20px, 3.5vh, 26px); }
 }
 
 .boton-secundario {
