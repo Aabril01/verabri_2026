@@ -21,30 +21,65 @@
   }
 }
 
-// ── BARRA DE ESTADO (header, arriba de las tabs) ────────────────
-.toolbar-estado {
-  --background: var(--vb-fondo);
-  --min-height: 56px;
-}
-
-.estado-bar-contenido {
+// ── ÍCONO DE ESTADO EN EL HEADER (abre el panel "Mi pedido") ─────
+.badge-header-pedido {
+  --padding-start: 6px;
+  --padding-end: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 6px 12px;
+  justify-content: center;
 
-  &::-webkit-scrollbar { display: none; }
+  ion-icon { font-size: 16px; }
 }
 
-.boton-chip {
-  --background: var(--vb-card);
+// ── PANEL "MI PEDIDO" (reemplaza a la barra apretada de chips) ──
+.card-panel-pedido {
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--vb-texto);
+    margin: 4px 0 0;
+  }
+}
+
+.badge-estado-panel {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.acciones-panel-pedido {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.boton-accion-panel {
+  --background: var(--vb-acento);
   --color: var(--vb-blanco);
-  --border-radius: 20px;
-  height: 32px;
-  font-size: 12px;
-  flex-shrink: 0;
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.texto-sin-acciones {
+  font-size: 13px;
+  color: var(--vb-texto-suave);
+  margin: 4px 0 0;
 }
 
 // ── ESTADO VACÍO ──────────────────────────────────────────────
@@ -177,6 +212,8 @@
   text-align: center;
 }
 
+// (fab-chat eliminado: el botón de chat ahora vive en la barra inferior,
+// ancho cuando no hay pedido, achicado a círculo cuando ya lo hay)
 
 // ── DETALLE DE PRODUCTO (overlay) ───────────────────────────────
 .overlay-detalle {
@@ -334,7 +371,11 @@
   font-weight: 600;
 }
 
-
+// ── Clases heredadas de la versión anterior, ya sin uso directo ──
+// (mesa-card, mesa-foto, mesa-numero, mesa-info-row, acciones-contenedor,
+// boton-accion, boton-recepcion, producto-card "grande", estado-pedido-card,
+// pedido-items, item-row, pedido-total-row, qr-ilustracion): se dejan
+// intactas por si se reusan en otra pantalla, no afectan el render actual.
 .mesa-card {
   background: var(--vb-card);
   border: 1px solid rgba(240,230,211,0.15);
@@ -387,4 +428,23 @@
 
 .boton-recepcion {
   --background: var(--vb-exito);
+}
+
+// ── BANNER DE REINTENTAR (problema de red al cargar) ────────────
+.banner-red {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--ion-color-danger);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: center;
+  cursor: pointer;
+
+  ion-icon { font-size: 16px; }
 }

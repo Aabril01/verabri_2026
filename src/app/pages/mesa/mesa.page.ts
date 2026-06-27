@@ -26,20 +26,15 @@ export class MesaPage implements OnInit {
   segmentoActivo: 'platos' | 'bebidas' = 'platos';
   encuestaHabilitada: boolean = false;
 
-  // ── CARRITO (fusionado desde pedido.page) ──────────────────────
   itemsPedido: ItemPedido[] = [];
   pedidoExistenteId: string | null = null;
   esModificacion = false;
 
-  // ── DETALLE DE PRODUCTO ─────────────────────────────────────────
   productoDetalle: any = null;
+  mostrarPanelPedido: boolean = false;
 
-  // Evita que cargarDatos() se ejecute dos veces en simultáneo (pasaba
-  // que ngOnInit y ionViewWillEnter se disparaban casi juntos al entrar
-  // por primera vez, creando 2 spinners; si uno terminaba antes que el
-  // otro, el segundo podía quedar colgado en pantalla con "Cargando
-  // mesa..." aunque los datos ya estuvieran listos).
   private cargandoDatos = false;
+  hayProblemaDeRed: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,15 +51,13 @@ export class MesaPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    if (this.mesaId) {
+    const idActual = this.route.snapshot.paramMap.get('id') || '';
+    if (idActual) {
+      this.mesaId = idActual;
       await this.cargarDatos();
     }
   }
 
-  /**
-   * true si el cliente actual está navegando con una sesión anónima activa
-   * (localStorage 'sesion_anonima', no vencida).
-   */
   get esAnonimo(): boolean {
     const sesionAnonimaRaw = localStorage.getItem('sesion_anonima');
     if (!sesionAnonimaRaw) return false;
@@ -76,33 +69,57 @@ export class MesaPage implements OnInit {
     }
   }
 
-  /**
-   * Se puede editar el carrito (agregar/quitar productos y confirmar) solo
-   * si todavía no hay pedido, o si el pedido existente fue rechazado por el
-   * mozo (en ese caso se modifica en vez de crear uno nuevo).
-   * Mientras está 'pendiente' o más adelante (confirmado, en_cocina, listo,
-   * entregado, recibido) el carrito queda de solo lectura.
-   */
   get puedeEditarPedido(): boolean {
     return !this.pedidoActual || this.pedidoActual.estado === 'rechazado';
   }
 
   /**
-   * Productos del segmento activo (platos o bebidas), agrupados de a 2 para
-   * el carrusel paginado horizontal.
+   * Antes esto era un getter recalculado en CADA ciclo de detección de
+   * cambios de Angular (porque el HTML lo usa en un *ngFor) — devolvía un
+   * array NUEVO cada vez que se lo llamaba, lo cual puede disparar un
+   * re-renderizado constante e interminable, sobre todo con imágenes
+   * cargando al mismo tiempo (cada imagen que termina de cargar dispara
+   * otro chequeo de Angular, que vuelve a pedir el array, que es "nuevo"
+   * de nuevo, etc.). Ahora es una propiedad normal que se calcula una
+   * sola vez, cuando realmente hace falta (al cargar productos o cambiar
+   * de pestaña), no en cada repintado de pantalla.
    */
-  get paginasProductos(): any[][] {
+  paginasProductos: any[][] = [];
+
+  private recalcularPaginasProductos() {
     const lista = this.segmentoActivo === 'platos' ? this.platos : this.bebidas;
     const paginas: any[][] = [];
     for (let i = 0; i < lista.length; i += 2) {
       paginas.push(lista.slice(i, i + 2));
     }
-    return paginas;
+    this.paginasProductos = paginas;
+  }
+
+  /**
+   * Corre una consulta con un límite de tiempo. Si no responde antes de
+   * `ms`, devuelve `fallback` en vez de quedarse esperando para siempre.
+   * Esto es lo que evita que la pantalla se cuelgue sin importar la causa
+   * de fondo de por qué una consulta puntual no contesta a veces.
+   */
+  private async conLimiteDeTiempo<T>(promesa: PromiseLike<T>, ms: number, fallback: T): Promise<T> {
+    let timeoutId: any;
+    const timeoutPromise = new Promise<T>((resolve) => {
+      timeoutId = setTimeout(() => resolve(fallback), ms);
+    });
+    try {
+      const resultado = await Promise.race([Promise.resolve(promesa), timeoutPromise]);
+      clearTimeout(timeoutId);
+      return resultado;
+    } catch (e) {
+      clearTimeout(timeoutId);
+      return fallback;
+    }
   }
 
   async cargarDatos() {
     if (this.cargandoDatos) return;
     this.cargandoDatos = true;
+    this.hayProblemaDeRed = false;
 
     const loading = await this.loadingController.create({
       spinner: 'crescent',
@@ -112,13 +129,16 @@ export class MesaPage implements OnInit {
     await loading.present();
 
     try {
-      const { data: mesaData, error: errorMesa } = await this.supabaseService.client
-        .from('mesas')
-        .select('*')
-        .eq('id', this.mesaId)
-        .single();
+      const { data: mesaData, error: errorMesa } = await this.conLimiteDeTiempo(
+        this.supabaseService.client.from('mesas').select('*').eq('id', this.mesaId).single(),
+        6000,
+        { data: null, error: { message: 'timeout' } } as any
+      );
 
-      if (errorMesa) throw errorMesa;
+      if (errorMesa && !mesaData) {
+        this.hayProblemaDeRed = true;
+        throw new Error('No se pudo cargar la mesa (red lenta o sin respuesta).');
+      }
       this.mesa = mesaData;
 
       const accesoOk = await this.validarAccesoCliente();
@@ -128,18 +148,21 @@ export class MesaPage implements OnInit {
         return;
       }
 
-      const { data: pedidoData } = await this.supabaseService.client
-        .from('pedidos')
-        .select(`*, pedido_items(*, productos(*))`)
-        .eq('mesa_id', this.mesaId)
-        .not('estado', 'in', '(cerrado,pagado)')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      const { data: pedidoData } = await this.conLimiteDeTiempo(
+        this.supabaseService.client
+          .from('pedidos')
+          .select(`*, pedido_items(*, productos(*))`)
+          .eq('mesa_id', this.mesaId)
+          .neq('estado', 'cerrado')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        6000,
+        { data: null } as any
+      );
 
       this.pedidoActual = pedidoData;
 
-      // Si el pedido fue pagado, redirigir al cliente al home
       if (this.mesa?.estado === 'vacia') {
         const usuario = this.supabaseService.usuarioActual;
         if (usuario?.perfil === 'cliente_registrado' || usuario?.perfil === 'cliente_anonimo' || this.esAnonimo) {
@@ -151,8 +174,6 @@ export class MesaPage implements OnInit {
         }
       }
 
-      // El cliente anónimo nunca puede completar una encuesta nueva,
-      // solo ver resultados de encuestas previas (botón "Ver estadísticas").
       if (this.esAnonimo) {
         this.encuestaHabilitada = false;
       } else if (this.pedidoActual && this.pedidoActual.encuesta_realizada === false) {
@@ -161,8 +182,6 @@ export class MesaPage implements OnInit {
         this.encuestaHabilitada = false;
       }
 
-      // Si el pedido fue rechazado, precargamos sus items en el carrito
-      // para que el cliente los pueda modificar directamente acá.
       if (this.pedidoActual?.estado === 'rechazado') {
         this.pedidoExistenteId = this.pedidoActual.id;
         this.esModificacion = true;
@@ -174,26 +193,34 @@ export class MesaPage implements OnInit {
         this.pedidoExistenteId = null;
         this.esModificacion = false;
         if (this.pedidoActual?.estado !== undefined && this.pedidoActual !== null) {
-          // Hay un pedido en curso (pendiente o más adelante): el carrito
-          // de edición no aplica, se vacía para no confundir.
           this.itemsPedido = [];
         }
       }
 
-      const { data: productosData, error: errorProductos } = await this.supabaseService.client
-        .from('productos')
-        .select('*')
-        .eq('activo', true)
-        .order('nombre', { ascending: true });
+      const { data: productosData, error: errorProductos } = await this.conLimiteDeTiempo(
+        this.supabaseService.client
+          .from('productos')
+          .select('*')
+          .eq('activo', true)
+          .order('nombre', { ascending: true }),
+        6000,
+        { data: null, error: { message: 'timeout' } } as any
+      );
 
-      if (errorProductos) throw errorProductos;
-
-      this.platos = (productosData || []).filter((p: any) => p.tipo === 'plato');
-      this.bebidas = (productosData || []).filter((p: any) => p.tipo === 'bebida');
+      if (errorProductos && !productosData) {
+        this.hayProblemaDeRed = true;
+        this.platos = [];
+        this.bebidas = [];
+      } else {
+        this.platos = (productosData || []).filter((p: any) => p.tipo === 'plato');
+        this.bebidas = (productosData || []).filter((p: any) => p.tipo === 'bebida');
+      }
+      this.recalcularPaginasProductos();
 
     } catch (error: any) {
       console.error('Error:', error);
-      await this.mostrarToast('Error al cargar la mesa.', 'danger');
+      this.hayProblemaDeRed = true;
+      await this.mostrarToast('Hubo un problema de conexión. Tocá para reintentar.', 'danger');
     } finally {
       await loading.dismiss();
       this.cargando = false;
@@ -201,10 +228,10 @@ export class MesaPage implements OnInit {
     }
   }
 
-  /**
-   * Valida si el cliente actual (anónimo o registrado) puede ver esta mesa.
-   * Devuelve false (y ya redirige) cuando el acceso NO está permitido.
-   */
+  async reintentar() {
+    await this.cargarDatos();
+  }
+
   async validarAccesoCliente(): Promise<boolean> {
     const usuario = this.supabaseService.usuarioActual;
 
@@ -246,10 +273,6 @@ export class MesaPage implements OnInit {
     return true;
   }
 
-  /**
-   * Popup grande (modal) para los casos en que la mesa no corresponde al
-   * cliente — reemplaza al toast.
-   */
   async mostrarPopupAcceso(titulo: string, mensaje: string) {
     const alert = await this.alertController.create({
       header: titulo,
@@ -258,10 +281,7 @@ export class MesaPage implements OnInit {
       buttons: ['Entendido']
     });
     await alert.present();
-    await alert.onDidDismiss();
   }
-
-  // ── CARRITO (fusionado desde pedido.page) ──────────────────────
 
   getCantidad(productoId: string): number {
     const item = this.itemsPedido.find(i => i.producto.id === productoId);
@@ -296,7 +316,10 @@ export class MesaPage implements OnInit {
     }, 0);
   }
 
-  get tiempoEstimado(): number { if (this.itemsPedido.length === 0) return 0; return Math.max(...this.itemsPedido.map(item => item.producto.tiempo_min || 0)); }
+  get tiempoEstimado(): number {
+    if (this.itemsPedido.length === 0) return 0;
+    return Math.max(...this.itemsPedido.map(item => item.producto.tiempo_min || 0));
+  }
 
   get cantidadItems(): number {
     return this.itemsPedido.reduce((total, item) => total + item.cantidad, 0);
@@ -399,8 +422,6 @@ export class MesaPage implements OnInit {
     }
   }
 
-  // ── DETALLE DE PRODUCTO ─────────────────────────────────────────
-
   abrirDetalle(producto: any) {
     this.productoDetalle = producto;
   }
@@ -408,8 +429,6 @@ export class MesaPage implements OnInit {
   cerrarDetalle() {
     this.productoDetalle = null;
   }
-
-  // ── RESTO (sin cambios respecto a la versión anterior) ──────────
 
   async confirmarRecepcion() {
     try {
@@ -427,6 +446,7 @@ export class MesaPage implements OnInit {
 
   cambiarSegmento(evento: any) {
     this.segmentoActivo = evento.detail.value;
+    this.recalcularPaginasProductos();
   }
 
   formatearTipo(tipo: string): string {
