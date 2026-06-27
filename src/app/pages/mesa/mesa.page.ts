@@ -132,6 +132,7 @@ export class MesaPage implements OnInit {
         .from('pedidos')
         .select(`*, pedido_items(*, productos(*))`)
         .eq('mesa_id', this.mesaId)
+        .not('estado', 'in', '(cerrado,pagado)')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -456,6 +457,8 @@ export class MesaPage implements OnInit {
       'entregado': '🚀 ¡En camino!',
       'rechazado': '⚠️ Pedido rechazado — modificalo abajo',
       'recibido': '✅ ¡Recibido! Que lo disfrutes.',
+      'pagado': '✅ Pagado',
+      'cerrado': '✅ Pagado',
     };
     return estados[this.pedidoActual.estado] || this.pedidoActual.estado;
   }
